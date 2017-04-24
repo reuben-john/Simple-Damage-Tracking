@@ -199,29 +199,17 @@ def get_shipping_lost():
             return shipping_lost
 
 
-def get_order_number_damaged():
+def get_number_damaged():
     """
     Gets number of products damaged from user then converts it to an int
     :return: int
     """
     while True:
         try:
-            number_product_damaged = int(input('How many individual items were lost? '))
-        except ValueError:
-            print('Please enter a number.')
-            continue
-        else:
-            return number_product_damaged
-
-
-def get_warehouse_number_damaged():
-    """
-    Gets number of warehouse boxes/items damaged from user then converts it to an int
-    :return: int 
-    """
-    while True:
-        try:
-            number_product_damaged = int(input('How many boxes are being thrown away? '))
+            if loss_type == 'warehouse':
+                number_product_damaged = int(input('How many boxes are being thrown away? '))
+            elif loss_type == 'order':
+                number_product_damaged = int(input('How many individual items were lost? '))
         except ValueError:
             print('Please enter a number.')
             continue
@@ -312,7 +300,7 @@ def info_form(loss_type):
         lost_product_cost = get_product_cost(product_type_lost, loss_type)  # Pulls item cost (custom allows user entry)
         if product_type_lost == 'c':  # If custom item was chosen, asks user for custom product type
             product_type_lost = input('Please enter your custom item type: ')
-        number_product_damaged = get_order_number_damaged()  # Asks user for number of items lost
+        number_product_damaged = get_number_damaged()  # Asks user for number of items lost
         # Checks if loss_type chosen is order damages or warehouse damages then compiles the variables to a list
         if loss_type == 'order':
             form = [todays_date, ebay_order_number, order_cost, shipping_cost, shipping_lost,
