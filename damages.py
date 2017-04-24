@@ -9,17 +9,6 @@ import time
 
 from terminaltables import AsciiTable
 
-# These 3 variables contain our menu choices for navigating the damage tracker
-main_menu_codes = {'1': 'Add new order damages report', '2': 'Add new warehouse damages report', '3': 'View Current Damages', '4': 'Tally Damages'}
-order_damages_codes = {'1': 'Order lost in transit', '2': 'Returned product', '3': 'Bad Address', '4': 'Bad Product'}
-warehouse_damages_codes = {'1': 'Box loss', '2': 'Item loss'}
-
-# These 2 variables contain a list of product types we sell and a basic cost of goods
-# These are used to calculate losses
-order_products = {'beauty': 1, 'makeup': 0.4, 'food': 2, 'clothing': 4, 'consigner': 0, 'health': 1,
-                      'household': 1.50, }
-warehouse_products = {'beauty': 40, 'makeup': 50, 'food': 40, 'general': 20}
-
 
 def main_menu():
     """
@@ -135,6 +124,19 @@ def damages_reader(path):
     for row in reader:
         csv_data.append(row)
     return csv_data
+
+
+def cost_reader(path):
+    """
+    Opens csv file and converts the data to a dictionary. 
+    This gives a dictionary containing a product key with a cost value.
+    :param path: str
+    :return: dict
+    """
+    reader = csv.reader(path)
+    next(reader)
+    costs = {rows[0]: rows[1] for rows in reader}
+    return costs
 
 
 def get_order_number():
@@ -319,12 +321,30 @@ def info_form(loss_type):
             form = [todays_date, product_type_lost, lost_product_cost, number_product_damaged]
         return form
 
+# These 3 variables contain our menu choices for navigating the damage tracker
+main_menu_codes = {'1': 'Add new order damages report', '2': 'Add new warehouse damages report',
+                   '3': 'View Current Damages', '4': 'Tally Damages'}
+order_damages_codes = {'1': 'Order lost in transit', '2': 'Returned product', '3': 'Bad Address', '4': 'Bad Product'}
+warehouse_damages_codes = {'1': 'Box loss', '2': 'Item loss'}
+
+order_csv = 'order_damages.csv'  # Path to order damages csv data file
+warehouse_csv = 'warehouse_damages.csv'  # Path to warehouse damages csv data file
+order_cost_csv = 'order_product_costs.csv'  # Path to product costs for order damages
+warehouse_cost_csv = 'warehouse_product_costs.csv'  # Path to product costs for warehouse damages
+
+# These 2 variables contain a list of product types we sell and a basic cost of goods
+# These are used to calculate losses
+# csv was chosen so other uses can easily edit product costs as they change
+with open(order_cost_csv, 'r') as f_obj:  # Generates product cost list from csv file
+    order_products = cost_reader(f_obj)
+
+with open(warehouse_cost_csv, 'r') as f_obj:  # Generates product cost list from csv file
+    warehouse_products = cost_reader(f_obj)
+
 # This is the main program loop for the damage tracking system.
 # It starts the main menu processes user input from that menu
 while True:
     menu = main_menu()  # Loads the main menu
-    order_csv = 'order_damages.csv'  # Path to order damages csv data file
-    warehouse_csv = 'warehouse_damages.csv'  # Path to warehouse damages csv data file
     if menu == 'q':  # Quits program if selected from main menu
         break
     elif menu == '1':
