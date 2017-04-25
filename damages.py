@@ -10,6 +10,7 @@ import time
 from terminaltables import AsciiTable
 import colorama
 
+
 def main_menu():
     """
     This displays the main menu and allows the user to navigate to submenus  
@@ -17,15 +18,15 @@ def main_menu():
     """
     while True:
         print('')
-        print(colorama.Fore.LIGHTWHITE_EX + 'Welcome to the ShopCrownhouse damage tracking system')
+        print(col_ltwht + 'Welcome to the ShopCrownhouse damage tracking system')
         print('')
         print('What would you like to do?')
         print('')
         for k, v in main_menu_codes.items():  # Prints out main menu
-            print(colorama.Fore.LIGHTRED_EX + ' ' + k + colorama.Fore.WHITE + '  '+ v)
-        print(colorama.Fore.LIGHTRED_EX + ' q' + colorama.Fore.WHITE + '  Quit')
+            print(col_ltred + ' ' + k + col_wht + '  ' + v)
+        print(col_ltred + ' q' + col_wht + '  Quit')
         print('')
-        menu_choice = input(colorama.Fore.LIGHTWHITE_EX + 'Please enter your choice: ')
+        menu_choice = input(col_ltwht + 'Please enter your choice: ')
         while menu_choice not in main_menu_codes.keys():  # Quits if q is chosen
             if menu_choice == 'q':
                 break
@@ -47,14 +48,16 @@ def add_damages_menu(loss_type):
         # Checks if logging order damages or warehouse damages then pulls the appropriate menu data
         if loss_type == 'order':
             codes = order_damages_codes
-        elif loss_type == 'warehouse':
+        else:
             codes = warehouse_damages_codes
-        for k, v in codes.items():  # Prints out damage menu choices
-            print(colorama.Fore.LIGHTRED_EX + ' ' + k + colorama.Fore.WHITE + '  ' + v)
-        print(colorama.Fore.LIGHTRED_EX + ' b' + colorama.Fore.WHITE + '  Go Back')
+        # Prints out damage menu choices
+        for k, v in codes.items():
+            print(col_ltred + ' ' + k + col_wht + '  ' + v)
+        print(col_ltred + ' b' + col_wht + '  Go Back')
         print('')
-        damage_choice = input(colorama.Fore.LIGHTWHITE_EX + 'Please enter your choice: ')
-        while damage_choice not in codes.keys():  # Goes to previous menu is b is chosen
+        damage_choice = input(col_ltwht + 'Please enter your choice: ')
+        # Goes to previous menu if b is chosen
+        while damage_choice not in codes.keys():
             if damage_choice == 'b':
                 break
             print('That is not an option, please try again.')
@@ -63,45 +66,37 @@ def add_damages_menu(loss_type):
         return damage_choice
 
 
-def tally_warehouse_damages(csv_file):
-    """
-    This calculates warehouse damages from the warehouse_damages.csv file.
-    It looks at each line in the csv file and multiplies the item cost by the number lost then adds it to the tally
-    It prints the tally out at the end.
-    :param csv_file: str 
-    :return: None 
-    """
-    reader = csv.DictReader(csv_file, delimiter=',')
-    box_loss_tally = 0
-    for line in reader:
-        # Tallies (Item Cost * Number Lost)
-        box_loss_tally += float(str(line['Item Cost'])) * float(str(line['# Lost']))
-    print('')
-    print(colorama.Fore.LIGHTCYAN_EX + 'Total Warehouse Loss: ' + colorama.Fore.LIGHTGREEN_EX +
-          '$' + str('{:.2f}'.format(box_loss_tally) + colorama.Fore.RESET))  # Prints tallied warehouse losses
-
-
-def tally_order_damages(csv_file):
+def tally_damages(order_file, warehouse_file):
     """
     This calculates product losses and shipping losses from the order_damages.csv file.
     For each line in the csv file, it multiplies the item cost by the number lost then adds it to the product tally
     It then also reads the shipping loss for that line and adds it to the shipping tally.
     It prints both tallies out at the end.
-    :param csv_file: str
+    :param order_file: str
+    :param warehouse_file: str
     :return: None
     """
-    reader = csv.DictReader(csv_file, delimiter=',')
+    order = csv.DictReader(order_file, delimiter=',')
+    warehouse = csv.DictReader(warehouse_file, delimiter=',')
     shipping_tally = 0
     product_tally = 0
-    for line in reader:
-        shipping_tally += float(line['Ship Loss'])  # Tallies shipping losses
+    for line in order:
+        # Tallies shipping losses
+        shipping_tally += float(line['Ship Loss'])
         # Tallies (Item Cost * Number Lost)
         product_tally += float(str(line['Item Cost'])) * float(str(line['# Lost']))
+    box_loss_tally = 0
+    for line in warehouse:
+        # Tallies (Item Cost * Number Lost)
+        box_loss_tally += float(str(line['Item Cost'])) * float(str(line['# Lost']))
     print('')
-    print(colorama.Fore.LIGHTCYAN_EX + 'Total Shipping Loss: ' + colorama.Fore.LIGHTGREEN_EX +
-          '$' + str('{:.2f}'.format(shipping_tally)))  # Prints tallied shipping losses
-    print(colorama.Fore.LIGHTCYAN_EX + 'Total Product Loss: ' + colorama.Fore.LIGHTGREEN_EX +
-          '$' + str('{:.2f}'.format(product_tally) + colorama.Fore.RESET))    # Prints tallied product losses
+    # Prints tallied shipping losses
+    print(col_ltcyn + 'Total Shipping Loss: ' + col_ltgrn + '$' + str('{:.2f}'.format(shipping_tally)))
+    # Prints tallied product losses
+    print(col_ltcyn + 'Total Product Loss: ' + col_ltgrn + '$' + str('{:.2f}'.format(product_tally)))
+    print('')
+    # Prints tallied warehouse losses
+    print(col_ltcyn + 'Total Warehouse Loss: ' + col_ltgrn + '$' + str('{:.2f}'.format(box_loss_tally) + col_reset))
 
 
 def damages_writer(data, path):
@@ -142,98 +137,39 @@ def cost_reader(path):
     return costs
 
 
-def get_order_number():
+def int_check(question):
     """
-    Gets ebay order number from user then converts it to an int
-    :return: int 
+    Asks for user inputs and converts to int. 
+    It asks them to try again if they enter something else
+    :param question: str 
+    :return: int
     """
     while True:
         try:
-            ebay_order_number = int(input('What is the ebay order number? '))
+            checked_input = int(input(question))
         except ValueError:
             print('Please enter a number.')
             continue
         else:
-            return ebay_order_number
+            return checked_input
 
 
-def get_order_cost():
+def float_check(question):
     """
-    Gets order cost from user then converts it to an float
+    Asks for user inputs and converts to float. 
+    It asks them to try again if they enter something else
+    :param question: str
     :return: float
     """
     while True:
         try:
-            order_cost = float(input('What is the total order cost? '))
+            checked_input = float(input(question))
         except ValueError:
             print('Please enter a number.')
             continue
         else:
-            return order_cost
+            return checked_input
 
-
-def get_shipping_cost():
-    """
-    Gets shipping cost from user then converts it to an float
-    :return: float 
-    """
-    while True:
-        try:
-            shipping_cost = float(input('What is the shipping cost? '))
-        except ValueError:
-            print('Please enter a number.')
-            continue
-        else:
-            return shipping_cost
-
-
-def get_shipping_lost():
-    """
-    Gets shipping loss from user then converts it to an float
-    :return: float
-    """
-    while True:
-        try:
-            shipping_lost = float(input('How much did we lose on shipping? '))
-        except ValueError:
-            print('Please enter a number.')
-            continue
-        else:
-            return shipping_lost
-
-
-def get_number_damaged():
-    """
-    Gets number of products damaged from user then converts it to an int
-    :return: float
-    """
-    while True:
-        try:
-            if loss_type == 'warehouse':
-                number_product_damaged = float(input('How many boxes are being thrown away? '))
-            elif loss_type == 'order':
-                number_product_damaged = float(input('How many individual items were lost? '))
-        except ValueError:
-            print('Please enter a number.')
-            continue
-        else:
-            return number_product_damaged
-
-
-def get_custom_cost():
-    """
-    Allows user to enter a custom item cost for the items. This is to replace the default data entered in the starting
-    variables
-    :return: float 
-    """
-    while True:
-        try:
-            cost = float(input('Please enter a custom item cost: '))
-        except ValueError:
-            print('Please enter a number.')
-            continue
-        else:
-            return cost
 
 def get_product_cost(product, loss_type):
     """
@@ -246,12 +182,14 @@ def get_product_cost(product, loss_type):
     # Checks if logging order damages or warehouse damages then pulls the appropriate product list data
     if loss_type == 'order':
         codes = order_products
-    elif loss_type == 'warehouse':
-        codes = warehouse_products
-    if product == 'c':  # Checks for custom item selection and allows user to enter the cost of it
-        cost = get_custom_cost()
     else:
-        cost = float(codes[product])  # Pulls cost value from product list and converts to float
+        codes = warehouse_products
+    # Checks for custom item selection and allows user to enter the cost of it
+    if product == 'c':
+        cost = float_check('Please enter a custom item cost: ')
+    else:
+        # Pulls cost value from product list and converts to float
+        cost = float(codes[product])
     return cost
 
 
@@ -265,21 +203,23 @@ def get_product_types(loss_type):
     # Checks if logging order damages or warehouse damages then pulls the appropriate product list data
     if loss_type == 'order':
         codes = order_products
-    elif loss_type == 'warehouse':
+    else:
         codes = warehouse_products
-    product_names = sorted(codes.keys())  # Sorts the product types alphabetically for consistent display
+    # Sorts the product types alphabetically for consistent display
+    product_names = sorted(codes.keys())
     print('We have the following product types:')
     print('')
     for name in product_names:
-        print(colorama.Fore.LIGHTRED_EX + ' ' + name)
+        print(col_ltred + ' ' + name)
     print('')
-    print(colorama.Fore.WHITE + 'To enter a custom product type, please type ' +
-          colorama.Fore.LIGHTRED_EX + "'c'" +colorama.Fore.LIGHTWHITE_EX )
+    print(col_wht + 'To enter a custom product type, please type ' +
+          col_ltred + "'c'" + col_ltwht)
     print('')
-    type_choice = input(colorama.Fore.LIGHTWHITE_EX + 'What type of product was lost? ')
-    while type_choice not in codes.keys():  # Allows for custom item type to be entered
+    type_choice = input(col_ltwht + 'What type of product was lost? ')
+    # Allows for custom item type to be entered
+    while type_choice not in codes.keys():
         if type_choice == 'c':
-            return type_choice
+            break
         print('That is not an option, please try again.')
         print('')
         type_choice = input('What type of product was lost? ')
@@ -294,31 +234,49 @@ def info_form(loss_type):
     :return: list
     """
     while True:
-        todays_date = time.strftime("%m/%d/%Y")  # Date entered as mm/dd/yyyy
-        if loss_type == 'order':  # only applies to order damages
-            ebay_order_number = get_order_number()  # Asks user for ebay order number
-            order_cost = get_order_cost()  # Asks user for total order cost (what the customer paid)
-            shipping_cost = get_shipping_cost()  # Asks user for shipping cost (what the customer paid)
-            shipping_lost = get_shipping_lost()  # Asks user for shipping loss (what we paid and lost)
-        product_type_lost = get_product_types(loss_type)  # Asks user for the product type - accepts custom choice
-        lost_product_cost = get_product_cost(product_type_lost, loss_type)  # Pulls item cost (custom allows user entry)
-        if product_type_lost == 'c':  # If custom item was chosen, asks user for custom product type
+        # We want to log the date the damage report was filed as mm/dd/yyyy
+        todays_date = time.strftime("%m/%d/%Y")
+        # These questions are only pertinent to order losses
+        if loss_type == 'order':
+            # We use the ebay order number here so we have an identifier if we need to verify data
+            ebay_order_number = int_check('What is the ebay order number? ')
+            order_cost = float_check('What is the total order cost? ')
+            shipping_cost = float_check('What is the shipping cost? ')
+            shipping_lost = float_check('How much did we lose on shipping? ')
+        # Product types and costs are customizable by the user via csv files
+        # It also allows for a custom item type/price to be entered
+        product_type_lost = get_product_types(loss_type)
+        lost_product_cost = get_product_cost(product_type_lost, loss_type)
+        # If custom item was chosen, gets custom product type
+        if product_type_lost == 'c':
             product_type_lost = input('Please enter your custom item type: ')
-        number_product_damaged = get_number_damaged()  # Asks user for number of items lost
-        # Checks if loss_type chosen is order damages or warehouse damages then compiles the variables to a list
+        # Warehouse damages are measured in boxes not items, thus the split between the two
+        if loss_type == 'order':
+            number_product_damaged = float_check('How many individual items were lost? ')
+        else:
+            number_product_damaged = float_check('How many boxes are being thrown away? ')
+        # Since we use different csv sheets for orders vs warehouse damages, we need the data ordered differently
         if loss_type == 'order':
             form = [todays_date, ebay_order_number, order_cost, shipping_cost, shipping_lost,
                     product_type_lost, lost_product_cost, number_product_damaged]
-        elif loss_type == 'warehouse':
+        else:
             form = [todays_date, product_type_lost, lost_product_cost, number_product_damaged]
         return form
 
 # These 3 variables contain our menu choices for navigating the damage tracker
-main_menu_codes = {'1': 'Add new order damages report', '2': 'Add new warehouse damages report',
-                   '3': 'View Current Damages', '4': 'Tally Damages'}
-order_damages_codes = {'1': 'Order lost in transit', '2': 'Returned product', '3': 'Bad Address', '4': 'Bad Product'}
-warehouse_damages_codes = {'1': 'Box loss', '2': 'Item loss'}
+main_menu_codes = {'1': 'Add new order damages report',
+                   '2': 'Add new warehouse damages report',
+                   '3': 'View Current Damages',
+                   '4': 'Tally Damages'}
+order_damages_codes = {'1': 'Order lost in transit',
+                       '2': 'Returned product',
+                       '3': 'Bad Address',
+                       '4': 'Bad Product'}
+warehouse_damages_codes = {'1': 'Box loss',
+                           '2': 'Item loss'}
 
+# I assigned the file paths to variables in case the locations change in the future.
+# Currently they are in the same folder
 order_csv = 'order_damages.csv'  # Path to order damages csv data file
 warehouse_csv = 'warehouse_damages.csv'  # Path to warehouse damages csv data file
 order_cost_csv = 'order_product_costs.csv'  # Path to product costs for order damages
@@ -327,46 +285,71 @@ warehouse_cost_csv = 'warehouse_product_costs.csv'  # Path to product costs for 
 # These 2 variables contain a list of product types we sell and a basic cost of goods
 # These are used to calculate losses
 # csv was chosen so other uses can easily edit product costs as they change
-with open(order_cost_csv, 'r') as f_obj:  # Generates product cost list from csv file
-    order_products = cost_reader(f_obj)
+with open(order_cost_csv, 'r') as order_obj:
+    order_products = cost_reader(order_obj)
 
-with open(warehouse_cost_csv, 'r') as f_obj:  # Generates product cost list from csv file
-    warehouse_products = cost_reader(f_obj)
+with open(warehouse_cost_csv, 'r') as warehouse_obj:
+    warehouse_products = cost_reader(warehouse_obj)
 
-colorama.init()  # Starts colorama to allow terminal colors
+# Colorama needs initialized before it works. It allows terminal colors in windows
+colorama.init()
+
+# Assigns colors used in menus to shorter variables
+col_ltwht = colorama.Fore.LIGHTWHITE_EX
+col_ltred = colorama.Fore.LIGHTRED_EX
+col_reset = colorama.Fore.RESET
+col_wht = colorama.Fore.WHITE
+col_ltcyn = colorama.Fore.LIGHTCYAN_EX
+col_ltgrn = colorama.Fore.LIGHTGREEN_EX
 
 # This is the main program loop for the damage tracking system.
-# It starts the main menu processes user input from that menu
+# It starts the main menu and processes user input from that menu
+# loss_type is used in few if/else switches
+# It lets functions know whether they should return info for order damages or warehouse damages
 while True:
-    menu = main_menu()  # Loads the main menu
-    if menu == 'q':  # Quits program if selected from main menu
+    # Opens the main menu
+    menu = main_menu()
+    # Quits program if selected from main menu
+    if menu == 'q':
         break
     elif menu == '1':
-        loss_type = 'order'  # Assigns order identifier to specify this as order damages
-        damage_type = add_damages_menu(loss_type)  # Opens damages menu
-        if damage_type == 'b':  # Goes back to main menu if selected from damages menu
+        loss_type = 'order'
+        # Opens damages menu
+        damage_type = add_damages_menu(loss_type)
+        # Goes back to main menu if selected from damages menu
+        if damage_type == 'b':
             continue
-        data = info_form(loss_type)  # Starts data collection form
-        damage_type = order_damages_codes[damage_type]  # Swaps number for text description of the type of damage
-        data.append(damage_type)  # Adds damage to the end of the list containing info entered by user
-        damages_writer(data, order_csv)  # Writes entry to csv file
-    elif menu == '2':
-        loss_type = 'warehouse'  # Assigns order identifier to specify this as warehouse damages
-        damage_type = add_damages_menu(loss_type)  # Opens damages menu
-        if damage_type == 'b':  # Goes back to main menu if selected from damages menu
-            continue
-        data = info_form(loss_type)  # Starts data collection form
-        damage_type = warehouse_damages_codes[damage_type]  # Swaps number for text description of the type of damage
+        # Starts data collection form
+        data = info_form(loss_type)
+        # Swaps number for text description of the type of damage
+        # then adds it to the end the generated list before writing the data to a csv file
+        damage_type = order_damages_codes[damage_type]
         data.append(damage_type)
-        damages_writer(data, warehouse_csv)  # Writes entry to csv file
+        damages_writer(data, order_csv)
+    elif menu == '2':
+        # Opens damages menu
+        loss_type = 'warehouse'
+        damage_type = add_damages_menu(loss_type)
+        # Goes back to main menu if selected from damages menu
+        if damage_type == 'b':
+            continue
+        # Starts data collection form
+        data = info_form(loss_type)
+        # Swaps number for text description of the type of damage
+        # then adds it to the end the generated list before writing the data to a csv file
+        damage_type = warehouse_damages_codes[damage_type]
+        data.append(damage_type)
+        damages_writer(data, warehouse_csv)
+    # Menu 3 generates a table from csv data. This is the data the user previously entered
+    # Currently it only shows the order damages
     elif menu == '3':
-        with open(order_csv, 'r') as f_obj:  # Opens order damages csv file and reads the data
-            csv_data = damages_reader(f_obj)
-        damages_table = AsciiTable(csv_data)  # Creates table from csv data
-        print(damages_table.table)  # Displays table to user
+        with open(order_csv, 'r') as order_obj:
+            csv_data = damages_reader(order_obj)
+        damages_table = AsciiTable(csv_data)
+        print(damages_table.table)
+    # Menu 4 generates loss tallies for order and warehouse losses and prints them out
     elif menu == '4':
-        with open(order_csv) as f_obj:  # Opens order csv file and tallies then prints order losses
-            tally_order_damages(f_obj)
-        with open(warehouse_csv) as f_obj:  # Opens warehouse csv file and tallies then prints warehouse losses
-            tally_warehouse_damages(f_obj)
-    continue  # Restarts main menu loop
+        with open(order_csv) as order_obj:
+            with open(warehouse_csv) as warehouse_obj:
+                tally_damages(order_obj, warehouse_obj)
+    continue
