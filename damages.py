@@ -8,7 +8,7 @@ import csv
 import time
 
 from terminaltables import AsciiTable
-
+import colorama
 
 def main_menu():
     """
@@ -17,14 +17,15 @@ def main_menu():
     """
     while True:
         print('')
-        print('Welcome to the ShopCrownhouse damage tracking system')
+        print(colorama.Fore.LIGHTWHITE_EX + 'Welcome to the ShopCrownhouse damage tracking system')
         print('')
         print('What would you like to do?')
-        for k, v in main_menu_codes.items():  # Prints out main menu
-            print(k, v)
-        print('q Quit')
         print('')
-        menu_choice = input('Please enter your choice: ')
+        for k, v in main_menu_codes.items():  # Prints out main menu
+            print(colorama.Fore.LIGHTRED_EX + ' ' + k + colorama.Fore.WHITE + '  '+ v)
+        print(colorama.Fore.LIGHTRED_EX + ' q' + colorama.Fore.WHITE + '  Quit')
+        print('')
+        menu_choice = input(colorama.Fore.LIGHTWHITE_EX + 'Please enter your choice: ')
         while menu_choice not in main_menu_codes.keys():  # Quits if q is chosen
             if menu_choice == 'q':
                 break
@@ -49,10 +50,10 @@ def add_damages_menu(loss_type):
         elif loss_type == 'warehouse':
             codes = warehouse_damages_codes
         for k, v in codes.items():  # Prints out damage menu choices
-            print(k, v)
-        print('b Go Back')
+            print(colorama.Fore.LIGHTRED_EX + ' ' + k + colorama.Fore.WHITE + '  ' + v)
+        print(colorama.Fore.LIGHTRED_EX + ' b' + colorama.Fore.WHITE + '  Go Back')
         print('')
-        damage_choice = input('Please enter your choice: ')
+        damage_choice = input(colorama.Fore.LIGHTWHITE_EX + 'Please enter your choice: ')
         while damage_choice not in codes.keys():  # Goes to previous menu is b is chosen
             if damage_choice == 'b':
                 break
@@ -76,7 +77,8 @@ def tally_warehouse_damages(csv_file):
         # Tallies (Item Cost * Number Lost)
         box_loss_tally += float(str(line['Item Cost'])) * float(str(line['# Lost']))
     print('')
-    print('Total Warehouse Loss: $' + str('{:.2f}'.format(box_loss_tally)))  # Prints tallied warehouse losses
+    print(colorama.Fore.LIGHTCYAN_EX + 'Total Warehouse Loss: ' + colorama.Fore.LIGHTGREEN_EX +
+          '$' + str('{:.2f}'.format(box_loss_tally) + colorama.Fore.RESET))  # Prints tallied warehouse losses
 
 
 def tally_order_damages(csv_file):
@@ -96,9 +98,10 @@ def tally_order_damages(csv_file):
         # Tallies (Item Cost * Number Lost)
         product_tally += float(str(line['Item Cost'])) * float(str(line['# Lost']))
     print('')
-    print('Order Losses')
-    print('Total Shipping Loss: $' + str('{:.2f}'.format(shipping_tally)))  # Prints tallied shipping losses
-    print('Total Product Loss: $' + str('{:.2f}'.format(product_tally)))    # Prints tallied product losses
+    print(colorama.Fore.LIGHTCYAN_EX + 'Total Shipping Loss: ' + colorama.Fore.LIGHTGREEN_EX +
+          '$' + str('{:.2f}'.format(shipping_tally)))  # Prints tallied shipping losses
+    print(colorama.Fore.LIGHTCYAN_EX + 'Total Product Loss: ' + colorama.Fore.LIGHTGREEN_EX +
+          '$' + str('{:.2f}'.format(product_tally) + colorama.Fore.RESET))    # Prints tallied product losses
 
 
 def damages_writer(data, path):
@@ -268,11 +271,12 @@ def get_product_types(loss_type):
     print('We have the following product types:')
     print('')
     for name in product_names:
-        print(name)
+        print(colorama.Fore.LIGHTRED_EX + ' ' + name)
     print('')
-    print("To enter a custom product type, please type 'c'")
+    print(colorama.Fore.WHITE + 'To enter a custom product type, please type ' +
+          colorama.Fore.LIGHTRED_EX + "'c'" +colorama.Fore.LIGHTWHITE_EX )
     print('')
-    type_choice = input('What type of product was lost? ')
+    type_choice = input(colorama.Fore.LIGHTWHITE_EX + 'What type of product was lost? ')
     while type_choice not in codes.keys():  # Allows for custom item type to be entered
         if type_choice == 'c':
             return type_choice
@@ -328,6 +332,8 @@ with open(order_cost_csv, 'r') as f_obj:  # Generates product cost list from csv
 
 with open(warehouse_cost_csv, 'r') as f_obj:  # Generates product cost list from csv file
     warehouse_products = cost_reader(f_obj)
+
+colorama.init()  # Starts colorama to allow terminal colors
 
 # This is the main program loop for the damage tracking system.
 # It starts the main menu processes user input from that menu
