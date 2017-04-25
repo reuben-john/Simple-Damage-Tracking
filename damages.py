@@ -5,10 +5,10 @@ It currently saves all data to csv files instead of a database.
 """
 
 import csv
-import time
+from time import strftime
 
 from terminaltables import AsciiTable
-import colorama
+from colorama import init, Fore
 
 
 def main_menu():
@@ -212,8 +212,7 @@ def get_product_types(loss_type):
     for name in product_names:
         print(col_ltred + ' ' + name)
     print('')
-    print(col_wht + 'To enter a custom product type, please type ' +
-          col_ltred + "'c'" + col_ltwht)
+    print(col_wht + 'To enter a custom product type, please type ' + col_ltred + "'c'" + col_ltwht)
     print('')
     type_choice = input(col_ltwht + 'What type of product was lost? ')
     # Allows for custom item type to be entered
@@ -235,7 +234,7 @@ def info_form(loss_type):
     """
     while True:
         # We want to log the date the damage report was filed as mm/dd/yyyy
-        todays_date = time.strftime("%m/%d/%Y")
+        todays_date = strftime("%m/%d/%Y")
         # These questions are only pertinent to order losses
         if loss_type == 'order':
             # We use the ebay order number here so we have an identifier if we need to verify data
@@ -292,15 +291,15 @@ with open(warehouse_cost_csv, 'r') as warehouse_obj:
     warehouse_products = cost_reader(warehouse_obj)
 
 # Colorama needs initialized before it works. It allows terminal colors in windows
-colorama.init()
+init()
 
 # Assigns colors used in menus to shorter variables
-col_ltwht = colorama.Fore.LIGHTWHITE_EX
-col_ltred = colorama.Fore.LIGHTRED_EX
-col_reset = colorama.Fore.RESET
-col_wht = colorama.Fore.WHITE
-col_ltcyn = colorama.Fore.LIGHTCYAN_EX
-col_ltgrn = colorama.Fore.LIGHTGREEN_EX
+col_ltwht = Fore.LIGHTWHITE_EX
+col_ltred = Fore.LIGHTRED_EX
+col_reset = Fore.RESET
+col_wht = Fore.WHITE
+col_ltcyn = Fore.LIGHTCYAN_EX
+col_ltgrn = Fore.LIGHTGREEN_EX
 
 # This is the main program loop for the damage tracking system.
 # It starts the main menu and processes user input from that menu
