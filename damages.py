@@ -202,14 +202,14 @@ def get_shipping_lost():
 def get_number_damaged():
     """
     Gets number of products damaged from user then converts it to an int
-    :return: int
+    :return: float
     """
     while True:
         try:
             if loss_type == 'warehouse':
-                number_product_damaged = int(input('How many boxes are being thrown away? '))
+                number_product_damaged = float(input('How many boxes are being thrown away? '))
             elif loss_type == 'order':
-                number_product_damaged = int(input('How many individual items were lost? '))
+                number_product_damaged = float(input('How many individual items were lost? '))
         except ValueError:
             print('Please enter a number.')
             continue
