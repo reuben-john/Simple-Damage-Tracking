@@ -5,28 +5,57 @@ It currently saves all data to csv files instead of a database.
 """
 
 import csv
+from os import path
 from time import strftime
 
 from terminaltables import AsciiTable
 from colorama import init, Fore
 
 
+def file_check(ordam, orpro_cost, wardam, warpro_cost, master):
+    """
+    Checks if csv files already exist. If not, it creates them using the appropriate header info from the csv_master
+    It then checks if the created file is one containing pricing data and warns the user that they need
+    to add data in to the csv file. It adds in dummy data.
+    
+    :param str ordam: Order Damages csv file
+    :param str orpro_cost: Order Product Costs csv file 
+    :param str wardam: Warhouse Damages csv file
+    :param str warpro_cost: Warhouse Product Costs csv file
+    :param dict master: Contains the master header info linked to the csv file name
+    :return: None
+    """
+    for file in (ordam, orpro_cost, wardam, warpro_cost):
+        if path.isfile(file) is False:
+            damages_writer(master[file], file)
+            print('{}{} did not exist and was created for you.'.format(col_ltwht, file))
+            print('')
+            if file in (orpro_cost, warpro_cost):
+                damages_writer(['ENTER PRODUCT DATA',0], file)
+                print('')
+                print('       {}{} contains price data used to calculate costs.'.format(col_ltred, file))
+                print('       It is currently EMPTY')
+                print('       Please enter pricing data into {} before proceeding'.format(file))
+                print('')
+
+
 def main_menu():
     """
-    This displays the main menu and allows the user to navigate to submenus  
-    :return: str 
+    This displays the main menu and allows the user to navigate to submenus
+    
+    :return: Returns the key entered by the user
     """
     while True:
         print('')
-        print(col_ltwht + 'Welcome to the ShopCrownhouse damage tracking system')
+        print('{}Welcome to the ShopCrownhouse damage tracking system'.format(col_ltwht))
         print('')
         print('What would you like to do?')
         print('')
         for k, v in main_menu_codes.items():  # Prints out main menu
-            print(col_ltred + ' ' + k + col_wht + '  ' + v)
-        print(col_ltred + ' q' + col_wht + '  Quit')
+            print(' {}{}  {}{}'.format(col_ltred, k, col_wht, v))
+        print(' {}q  {}Quit'.format(col_ltred, col_wht))
         print('')
-        menu_choice = input(col_ltwht + 'Please enter your choice: ')
+        menu_choice = input('{}Please enter your choice: '.format(col_ltwht))
         while menu_choice not in main_menu_codes.keys():  # Quits if q is chosen
             if menu_choice == 'q':
                 break
@@ -40,6 +69,7 @@ def add_damages_menu(loss_type):
     """
     This displays the damage entry menu. It allows users to choose what type of damage they wish to log.
     It uses the loss_type to pull the appropriate variable then prints out the menu.
+    
     :param loss_type: str
     :return: str
     """
@@ -52,10 +82,10 @@ def add_damages_menu(loss_type):
             codes = warehouse_damages_codes
         # Prints out damage menu choices
         for k, v in codes.items():
-            print(col_ltred + ' ' + k + col_wht + '  ' + v)
-        print(col_ltred + ' b' + col_wht + '  Go Back')
+            print(' {}{}  {}{}'.format(col_ltred, k, col_wht, v))
+        print(' {}b  {}Go Back'.format(col_ltred, col_wht))
         print('')
-        damage_choice = input(col_ltwht + 'Please enter your choice: ')
+        damage_choice = input('{}Please enter your choice: '.format(col_ltwht))
         # Goes to previous menu if b is chosen
         while damage_choice not in codes.keys():
             if damage_choice == 'b':
@@ -72,8 +102,9 @@ def tally_damages(order_file, warehouse_file):
     For each line in the csv file, it multiplies the item cost by the number lost then adds it to the product tally
     It then also reads the shipping loss for that line and adds it to the shipping tally.
     It prints both tallies out at the end.
-    :param order_file: str
-    :param warehouse_file: str
+    
+    :param str order_file: Order Damages csv file
+    :param str warehouse_file: Warehouse Damages csv file
     :return: None
     """
     order = csv.DictReader(order_file, delimiter=',')
@@ -91,19 +122,21 @@ def tally_damages(order_file, warehouse_file):
         box_loss_tally += float(str(line['Item Cost'])) * float(str(line['# Lost']))
     print('')
     # Prints tallied shipping losses
-    print(col_ltcyn + 'Total Shipping Loss: ' + col_ltgrn + '$' + str('{:.2f}'.format(shipping_tally)))
+    print('{}Total Shipping Loss: {}${:.2f}'.format(col_ltcyn, col_ltgrn, shipping_tally))
     # Prints tallied product losses
-    print(col_ltcyn + 'Total Product Loss: ' + col_ltgrn + '$' + str('{:.2f}'.format(product_tally)))
+    print('{}Total Product Loss: {}${:.2f}'.format(col_ltcyn, col_ltgrn, product_tally))
     print('')
     # Prints tallied warehouse losses
-    print(col_ltcyn + 'Total Warehouse Loss: ' + col_ltgrn + '$' + str('{:.2f}'.format(box_loss_tally) + col_reset))
+    trim_loss = str('{:.2f}'.format(box_loss_tally))
+    print('{}Total Warehouse Loss: {}${}{}'.format(col_ltcyn, col_ltgrn, trim_loss, col_ltwht))
 
 
 def damages_writer(data, path):
     """
     csv data writer to write the damages info to a new row of the csv file
-    :param data: list
-    :param path: str
+    
+    :param list data: Data to be written to csv file
+    :param str path: csv file to write data to
     :return: None
     """
     with open(path, 'a', newline='') as csv_file:
@@ -114,8 +147,9 @@ def damages_writer(data, path):
 def damages_reader(path):
     """
     csv data reader to read the csv files and return them
-    :param path: str 
-    :return: list
+    
+    :param str path: csv file to pull data from
+    :return: data pulled from csv file
     """
     csv_data = []
     reader = csv.reader(path)
@@ -128,8 +162,9 @@ def cost_reader(path):
     """
     Opens csv file and converts the data to a dictionary. 
     This gives a dictionary containing a product key with a cost value.
-    :param path: str
-    :return: dict
+    
+    :param str path: csv file to pull data from
+    :return: data read from csv file
     """
     reader = csv.reader(path)
     next(reader)
@@ -141,8 +176,9 @@ def int_check(question):
     """
     Asks for user inputs and converts to int. 
     It asks them to try again if they enter something else
-    :param question: str 
-    :return: int
+    
+    :param str question: question to ask user 
+    :return: answer as an int
     """
     while True:
         try:
@@ -158,8 +194,9 @@ def float_check(question):
     """
     Asks for user inputs and converts to float. 
     It asks them to try again if they enter something else
-    :param question: str
-    :return: float
+    
+    :param str question: question to ask user
+    :return: answer as a float
     """
     while True:
         try:
@@ -175,9 +212,10 @@ def get_product_cost(product, loss_type):
     """
     This uses the loss_type to pull the correct list of products. It then matches the product against the list and
     pulls the appropriate item cost. If the user has chosen custom, it asks the user for the custom cost.
-    :param product: str
-    :param loss_type: str
-    :return: float
+    
+    :param str product: type of product used to cost lookup
+    :param str loss_type: type of loss we are tracking
+    :return: cost of product as float
     """
     # Checks if logging order damages or warehouse damages then pulls the appropriate product list data
     if loss_type == 'order':
@@ -197,8 +235,9 @@ def get_product_types(loss_type):
     """
     This uses loss_Type to pull the correct list of products. It then sorts the product types and prints them out for
     the user to choose from. It also allows for a custom entry to be selected.
-    :param loss_type: str 
-    :return: str
+    
+    :param str loss_type: type of loss we are tracking 
+    :return: product type chosen from list
     """
     # Checks if logging order damages or warehouse damages then pulls the appropriate product list data
     if loss_type == 'order':
@@ -210,7 +249,7 @@ def get_product_types(loss_type):
     print('We have the following product types:')
     print('')
     for name in product_names:
-        print(col_ltred + ' ' + name)
+        print(' {}{}'.format(col_ltred, name))
     print('')
     print(col_wht + 'To enter a custom product type, please type ' + col_ltred + "'c'" + col_ltwht)
     print('')
@@ -229,8 +268,9 @@ def info_form(loss_type):
     """
     This form goes through a list of questions for the user, collecting data on the loss to be logged. It then returns
     the results as a list.
-    :param loss_type: str 
-    :return: list
+    
+    :param str loss_type: type of loss we are tracking
+    :return: answers to input questions in form of list
     """
     while True:
         # We want to log the date the damage report was filed as mm/dd/yyyy
@@ -276,10 +316,32 @@ warehouse_damages_codes = {'1': 'Box loss',
 
 # I assigned the file paths to variables in case the locations change in the future.
 # Currently they are in the same folder
-order_csv = 'order_damages.csv'  # Path to order damages csv data file
-warehouse_csv = 'warehouse_damages.csv'  # Path to warehouse damages csv data file
-order_cost_csv = 'order_product_costs.csv'  # Path to product costs for order damages
-warehouse_cost_csv = 'warehouse_product_costs.csv'  # Path to product costs for warehouse damages
+order_csv = 'order_damages.csv'
+warehouse_csv = 'warehouse_damages.csv'
+order_cost_csv = 'order_product_costs.csv'
+warehouse_cost_csv = 'warehouse_product_costs.csv'
+
+# This is the header data for the csv files
+# It is used to create new csv files if someone deletes one
+csv_master = {order_csv: ['Date', 'Order #', 'Order Cost', 'Ship Cost', 'Ship Loss', 'Item Type',
+                                    'Item Cost', '# Lost', 'Loss Type'],
+              order_cost_csv: ['Product Type', 'Product Cost'],
+              warehouse_csv: ['Date', 'Item Type', 'Item Cost', '# Lost', 'Loss Type'],
+              warehouse_cost_csv: ['Product Type', 'Product Cost']}
+
+# Colorama needs initialized before it works. It allows terminal colors in Windows
+init()
+
+# Assigns colors used in menus to shorter variables
+col_ltwht = Fore.LIGHTWHITE_EX
+col_ltred = Fore.LIGHTRED_EX
+col_wht = Fore.WHITE
+col_ltcyn = Fore.LIGHTCYAN_EX
+col_ltgrn = Fore.LIGHTGREEN_EX
+
+# This checks that the csv files are created. It does not verify the header data
+file_check(order_csv, order_cost_csv, warehouse_csv, warehouse_cost_csv, csv_master)
+
 
 # These 2 variables contain a list of product types we sell and a basic cost of goods
 # These are used to calculate losses
@@ -289,17 +351,6 @@ with open(order_cost_csv, 'r') as order_obj:
 
 with open(warehouse_cost_csv, 'r') as warehouse_obj:
     warehouse_products = cost_reader(warehouse_obj)
-
-# Colorama needs initialized before it works. It allows terminal colors in windows
-init()
-
-# Assigns colors used in menus to shorter variables
-col_ltwht = Fore.LIGHTWHITE_EX
-col_ltred = Fore.LIGHTRED_EX
-col_reset = Fore.RESET
-col_wht = Fore.WHITE
-col_ltcyn = Fore.LIGHTCYAN_EX
-col_ltgrn = Fore.LIGHTGREEN_EX
 
 # This is the main program loop for the damage tracking system.
 # It starts the main menu and processes user input from that menu
