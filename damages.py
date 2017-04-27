@@ -54,8 +54,8 @@ def main_menu():
         for k, v in main_menu_codes.items():  # Prints out main menu
             print(' {}{}  {}{}'.format(col_ltred, k, col_wht, v))
         print(' {}q  {}Quit'.format(col_ltred, col_wht))
-        print('')
-        menu_choice = input('{}Please enter your choice: '.format(col_ltwht))
+        print(col_ltwht)
+        menu_choice = input('Please enter your choice: ')
         while menu_choice not in main_menu_codes.keys():  # Quits if q is chosen
             if menu_choice == 'q':
                 break
@@ -84,8 +84,8 @@ def add_damages_menu(loss_type):
         for k, v in codes.items():
             print(' {}{}  {}{}'.format(col_ltred, k, col_wht, v))
         print(' {}b  {}Go Back'.format(col_ltred, col_wht))
-        print('')
-        damage_choice = input('{}Please enter your choice: '.format(col_ltwht))
+        print(col_ltwht)
+        damage_choice = input('Please enter your choice: ')
         # Goes to previous menu if b is chosen
         while damage_choice not in codes.keys():
             if damage_choice == 'b':
@@ -251,9 +251,9 @@ def get_product_types(loss_type):
     for name in product_names:
         print(' {}{}'.format(col_ltred, name))
     print('')
-    print(col_wht + 'To enter a custom product type, please type ' + col_ltred + "'c'" + col_ltwht)
-    print('')
-    type_choice = input(col_ltwht + 'What type of product was lost? ')
+    print("{}To enter a custom product type, please type '{}c{}'".format(col_wht, col_ltred, col_wht))
+    print(col_ltwht)
+    type_choice = input('What type of product was lost? ')
     # Allows for custom item type to be entered
     while type_choice not in codes.keys():
         if type_choice == 'c':
@@ -338,6 +338,7 @@ col_ltred = Fore.LIGHTRED_EX
 col_wht = Fore.WHITE
 col_ltcyn = Fore.LIGHTCYAN_EX
 col_ltgrn = Fore.LIGHTGREEN_EX
+col_reset = Fore.RESET
 
 # This checks that the csv files are created. It does not verify the header data
 file_check(order_csv, order_cost_csv, warehouse_csv, warehouse_cost_csv, csv_master)
