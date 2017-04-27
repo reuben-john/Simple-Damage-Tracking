@@ -55,13 +55,13 @@ def main_menu():
             print(' {}{}  {}{}'.format(col_ltred, k, col_wht, v))
         print(' {}q  {}Quit'.format(col_ltred, col_wht))
         print(col_ltwht)
-        menu_choice = input('Please enter your choice: ')
+        menu_choice = key_check('Please enter your choice: ')
         while menu_choice not in main_menu_codes.keys():  # Quits if q is chosen
             if menu_choice == 'q':
                 break
             print('That is not an option, please try again.')
             print('')
-            menu_choice = input('Please enter your choice: ')
+            menu_choice = key_check('Please enter your choice: ')
         return menu_choice
 
 
@@ -85,14 +85,14 @@ def add_damages_menu(loss_type):
             print(' {}{}  {}{}'.format(col_ltred, k, col_wht, v))
         print(' {}b  {}Go Back'.format(col_ltred, col_wht))
         print(col_ltwht)
-        damage_choice = input('Please enter your choice: ')
+        damage_choice = key_check('Please enter your choice: ')
         # Goes to previous menu if b is chosen
         while damage_choice not in codes.keys():
             if damage_choice == 'b':
                 break
             print('That is not an option, please try again.')
             print('')
-            damage_choice = input('Please enter your choice: ')
+            damage_choice = key_check('Please enter your choice: ')
         return damage_choice
 
 
@@ -182,7 +182,7 @@ def int_check(question):
     """
     while True:
         try:
-            checked_input = int(input(question))
+            checked_input = int(key_check(question))
         except ValueError:
             print('Please enter a number.')
             continue
@@ -200,12 +200,26 @@ def float_check(question):
     """
     while True:
         try:
-            checked_input = float(input(question))
+            checked_input = float(key_check(question))
         except ValueError:
             print('Please enter a number.')
             continue
         else:
             return checked_input
+
+
+def key_check(line):
+    while True:
+        try:
+            answer = input(line)
+
+        except KeyboardInterrupt:
+            print('')
+            print('To copy something, please highlight the text first')
+            print('To exit, please use the menu instead')
+            continue
+        else:
+            return answer
 
 
 def get_product_cost(product, loss_type):
@@ -253,14 +267,14 @@ def get_product_types(loss_type):
     print('')
     print("{}To enter a custom product type, please type '{}c{}'".format(col_wht, col_ltred, col_wht))
     print(col_ltwht)
-    type_choice = input('What type of product was lost? ')
+    type_choice = key_check('What type of product was lost? ')
     # Allows for custom item type to be entered
     while type_choice not in codes.keys():
         if type_choice == 'c':
             break
         print('That is not an option, please try again.')
         print('')
-        type_choice = input('What type of product was lost? ')
+        type_choice = key_check('What type of product was lost? ')
     return type_choice
 
 
@@ -288,7 +302,7 @@ def info_form(loss_type):
         lost_product_cost = get_product_cost(product_type_lost, loss_type)
         # If custom item was chosen, gets custom product type
         if product_type_lost == 'c':
-            product_type_lost = input('Please enter your custom item type: ')
+            product_type_lost = key_check('Please enter your custom item type: ')
         # Warehouse damages are measured in boxes not items, thus the split between the two
         if loss_type == 'order':
             number_product_damaged = float_check('How many individual items were lost? ')
