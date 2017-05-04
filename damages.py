@@ -182,7 +182,10 @@ def int_check(question):
     """
     while True:
         try:
-            checked_input = int(key_check(question))
+            user_input = key_check(question)
+            if user_input == 'b':
+                return user_input
+            checked_input = int(user_input)
         except ValueError:
             print('Please enter a number.')
             continue
@@ -200,7 +203,10 @@ def float_check(question):
     """
     while True:
         try:
-            checked_input = float(key_check(question))
+            user_input = key_check(question)
+            if user_input == 'b':
+                return user_input
+            checked_input = float(user_input)
         except ValueError:
             print('Please enter a number.')
             continue
@@ -209,6 +215,13 @@ def float_check(question):
 
 
 def key_check(line):
+    """
+    Windows tries to stop the script when ctrl+c is used. This keeps that from happening and offers two suggestions
+    to the user instead.
+    
+    :param str line: Input line to use  
+    :return: answer as string
+    """
     while True:
         try:
             answer = input(line)
@@ -270,7 +283,7 @@ def get_product_types(loss_type):
     type_choice = key_check('What type of product was lost? ')
     # Allows for custom item type to be entered
     while type_choice not in codes.keys():
-        if type_choice == 'c':
+        if type_choice == 'c' or type_choice == 'b':
             break
         print('That is not an option, please try again.')
         print('')
@@ -293,12 +306,22 @@ def info_form(loss_type):
         if loss_type == 'order':
             # We use the ebay order number here so we have an identifier if we need to verify data
             ebay_order_number = int_check('What is the ebay order number? ')
+            if ebay_order_number == 'b':
+                return 'b'
             order_cost = float_check('What is the total order cost? ')
+            if order_cost == 'b':
+                return 'b'
             shipping_cost = float_check('What is the shipping cost? ')
+            if shipping_cost == 'b':
+                return 'b'
             shipping_lost = float_check('How much did we lose on shipping? ')
+            if shipping_lost == 'b':
+                return 'b'
         # Product types and costs are customizable by the user via csv files
         # It also allows for a custom item type/price to be entered
         product_type_lost = get_product_types(loss_type)
+        if product_type_lost == 'b':
+            return 'b'
         lost_product_cost = get_product_cost(product_type_lost, loss_type)
         # If custom item was chosen, gets custom product type
         if product_type_lost == 'c':
@@ -322,9 +345,10 @@ main_menu_codes = {'1': 'Add new order damages report',
                    '3': 'View Current Damages',
                    '4': 'Tally Damages'}
 order_damages_codes = {'1': 'Order lost in transit',
-                       '2': 'Returned product',
-                       '3': 'Bad Address',
-                       '4': 'Bad Product'}
+                       '2': 'Damaged in Shipping',
+                       '3': 'Returned product',
+                       '4': 'Bad Address',
+                       '5': 'Bad Product'}
 warehouse_damages_codes = {'1': 'Box loss',
                            '2': 'Item loss'}
 
@@ -386,6 +410,8 @@ while True:
             continue
         # Starts data collection form
         data = info_form(loss_type)
+        if data == 'b':
+            continue
         # Swaps number for text description of the type of damage
         # then adds it to the end the generated list before writing the data to a csv file
         damage_type = order_damages_codes[damage_type]
@@ -400,9 +426,13 @@ while True:
             continue
         # Starts data collection form
         data = info_form(loss_type)
+        if data == 'b':
+            continue
         # Swaps number for text description of the type of damage
         # then adds it to the end the generated list before writing the data to a csv file
         damage_type = warehouse_damages_codes[damage_type]
+        if damage_type == 'b':
+            continue
         data.append(damage_type)
         damages_writer(data, warehouse_csv)
     # Menu 3 generates a table from csv data. This is the data the user previously entered
