@@ -346,6 +346,8 @@ def info_form(loss_type, damage_type):
             else:
                 number_product_damaged = float_check('How many boxes are being thrown away? ')
         # Since we use different csv sheets for orders vs warehouse damages, we need the data ordered differently
+        if number_product_damaged == 'b':
+            return 'b'
         if loss_type == 'order':
             form = [todays_date, ebay_order_number, order_cost, shipping_cost, shipping_lost,
                     product_type_lost, lost_product_cost, number_product_damaged]
