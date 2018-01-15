@@ -131,6 +131,17 @@ def tally_damages(order_file, warehouse_file):
     print('{}Total Warehouse Loss: {}${}{}'.format(col_ltcyn, col_ltgrn, trim_loss, col_ltwht))
 
 
+def item_loss_calculator(data):
+    """Calculates item cost based on box cost
+
+    :param list data: data collected so far
+    """
+
+    # Calculates base item cost of 
+    data[2] *= 0.015
+
+    return data
+
 def damages_writer(data, path):
     """
     csv data writer to write the damages info to a new row of the csv file
@@ -330,7 +341,7 @@ def info_form(loss_type):
         if loss_type == 'order':
             number_product_damaged = float_check('How many individual items were lost? ')
         else:
-            number_product_damaged = float_check('How many boxes are being thrown away? ')
+            number_product_damaged = float_check('How many items are being thrown away? ')
         # Since we use different csv sheets for orders vs warehouse damages, we need the data ordered differently
         if loss_type == 'order':
             form = [todays_date, ebay_order_number, order_cost, shipping_cost, shipping_lost,
@@ -430,6 +441,8 @@ while True:
             continue
         # Swaps number for text description of the type of damage
         # then adds it to the end the generated list before writing the data to a csv file
+        if damage_type == '2':
+            data = item_loss_calculator(data)
         damage_type = warehouse_damages_codes[damage_type]
         if damage_type == 'b':
             continue
