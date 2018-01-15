@@ -302,7 +302,7 @@ def get_product_types(loss_type):
     return type_choice
 
 
-def info_form(loss_type):
+def info_form(loss_type, damage_type):
     """
     This form goes through a list of questions for the user, collecting data on the loss to be logged. It then returns
     the results as a list.
@@ -341,7 +341,10 @@ def info_form(loss_type):
         if loss_type == 'order':
             number_product_damaged = float_check('How many individual items were lost? ')
         else:
-            number_product_damaged = float_check('How many items are being thrown away? ')
+            if damage_type == '2':
+                number_product_damaged = float_check('How many items are being thrown away? ')
+            else:
+                number_product_damaged = float_check('How many boxes are being thrown away? ')
         # Since we use different csv sheets for orders vs warehouse damages, we need the data ordered differently
         if loss_type == 'order':
             form = [todays_date, ebay_order_number, order_cost, shipping_cost, shipping_lost,
@@ -420,7 +423,7 @@ while True:
         if damage_type == 'b':
             continue
         # Starts data collection form
-        data = info_form(loss_type)
+        data = info_form(loss_type, damage_type)
         if data == 'b':
             continue
         # Swaps number for text description of the type of damage
@@ -436,7 +439,7 @@ while True:
         if damage_type == 'b':
             continue
         # Starts data collection form
-        data = info_form(loss_type)
+        data = info_form(loss_type, damage_type)
         if data == 'b':
             continue
         # Swaps number for text description of the type of damage
