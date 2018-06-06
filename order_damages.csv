@@ -1,0 +1,6 @@
+Date,Order #,Order Cost,Ship Cost,Ship Loss,Item Type,Item Cost,# Lost,Loss Type
+01/05/2018,5,5.99,2.61,2.61,beauty,1,2,Bad Product
+01/05/2018,23,35.64,16.55,16.55,clothing,4,0,Returned product
+01/09/2018,2,24.99,2.77,5.54,clothing,4,0,Returned product
+01/12/2018,53,5.99,2.61,2.61,makeup,0.3,2,Bad Product
+01/12/2018,231,61.14,11.15,10.05,clothing,4,0,Returned product
