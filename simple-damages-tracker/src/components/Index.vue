@@ -2,7 +2,7 @@
   <div class="index container">
     <div class="card" v-for="(value, key, index) in totalDamages" :key="index">
       <div class="card-content">
-        <h5>Total {{key | capitalize}} Damages</h5>
+        <h5>{{key | capitalize}} Losses</h5>
         <p class="loss">${{ value }}</p>
       </div>
     </div>
@@ -42,6 +42,9 @@ export default {
   grid-template-columns: 1fr 1fr 1fr;
   grid-gap: 30px;
   margin-top: 60px;
+}
+.index .card-content {
+  text-align: center;
 }
 .loss {
   font-size: 2em;
