@@ -12,6 +12,9 @@ Vue.filter('capitalize', function (value) {
   return value.charAt(0).toUpperCase() + value.slice(1)
 })
 
+// Global variable
+Vue.use(Buefy.default)
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
