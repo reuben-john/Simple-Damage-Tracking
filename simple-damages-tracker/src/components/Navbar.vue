@@ -2,11 +2,11 @@
   <div class="navbar">
     <nav class="nav-extended cyan darken-1">
       <div class="nav-content">
-        <router-link to="">
+        <router-link :to="{ name: 'Index' }">
           <span class="nav-title">Damage Tracker</span>
         </router-link>
         <a href="" class="btn-floating btn-large halfway-fab deep-purple">
-          <router-link to="">
+          <router-link :to="{ name: 'AddDamages' }">
             <i class="material-icons">add</i>
           </router-link>
         </a>
