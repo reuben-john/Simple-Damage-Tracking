@@ -1,47 +1,97 @@
 <template>
   <div class="add-damages">
-    <v-container>
-      <v-layout row wrap>
-        <v-flex xs12 sm6 offset-sm3>
-          <v-card width="600">
+    <v-container text-xs-center>
+      <v-layout row wrap align-center>
+        <v-flex xs12 sm6 offset-sm1 offset-md2>
+          <v-card>
             <v-card-title primary-title>
-              <v-flex text-xs-center>
+              <v-flex>
                 <h1>Add Damage Report</h1>
               </v-flex>
             </v-card-title>
-            <v-card-text v-if="damageReasons">
-              <v-radio-group v-model="damageReport.damageDept">
-                <v-radio
-                  v-for="(value, key) in damageReasons"
-                  :key="key"
-                  :label="`Add new ${key} damage report`"
-                  :value="key"
-                ></v-radio>
-                <h2>{{damageDept}}</h2>
-              </v-radio-group>
-              <v-layout v-if="damageReport.damageDept == 'order'">
-                <v-flex xs8 sm4 offset-sm1>
-                  <v-select
-                    :items="damageReasons.order.type"
-                    v-model="damageReport.reasonLost"
-                    label="Damage Type"
-                    single-line
-                    required
-                  ></v-select>
-                </v-flex>
-                <v-flex xs8 sm4 offset-sm2>
-                  <v-select
-                    :items="productCosts.types"
-                    v-model="damageReport.itemType"
-                    label="Product Type"
-                    single-line
-                    required
-                  ></v-select>
-                </v-flex>
-              </v-layout>
-            </v-card-text>
+            <v-form>
+
+              <v-card-text v-if="damageReasons">
+                <h4>What type of damage do you wish to log?</h4>
+                <v-radio-group
+                v-model="damageReport.damageDept">
+                  <v-layout row wrap>
+                      <v-flex xs12 sm6
+                      v-for="(reason, index) in damageReasons.reasons"
+                      :key="index">
+                        <v-radio
+                          :key="reason"
+                          :label="`${reason} damage report`"
+                          :value="reason"
+                        ></v-radio>
+                      </v-flex>
+                        <h2>{{damageDept}}</h2>
+                      </v-layout>
+                    </v-radio-group>
+                  <v-layout row wrap justify-center v-if="damageReport.damageDept == 'order'">
+                  <v-flex xs8 sm4 mx-4>
+                    <v-select
+                      :items="damageReasons.order.type"
+                      v-model="damageReport.reasonLost"
+                      label="Damage Type"
+                      single-line
+                      required
+                    ></v-select>
+                  </v-flex>
+                  <v-flex xs8 sm4 mx-4>
+                    <v-select
+                      :items="productCosts.types"
+                      v-model="damageReport.itemType"
+                      label="Product Type"
+                      single-line
+                      required
+                    ></v-select>
+                  </v-flex>
+                  <v-flex xs6 sm3 mx-3>
+                    <v-text-field
+                      name="orderNumber"
+                      label="Order Number"
+                      id="order-number"
+                    ></v-text-field>
+                  </v-flex>
+                  <v-flex xs6 sm3 mx-3>
+                    <v-text-field
+                      name="orderTotal"
+                      label="Order Total"
+                      id="order-total"
+                    ></v-text-field>
+                  </v-flex>
+                  <v-flex xs6 sm3 mx-3>
+                    <v-text-field
+                      name="shippingCost"
+                      label="Shipping Cost"
+                      id="shipping-cost"
+                    ></v-text-field>
+                  </v-flex>
+                  <v-flex xs6 sm3 mx-4>
+                    <v-text-field
+                      name="shippingLost"
+                      label="Shipping Lost"
+                      id="shipping-lost"
+                    ></v-text-field>
+                  </v-flex>
+                  <v-flex xs6 sm3 mx-4>
+                    <v-text-field
+                      name="itemsLost"
+                      label="Items Lost"
+                      id="items-lost"
+                    ></v-text-field>
+                  </v-flex>
+                </v-layout>
+              </v-card-text>
+              <v-btn
+                @click="submit"
+              >
+              Submit
+            </v-btn>
+            </v-form>
           </v-card>
-    <p><b>Current Damage Report</b>: {{ damageReport }}</p>
+        <p><b>Current Damage Report</b>: {{ damageReport }}</p>
         </v-flex>
       </v-layout>
     </v-container>
@@ -73,6 +123,7 @@ export default {
       .get()
       .then(doc => {
         this.damageReasons = doc.data()
+        this.damageReasons.reasons = Object.keys(this.damageReasons)
       })
       .catch(err => {
         console.log(err)
