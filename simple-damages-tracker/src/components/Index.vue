@@ -38,8 +38,7 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style>
 .index {
   display: grid;
   grid-template-columns: 1fr 1fr;

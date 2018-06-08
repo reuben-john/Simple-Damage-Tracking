@@ -1,8 +1,29 @@
 <template>
-  <div class="add-damages container">
-    <h2 class="center-align">Add New Damages</h2>
-    <form @submit.prevent="addDamages" v-for="(reason, index) in damageReasons" :key="index">
-    </form>
+  <div class="add-damages">
+    <v-container>
+      <v-layout row wrap>
+      <v-flex xs12 sm6 offset-sm3>
+        <v-card width="600">
+          <v-card-title primary-title>
+            <v-flex text-xs-center>Add Damage</v-flex>
+          </v-card-title>
+          <v-card-text v-if="damageReasons">
+            <v-select
+          :items="orders"
+          v-model="selected"
+          label="Select"
+          single-line
+        ></v-select>
+        <h2>{{ selected }}</h2>
+          </v-card-text>
+        </v-card>
+
+
+      </v-flex>
+    </v-layout>
+
+    </v-container>
+
   </div>
 </template>
 
@@ -13,8 +34,12 @@ export default {
   name: 'AddDamages',
   data() {
     return {
+      departments: null,
       damageReasons: null,
-      checked: true
+      damageDept: null,
+      selected: null,
+      warehouse: ['Bad Product', 'Bad Box'],
+      orders: ['Bad Product', 'Returned Product', 'Damaged in shipping']
     }
   },
   method: {

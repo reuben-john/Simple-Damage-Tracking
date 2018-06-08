@@ -8,7 +8,7 @@
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items>
-        <v-btn fab top right color="pink white--text" :to="{ name: 'AddDamages' }">
+        <v-btn class="add" fab top right large color="pink white--text" :to="{ name: 'AddDamages' }">
           <v-icon>add</v-icon>
         </v-btn>
       </v-toolbar-items>
@@ -26,4 +26,7 @@ export default {
 </script>
 
 <style>
+.nav-bar .add {
+  margin-top: 1em;
+}
 </style>
