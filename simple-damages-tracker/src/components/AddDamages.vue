@@ -52,6 +52,7 @@
                       name="orderNumber"
                       label="Order Number"
                       id="order-number"
+                      v-model="damageReport.orderNumber"
                     ></v-text-field>
                   </v-flex>
                   <v-flex xs6 sm3 mx-3>
@@ -59,6 +60,7 @@
                       name="orderTotal"
                       label="Order Total"
                       id="order-total"
+                      v-model="damageReport.orderTotal"
                     ></v-text-field>
                   </v-flex>
                   <v-flex xs6 sm3 mx-3>
@@ -66,6 +68,7 @@
                       name="shippingCost"
                       label="Shipping Cost"
                       id="shipping-cost"
+                      v-model="damageReport.shippingCost"
                     ></v-text-field>
                   </v-flex>
                   <v-flex xs6 sm3 mx-4>
@@ -73,6 +76,7 @@
                       name="shippingLost"
                       label="Shipping Lost"
                       id="shipping-lost"
+                      v-model="damageReport.shippingLost"
                     ></v-text-field>
                   </v-flex>
                   <v-flex xs6 sm3 mx-4>
@@ -80,6 +84,7 @@
                       name="itemsLost"
                       label="Items Lost"
                       id="items-lost"
+                      v-model="damageReport.itemsLost"
                     ></v-text-field>
                   </v-flex>
                 </v-layout>
@@ -112,8 +117,13 @@ export default {
       damageReport: {}
     }
   },
-  method: {
-    addDamages() {}
+  methods: {
+    addDamages() {
+      return {}
+    },
+    submit() {
+      return console.log(this.damageReport)
+    }
   },
   created() {
     // Get damage reasons from firestore
