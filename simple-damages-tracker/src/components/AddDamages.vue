@@ -10,7 +10,7 @@
               </v-flex>
             </v-card-title>
             <v-card-text v-if="damageReasons">
-              <v-radio-group v-model="damageDept">
+              <v-radio-group v-model="damageReport.damageDept">
                 <v-radio
                   v-for="(value, key) in damageReasons"
                   :key="key"
@@ -19,15 +19,29 @@
                 ></v-radio>
                 <h2>{{damageDept}}</h2>
               </v-radio-group>
-              <v-select v-if="damageDept == 'order'"
-                :items="damageReasons.order.type"
-                v-model="damageReport.reasonLost"
-                label="Damage Type"
-                single-line
-              ></v-select>
-              <p>{{ damageReport }}</p>
+              <v-layout v-if="damageReport.damageDept == 'order'">
+                <v-flex xs8 sm4 offset-sm1>
+                  <v-select
+                    :items="damageReasons.order.type"
+                    v-model="damageReport.reasonLost"
+                    label="Damage Type"
+                    single-line
+                    required
+                  ></v-select>
+                </v-flex>
+                <v-flex xs8 sm4 offset-sm2>
+                  <v-select
+                    :items="productCosts.types"
+                    v-model="damageReport.itemType"
+                    label="Product Type"
+                    single-line
+                    required
+                  ></v-select>
+                </v-flex>
+              </v-layout>
             </v-card-text>
           </v-card>
+    <p><b>Current Damage Report</b>: {{ damageReport }}</p>
         </v-flex>
       </v-layout>
     </v-container>
@@ -71,6 +85,7 @@ export default {
       .get()
       .then(doc => {
         this.productCosts = doc.data()
+        this.productCosts.types = Object.keys(this.productCosts)
       })
       .catch(err => {
         console.log(err)
