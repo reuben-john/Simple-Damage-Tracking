@@ -1,24 +1,18 @@
 <template>
   <div class="nav-bar">
-
-    <nav class="navbar" role="navigation" aria-label="main navigation">
-      <div class="navbar-brand">
+      <v-toolbar color="primary">
+      <v-toolbar-title>
         <router-link :to="{ name: 'Index' }">
-          <a class="navbar-item">Damage Tracker</a>
+          <span class="white--text">Damage Tracker</span>
         </router-link>
-      </div>
-      <div class="navbar-menu">
-        <div class="navbar-end">
-          <router-link :to="{ name: 'AddDamages' }">
-            <button class="button is-large is-primary">
-            <span class="icon is-large">
-              <i class="mdi mdi-plus mdi-48px"></i>  <!-- bell -->
-            </span>
-            </button>
-          </router-link>
-        </div>
-      </div>
-    </nav>
+      </v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-toolbar-items>
+        <v-btn fab top right color="pink white--text" :to="{ name: 'AddDamages' }">
+          <v-icon>add</v-icon>
+        </v-btn>
+      </v-toolbar-items>
+      </v-toolbar>
   </div>
 </template>
 
@@ -32,15 +26,4 @@ export default {
 </script>
 
 <style>
-.nav-bar nav {
-  padding: 10px 20px;
-  background-color: #1976d2;
-}
-.nav-bar button {
-  border-radius: 50px;
-}
-.nav-bar .navbar-brand a {
-  color: white;
-  font-size: 1.4em;
-}
 </style>
