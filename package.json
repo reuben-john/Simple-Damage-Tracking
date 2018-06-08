@@ -4,11 +4,13 @@
   "description": "Simple damage tracking app",
   "main": "",
   "dependencies": {
+    "buefy": "^0.6.6",
     "lodash": "^4.17.10",
     "npm": "^6.1.0",
     "vue": "^2.5.16",
     "vue-cli": "^2.9.6",
     "vue-router": "^3.0.1",
+    "vuetify": "^1.0.19",
     "vuex": "^3.0.1",
     "vuex-router-sync": "^5.0.0"
   },

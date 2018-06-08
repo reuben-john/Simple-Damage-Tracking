@@ -1,18 +1,18 @@
 <template>
   <div class="nav-bar">
-    <nav class="navbar" role="navigation" aria-label="dropdown navigation">
-      <div class="nav-brand navbar-item">
+
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
         <router-link :to="{ name: 'Index' }">
-          <a class="nav-title">Damage Tracker</a>
+          <a class="navbar-item"  color="white--text">Damage Tracker</a>
         </router-link>
       </div>
-
-      <div class="navbar-end">
-        <a href="" class="navbar-item">
+      <div class="navbar-menu">
+        <div class="navbar-end">
           <router-link :to="{ name: 'AddDamages' }">
-            <h3 class="navbar-end">Add</h3>
+            <h3>Add</h3>
           </router-link>
-        </a>
+        </div>
       </div>
     </nav>
   </div>
@@ -29,6 +29,6 @@ export default {
 
 <style>
 .nav-bar nav {
-  padding: 0 20px;
+  padding: 10px 20px;
 }
 </style>
