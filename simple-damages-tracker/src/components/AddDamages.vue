@@ -36,65 +36,10 @@
                       </v-layout>
                     </v-radio-group>
                   <v-layout v-if="damageReport.damageDept == 'order'">
-                    <OrderDamagesForm :damageReasons="damageReasons" :damageReport="damageReport" :productCosts="productCosts"></OrderDamagesForm>
-                  <!-- <v-flex xs8 sm4 mx-4>
-                    <v-select
-                      :items="damageReasons.order.type"
-                      v-model="damageReport.reasonLost"
-                      label="Damage Type"
-                      single-line
-                      required
-                    ></v-select>
-                  </v-flex>
-                  <v-flex xs8 sm4 mx-4>
-                    <v-select
-                      :items="productCosts.types"
-                      v-model="damageReport.itemType"
-                      label="Product Type"
-                      single-line
-                      required
-                    ></v-select>
-                  </v-flex>
-                  <v-flex xs6 sm3 mx-3>
-                    <v-text-field
-                      name="orderNumber"
-                      label="Order Number"
-                      id="order-number"
-                      v-model="damageReport.orderNumber"
-                    ></v-text-field>
-                  </v-flex>
-                  <v-flex xs6 sm3 mx-3>
-                    <v-text-field
-                      name="orderTotal"
-                      label="Order Total"
-                      id="order-total"
-                      v-model="damageReport.orderTotal"
-                    ></v-text-field>
-                  </v-flex>
-                  <v-flex xs6 sm3 mx-3>
-                    <v-text-field
-                      name="shippingCost"
-                      label="Shipping Cost"
-                      id="shipping-cost"
-                      v-model="damageReport.shippingCost"
-                    ></v-text-field>
-                  </v-flex>
-                  <v-flex xs6 sm3 mx-4>
-                    <v-text-field
-                      name="shippingLost"
-                      label="Shipping Lost"
-                      id="shipping-lost"
-                      v-model="damageReport.shippingLost"
-                    ></v-text-field>
-                  </v-flex>
-                  <v-flex xs6 sm3 mx-4>
-                    <v-text-field
-                      name="itemsLost"
-                      label="Items Lost"
-                      id="items-lost"
-                      v-model="damageReport.itemsLost"
-                    ></v-text-field>
-                  </v-flex> -->
+                    <order-damages-form :damageReasons="damageReasons" :damageReport="damageReport" :productCosts="productCosts"></order-damages-form>
+                </v-layout>
+                <v-layout v-else-if="damageReport.damageDept == 'warehouse'">
+                    <warehouse-damages-form :damageReasons="damageReasons" :damageReport="damageReport" :productCosts="productCosts"></warehouse-damages-form>
                 </v-layout>
               </v-card-text>
               <v-btn
@@ -115,11 +60,13 @@
 <script>
 import db from '@/firebase/init'
 import OrderDamagesForm from '@/components/OrderDamagesForm'
+import WarehouseDamagesForm from '@/components/WarehouseDamagesForm'
 
 export default {
   name: 'AddDamages',
   components: {
-    OrderDamagesForm
+    OrderDamagesForm,
+    WarehouseDamagesForm
   },
   data() {
     return {
@@ -147,13 +94,10 @@ export default {
         this.damageReport.itemCost = this.productCosts[this.damageReport.itemType].itemCost
       }
 
-      // Assign report to variable before submitting
-      // TODO look into this - Was having an issue on the data not going to the database without this
-      let report = this.damageReport
       // Send damage report to database
       db
         .collection('damages')
-        .add(report)
+        .add(this.damageReport)
         .then(() => {
           this.$router.push({ name: 'Index' })
         })
