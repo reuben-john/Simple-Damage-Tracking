@@ -35,8 +35,9 @@
                         <h2>{{damageDept}}</h2>
                       </v-layout>
                     </v-radio-group>
-                  <v-layout row wrap justify-center v-if="damageReport.damageDept == 'order'">
-                  <v-flex xs8 sm4 mx-4>
+                  <v-layout v-if="damageReport.damageDept == 'order'">
+                    <OrderDamagesForm :damageReasons="damageReasons" :damageReport="damageReport" :productCosts="productCosts"></OrderDamagesForm>
+                  <!-- <v-flex xs8 sm4 mx-4>
                     <v-select
                       :items="damageReasons.order.type"
                       v-model="damageReport.reasonLost"
@@ -93,7 +94,7 @@
                       id="items-lost"
                       v-model="damageReport.itemsLost"
                     ></v-text-field>
-                  </v-flex>
+                  </v-flex> -->
                 </v-layout>
               </v-card-text>
               <v-btn
@@ -113,9 +114,13 @@
 
 <script>
 import db from '@/firebase/init'
+import OrderDamagesForm from '@/components/OrderDamagesForm'
 
 export default {
   name: 'AddDamages',
+  components: {
+    OrderDamagesForm
+  },
   data() {
     return {
       appData: {},
@@ -130,6 +135,7 @@ export default {
       return {}
     },
     submit() {
+      console.log(this.damageReport)
       // Add timestamp to report
       this.damageReport.timestamp = Date.now()
 
@@ -140,10 +146,14 @@ export default {
       } else {
         this.damageReport.itemCost = this.productCosts[this.damageReport.itemType].itemCost
       }
+
+      // Assign report to variable before submitting
+      // TODO look into this - Was having an issue on the data not going to the database without this
+      let report = this.damageReport
       // Send damage report to database
       db
         .collection('damages')
-        .add(this.damageReport)
+        .add(report)
         .then(() => {
           this.$router.push({ name: 'Index' })
         })
