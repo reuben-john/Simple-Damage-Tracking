@@ -141,7 +141,6 @@ export default {
           this.$router.push({ name: 'Index' })
         })
         .catch(err => console.log(err))
-      return console.log(this.damageReport)
     }
   },
   created() {
