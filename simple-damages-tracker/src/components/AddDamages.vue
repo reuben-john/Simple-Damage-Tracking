@@ -99,6 +99,7 @@
         <p><b>Current Damage Report</b>: {{ damageReport }}</p>
         </v-flex>
       </v-layout>
+      {{ productCosts }}
     </v-container>
   </div>
 </template>
@@ -122,6 +123,21 @@ export default {
       return {}
     },
     submit() {
+      // Add timestamp to report
+      this.damageReport.timestamp = Date.now()
+
+      //Get product costs
+      if (this.damageReport.damageDept == 'order') {
+        this.damageReport.itemCost = this.productCosts[this.damageReport.itemType].itemCost
+      }
+      // Send damage report to database
+      db
+        .collection('damages')
+        .add(this.damageReport)
+        .then(() => {
+          this.$router.push({ name: 'Index' })
+        })
+        .catch(err => console.log(err))
       return console.log(this.damageReport)
     }
   },
