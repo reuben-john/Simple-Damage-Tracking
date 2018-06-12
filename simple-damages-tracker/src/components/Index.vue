@@ -1,3 +1,5 @@
+// TODO consider adding an animation that shows the new tally being added to the total before updating
+
 <template>
   <div class="index container">
     <div class="card" v-if="totalDamages" v-for="(type, index) in totalDamages" :key="index">
