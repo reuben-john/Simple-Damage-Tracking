@@ -126,8 +126,11 @@ export default {
       // Add timestamp to report
       this.damageReport.timestamp = Date.now()
 
-      //Get product costs
-      if (this.damageReport.damageDept == 'order') {
+      // Pull product cost for a box loss if damage report is for bad box
+      // Otherwise default to individual item cost
+      if (this.damageReport.reasonLost == 'Bad Box') {
+        this.damageReport.itemCost = this.productCosts[this.damageReport.itemType].boxCost
+      } else {
         this.damageReport.itemCost = this.productCosts[this.damageReport.itemType].itemCost
       }
       // Send damage report to database
