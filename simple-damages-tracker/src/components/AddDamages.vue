@@ -88,7 +88,8 @@ export default {
         this.damageReport.itemCost = this.productCosts[this.damageReport.itemType].itemCost
       }
 
-      this.convertNumbers()
+      let report = Object.assign(this.damageReport)
+      this.convertNumbers(report)
 
       // Send damage report to database
       db
@@ -99,9 +100,7 @@ export default {
         })
         .catch(err => console.log(err))
     },
-    convertNumbers() {
-      let report = Object.assign(this.damageReport)
-
+    convertNumbers(report) {
       // Convert string to numbers for different fields before adding to database
       if (report.damageDept == 'order') {
         report = Object.assign(report, {
