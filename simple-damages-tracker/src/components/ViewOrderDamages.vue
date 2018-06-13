@@ -144,6 +144,30 @@ export default {
     }
   },
   methods: {
+    tallyNewTotals() {
+      let damagesRef = db.collection('damages')
+      let ordereTally = 0
+      let shippingTally = 0
+
+      // Tally order totals
+      let orderQuery = damagesRef
+        .where('damageDept', '==', 'order')
+        .get()
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            let cost = doc.data().itemCost
+            let numLost = doc.data().itemsLost
+            let shipCost = doc.data().shippingCost
+            let shipLost = doc.data().shippingLost
+            shippingTally += shipLost
+            orderTally += cost * numLost
+            console.log(orderTally, shippingTally)
+          })
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
     initialize() {
       let damagesRef = db.collection('damages').orderBy('timestamp')
       // fetch data from firestore
@@ -252,6 +276,8 @@ export default {
         .catch(err => {
           console.log(err)
         })
+
+      this.tallyNewTotals()
     }
   },
   watch: {
