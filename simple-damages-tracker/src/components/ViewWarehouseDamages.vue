@@ -239,12 +239,10 @@ export default {
           itemCost: this.editedItem.itemCost,
           reasonLost: this.editedItem.reasonLost
         })
-        .then(console.log('Updated'))
+        .then(console.log('Updated'), this.tallyNewTotals())
         .catch(err => {
           console.log(err)
         })
-
-      this.tallyNewTotals()
     }
   },
   computed: {
