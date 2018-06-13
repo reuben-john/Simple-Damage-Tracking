@@ -88,6 +88,18 @@ export default {
         this.damageReport.itemCost = this.productCosts[this.damageReport.itemType].itemCost
       }
 
+      this.convertNumbers()
+
+      // Send damage report to database
+      db
+        .collection('damages')
+        .add(this.damageReport)
+        .then(() => {
+          this.$router.push({ name: 'Index' })
+        })
+        .catch(err => console.log(err))
+    },
+    convertNumbers() {
       let report = Object.assign(this.damageReport)
 
       // Convert string to numbers for different fields before adding to database
@@ -105,14 +117,7 @@ export default {
         })
       }
 
-      // Send damage report to database
-      db
-        .collection('damages')
-        .add(report)
-        .then(() => {
-          this.$router.push({ name: 'Index' })
-        })
-        .catch(err => console.log(err))
+      Object.assign(this.damageReport, report)
     },
     initialize() {
       // Get damage reasons from firestore
