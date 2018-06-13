@@ -4,6 +4,7 @@ import Index from '@/components/Index'
 import AddDamages from '@/components/AddDamages'
 import ViewOrderDamages from '@/components/ViewOrderDamages'
 import ViewWarehouseDamages from '@/components/ViewWarehouseDamages'
+import ViewAdmin from '@/components/ViewAdmin'
 
 Vue.use(Router)
 
@@ -28,6 +29,11 @@ export default new Router({
       path: '/warehouse-damages',
       name: 'ViewWarehouseDamages',
       component: ViewWarehouseDamages
+    },
+    {
+      path: '/admin',
+      name: 'ViewAdmin',
+      component: ViewAdmin
     }
   ]
 })
