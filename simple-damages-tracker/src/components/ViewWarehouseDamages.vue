@@ -110,13 +110,13 @@ export default {
         itemType: '',
         itemsLost: 0,
         itemCost: 0,
-        reasonLost: 0
+        reasonLost: ''
       },
       defaultItem: {
         itemType: '',
         itemsLost: 0,
         itemCost: 0,
-        reasonLost: 0
+        reasonLost: ''
       }
     }
   },
