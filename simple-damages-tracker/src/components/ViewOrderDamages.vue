@@ -28,12 +28,6 @@
                   <td class="text-xs-left">{{ props.item.reasonLost }}</td>
                 </template>
               </v-data-table>
-              <v-flex
-              v-for="report in orderDamages"
-              :key="report.id"
-              @click="editDamage">
-
-              </v-flex>
             </v-card-text>
           </v-card>
         </v-flex>
