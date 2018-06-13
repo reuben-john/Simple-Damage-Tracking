@@ -82,7 +82,6 @@
           </v-card>
         </v-flex>
       </v-layout>
-      <v-btn @click="tallyNewTotals">tally</v-btn>
     </v-container>
 </div>
 </template>
