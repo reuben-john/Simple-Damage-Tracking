@@ -124,8 +124,8 @@ export default {
       editedItem: {
         orderNumber: 0,
         orderTotal: 0,
-        shipingCost: 0,
-        shipingLost: 0,
+        shippingCost: 0,
+        shippingLost: 0,
         itemType: '',
         itemsLost: 0,
         itemCost: 0,
@@ -134,8 +134,8 @@ export default {
       defaultItem: {
         orderNumber: 0,
         orderTotal: 0,
-        shipingCost: 0,
-        shipingLost: 0,
+        shippingCost: 0,
+        shippingLost: 0,
         itemType: '',
         itemsLost: 0,
         itemCost: 0,
