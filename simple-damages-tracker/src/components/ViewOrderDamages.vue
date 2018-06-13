@@ -144,6 +144,26 @@ export default {
     }
   },
   methods: {
+    updateTally(orderTally, shippingTally) {
+      // fetch data from firestore
+      db
+        .collection('appData')
+        .doc('totalLosses')
+        .set(
+          {
+            order: {
+              total: orderTally + shippingTally,
+              itemTotal: orderTally,
+              shipTotal: shippingTally
+            }
+          },
+          { merge: true }
+        )
+        .then(console.log('Updated'))
+        .catch(err => {
+          console.log(err)
+        })
+    },
     tallyNewTotals() {
       let damagesRef = db.collection('damages')
       let orderTally = 0
@@ -161,8 +181,9 @@ export default {
             let shipLost = doc.data().shippingLost
             shippingTally += shipLost
             orderTally += cost * numLost
-            console.log(orderTally, shippingTally)
           })
+          console.log(orderTally, shippingTally)
+          this.updateTally(orderTally, shippingTally)
         })
         .catch(err => {
           console.log(err)
