@@ -21,6 +21,10 @@
                   <td class="text-xs-left">{{ props.item.timestamp }}</td>
                   <td class="text-xs-left">{{ props.item.orderNumber }}</td>
                   <td class="text-xs-left">{{ props.item.orderTotal }}</td>
+                  <td class="text-xs-left">{{ props.item.shippingCost }}</td>
+                  <td class="text-xs-left">{{ props.item.shippingLost }}</td>
+                  <td class="text-xs-left">{{ props.item.itemType }}</td>
+                  <td class="text-xs-left">{{ props.item.itemsLost }}</td>
                   <td class="text-xs-left">{{ props.item.reasonLost }}</td>
                 </template>
               </v-data-table>
@@ -29,7 +33,6 @@
               :key="report.id"
               >
 
-                <p>{{report}}</p>
               </v-flex>
             </v-card-text>
           </v-card>
@@ -52,6 +55,10 @@ export default {
         { text: 'Date', value: 'timestamp' },
         { text: 'Ebay Order', value: 'orderNumber' },
         { text: 'Order Total', value: 'orderTotal' },
+        { text: 'Shipping Cost', value: 'shippingCost' },
+        { text: 'Shipping Lost', value: 'shippingLost' },
+        { text: 'Item Type', value: 'itemType' },
+        { text: 'Items Lost', value: 'itemsLost' },
         { text: 'Reason Lost', value: 'reasonLost' }
       ]
     }
