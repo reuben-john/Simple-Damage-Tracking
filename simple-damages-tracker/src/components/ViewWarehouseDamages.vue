@@ -1,7 +1,5 @@
 <template>
-<div class="view-warehouse-damages">
-
-  <v-container text-xs-center>
+  <v-container text-xs-center fill-height class="view-warehouse-damages">
       <v-layout row wrap align-center>
         <v-flex>
           <v-card>
@@ -83,7 +81,6 @@
         </v-flex>
       </v-layout>
     </v-container>
-</div>
 </template>
 
 <script>
