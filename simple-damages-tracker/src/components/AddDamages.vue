@@ -6,19 +6,17 @@
 
 
 <template>
-  <div class="add-damages">
-    <v-container text-xs-center>
+    <v-container class="add-damages" text-xs-center fluid fill-height>
       <v-layout row wrap align-center>
-        <v-flex xs12 sm6 offset-sm1 offset-md2>
-          <v-card>
+        <v-flex xs12 sm6>
+          <v-card class="elevation-12">
             <v-card-title primary-title>
               <v-flex>
                 <h1>Add Damage Report</h1>
               </v-flex>
             </v-card-title>
-            <v-form>
-
-              <v-card-text v-if="dataDownloaded">
+            <v-card-text>
+              <v-form v-if="dataDownloaded">
                 <h4>What type of damage do you wish to log?</h4>
                 <v-radio-group
                 v-model="damageReport.damageDept">
@@ -41,18 +39,17 @@
                 <v-layout v-else-if="damageReport.damageDept == 'warehouse'">
                     <warehouse-damages-form :damageReasons="damageReasons" :damageReport="damageReport" :productCosts="productCosts"></warehouse-damages-form>
                 </v-layout>
-              </v-card-text>
-              <v-btn v-if="dataDownloaded"
-                @click="logDamages"
-              >
-              Log Damages
-            </v-btn>
-            </v-form>
+                <v-btn v-if="dataDownloaded"
+                  @click="logDamages"
+                  >
+                  Log Damages
+                </v-btn>
+              </v-form>
+            </v-card-text>
           </v-card>
         </v-flex>
       </v-layout>
     </v-container>
-  </div>
 </template>
 
 <script>
