@@ -89,7 +89,7 @@ export default {
       }
 
       let report = Object.assign(this.damageReport)
-      this.convertNumbers(report)
+      this.damageReport = this.convertNumbers(report)
 
       // Send damage report to database
       db
@@ -115,8 +115,6 @@ export default {
           itemsLost: parseInt(report.itemsLost)
         })
       }
-
-      Object.assign(this.damageReport, report)
     },
     initialize() {
       // Get damage reasons from firestore
