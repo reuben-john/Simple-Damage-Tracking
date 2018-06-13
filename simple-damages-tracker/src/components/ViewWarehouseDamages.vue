@@ -11,7 +11,7 @@
               </v-flex>
             </v-card-title>
             <v-card-text>
-              <v-dialog v-model="dialog" max-width="500px">
+              <v-dialog v-model="dialog" max-width="500px" v-if="dataDownloaded">
                 <v-card>
                   <v-card-title>
                     <span class="headline"> Edit Item </span>
@@ -20,7 +20,13 @@
                     <v-container grid-list-md>
                       <v-layout wrap>
                         <v-flex xs12 sm6 md4>
-                          <v-text-field v-model="editedItem.itemType" label="Type"></v-text-field>
+                          <v-select
+                            :items="productCosts.types"
+                            v-model="editedItem.itemType"
+                            label="Product Type"
+                            single-line
+                            required
+                          ></v-select>
                         </v-flex>
                         <v-flex xs12 sm6 md4>
                           <v-text-field v-model="editedItem.itemCost" label="Cost"></v-text-field>
@@ -29,7 +35,13 @@
                           <v-text-field v-model="editedItem.itemsLost" label="Lost"></v-text-field>
                         </v-flex>
                         <v-flex xs12 sm6 md4>
-                          <v-text-field v-model="editedItem.reasonLost" label="Reason"></v-text-field>
+                          <v-select
+                            :items="damageReasons.warehouse.type"
+                            v-model="editedItem.reasonLost"
+                            label="Reason Lost"
+                            single-line
+                            required
+                          ></v-select>
                         </v-flex>
                       </v-layout>
                     </v-container>
@@ -82,6 +94,8 @@ export default {
   name: 'ViewWarehouseDamages',
   data() {
     return {
+      productCosts: null,
+      damageReasons: null,
       warehouseDamages: [],
       warehouseHeaders: [
         { text: 'Date', value: 'timestamp' },
@@ -133,6 +147,32 @@ export default {
         .catch(err => {
           console.log(err)
         })
+
+      // Get damage reasons from firestore
+      db
+        .collection('appData')
+        .doc('damageReasons')
+        .get()
+        .then(doc => {
+          this.damageReasons = doc.data()
+          this.damageReasons.reasons = Object.keys(this.damageReasons)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+
+      // Get product costs from firestore
+      db
+        .collection('appData')
+        .doc('productCosts')
+        .get()
+        .then(doc => {
+          this.productCosts = doc.data()
+          this.productCosts.types = Object.keys(this.productCosts)
+        })
+        .catch(err => {
+          console.log(err)
+        })
     },
     editItem(item) {
       this.editedIndex = this.warehouseDamages.indexOf(item)
@@ -171,6 +211,11 @@ export default {
         .catch(err => {
           console.log(err)
         })
+    }
+  },
+  computed: {
+    dataDownloaded() {
+      return this.damageReasons && this.productCosts
     }
   }
 }
