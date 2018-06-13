@@ -129,10 +129,27 @@ export default {
     this.initialize()
   },
   methods: {
+    updateTally(tally) {
+      // fetch data from firestore
+      db
+        .collection('appData')
+        .doc('totalLosses')
+        .set(
+          {
+            warehouse: {
+              total: tally
+            }
+          },
+          { merge: true }
+        )
+        .then(console.log('Updated'))
+        .catch(err => {
+          console.log(err)
+        })
+    },
     tallyNewTotals() {
       let damagesRef = db.collection('damages')
-      let orderTally = 0
-
+      let warehouseTally = 0
       // Tally warehouse totals
       let warehouseQuery = damagesRef
         .where('damageDept', '==', 'warehouse')
@@ -143,6 +160,7 @@ export default {
             let numLost = doc.data().itemsLost
             warehouseTally += cost * numLost
           })
+          this.updateTally(warehouseTally)
         })
         .catch(err => {
           console.log(err)
@@ -198,9 +216,23 @@ export default {
       this.editedItem = Object.assign({}, item)
       this.dialog = true
     },
+    deleteFromDB(itemId) {
+      let damagesRef = db.collection('damages').doc(itemId)
+      // fetch data from firestore
+      let querty = damagesRef
+        .delete()
+        .then(console.log('Deleted'))
+        .catch(err => {
+          console.log(err)
+        })
+    },
     deleteItem(item) {
       const index = this.warehouseDamages.indexOf(item)
-      confirm('Are you sure you want to delete this item?') && this.warehouseDamages.splice(index, 1)
+      let id = this.warehouseDamages[index].id
+      confirm('Are you sure you want to delete this item?') &&
+        (this.warehouseDamages.splice(index, 1), this.deleteFromDB(id))
+
+      this.tallyNewTotals()
     },
     close() {
       this.dialog = false
