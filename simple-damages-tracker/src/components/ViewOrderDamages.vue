@@ -11,6 +11,7 @@
               </v-flex>
             </v-card-title>
             <v-card-text v-if="orderDamages">
+
               <v-flex
               v-for="report in orderDamages"
               :key="report.id"
@@ -28,6 +29,7 @@
 
 <script>
 import db from '@/firebase/init'
+import moment from 'moment'
 
 export default {
   name: 'ViewOrderDamages',
@@ -48,7 +50,6 @@ export default {
 
         snapshot.forEach(doc => {
           this.orderDamages[doc.id] = doc.data()
-          console.log(this.orderDamages[doc.id])
         })
       })
       .catch(err => {
