@@ -20,9 +20,9 @@
                 <template slot="items" slot-scope="props">
                   <td class="text-xs-left">{{ props.item.timestamp }}</td>
                   <td class="text-xs-left">{{ props.item.orderNumber }}</td>
-                  <td class="text-xs-left">{{ props.item.orderTotal }}</td>
-                  <td class="text-xs-left">{{ props.item.shippingCost }}</td>
-                  <td class="text-xs-left">{{ props.item.shippingLost }}</td>
+                  <td class="text-xs-left">${{ props.item.orderTotal }}</td>
+                  <td class="text-xs-left">${{ props.item.shippingCost }}</td>
+                  <td class="text-xs-left">${{ props.item.shippingLost }}</td>
                   <td class="text-xs-left">{{ props.item.itemType }}</td>
                   <td class="text-xs-left">{{ props.item.itemsLost }}</td>
                   <td class="text-xs-left">{{ props.item.reasonLost }}</td>
