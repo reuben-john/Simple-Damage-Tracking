@@ -5,9 +5,7 @@ import AddDamages from '@/components/AddDamages'
 import ViewDamages from '@/components/ViewDamages'
 import ViewOrderDamages from '@/components/ViewOrderDamages'
 import ViewWarehouseDamages from '@/components/ViewWarehouseDamages'
-import Vuelidate from 'vuelidate'
 
-Vue.use(Vuelidate)
 Vue.use(Router)
 
 export default new Router({
