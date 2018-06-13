@@ -77,7 +77,6 @@ export default {
   },
   methods: {
     logDamages() {
-      console.log(this.damageReport)
       // Add timestamp to report
       this.damageReport.timestamp = Date.now()
 
