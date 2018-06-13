@@ -24,6 +24,7 @@
         label="Order Number"
         id="order-number"
         v-model="damageReport.orderNumber"
+        type="number"
         required
       ></v-text-field>
     </v-flex>
@@ -33,6 +34,7 @@
         label="Order Total"
         id="order-total"
         v-model="damageReport.orderTotal"
+        type="number"
         required
       ></v-text-field>
     </v-flex>
@@ -42,6 +44,7 @@
         label="Shipping Cost"
         id="shipping-cost"
         v-model="damageReport.shippingCost"
+        type="number"
         required
       ></v-text-field>
     </v-flex>
@@ -51,6 +54,7 @@
         label="Shipping Lost"
         id="shipping-lost"
         v-model="damageReport.shippingLost"
+        type="number"
         required
       ></v-text-field>
     </v-flex>
@@ -60,6 +64,7 @@
         label="Items Lost"
         id="items-lost"
         v-model="damageReport.itemsLost"
+        type="number"
         required
       ></v-text-field>
     </v-flex>

@@ -24,6 +24,7 @@
         label="Items Lost"
         id="items-lost"
         v-model="damageReport.itemsLost"
+        type="number"
         required
       ></v-text-field>
     </v-flex>
