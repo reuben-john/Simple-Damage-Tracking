@@ -216,7 +216,25 @@ export default {
       }
       this.close()
     },
+    convertNumbers() {
+      let report = Object.assign(this.editedItem)
+
+      // Convert string to numbers for different fields before adding to database
+      report = Object.assign(report, {
+        orderNumber: parseInt(report.orderNumber),
+        orderTotal: parseFloat(report.orderTotal),
+        shippingCost: parseFloat(report.shippingCost),
+        shippingLost: parseFloat(report.shippingLost),
+        itemCost: parseFloat(report.itemCost),
+        itemsLost: parseInt(report.itemsLost)
+      })
+      return report
+    },
     updateItem(itemId) {
+      // Convert edited numbers to fields
+      let report = Object.assign(this.editedItem)
+      this.editedItem = this.convertNumbers(report)
+
       let damagesRef = db.collection('damages').doc(itemId)
       // fetch data from firestore
       let querty = damagesRef
