@@ -104,7 +104,6 @@ export default {
       // Convert string to numbers for different fields before adding to database
       if (report.damageDept == 'order') {
         report = Object.assign(report, {
-          orderNumber: parseInt(report.orderNumber),
           orderTotal: parseFloat(report.orderTotal),
           shippingCost: parseFloat(report.shippingCost),
           shippingLost: parseFloat(report.shippingLost),
