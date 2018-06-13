@@ -62,8 +62,8 @@
                 <template slot="items" slot-scope="props">
                   <td class="text-xs-left">{{ props.item.timestamp }}</td>
                   <td class="text-xs-left">{{ props.item.itemType }}</td>
-                  <td class="text-xs-left">{{ props.item.itemsLost }}</td>
                   <td class="text-xs-left">{{ props.item.itemCost }}</td>
+                  <td class="text-xs-left">{{ props.item.itemsLost }}</td>
                   <td class="text-xs-left">{{ props.item.reasonLost }}</td>
                   <td class="justify-center layout px-0">
                     <v-btn icon class="mx-0" @click="editItem(props.item)">
