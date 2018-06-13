@@ -10,6 +10,60 @@
                 <h1>View Order Damages</h1>
               </v-flex>
             </v-card-title>
+            <v-dialog v-model="dialog" max-width="500px" v-if="dataDownloaded">
+              <v-card>
+                <v-card-title>
+                  <span class="headline"> Edit Item </span>
+                </v-card-title>
+                <v-card-text>
+                  <v-container grid-list-md>
+                    <v-layout wrap>
+                      <v-flex xs12 sm6 md4>
+                        <v-text-field v-model="editedItem.orderNumber" label="Order Number"></v-text-field>
+                      </v-flex>
+                      <v-flex xs12 sm6 md4>
+                        <v-text-field v-model="editedItem.orderTotal" label="Order Total"></v-text-field>
+                      </v-flex>
+                      <v-flex xs12 sm6 md4>
+                        <v-text-field v-model="editedItem.shippingCost" label="Shipping Cost"></v-text-field>
+                      </v-flex>
+                      <v-flex xs12 sm6 md4>
+                        <v-text-field v-model="editedItem.shippingLost" label="Shipping Lost"></v-text-field>
+                      </v-flex>
+                      <v-flex xs12 sm6 md4>
+                        <v-select
+                          :items="productCosts.types"
+                          v-model="editedItem.itemType"
+                          label="Product Type"
+                          single-line
+                          required
+                        ></v-select>
+                      </v-flex>
+                      <v-flex xs12 sm6 md4>
+                        <v-text-field v-model="editedItem.itemCost" label="Item Cost"></v-text-field>
+                      </v-flex>
+                      <v-flex xs12 sm6 md4>
+                        <v-text-field v-model="editedItem.itemsLost" label="Items Lost"></v-text-field>
+                      </v-flex>
+                      <v-flex xs12 sm6>
+                        <v-select
+                          :items="damageReasons.order.type"
+                          v-model="editedItem.reasonLost"
+                          label="Reason Lost"
+                          single-line
+                          required
+                        ></v-select>
+                      </v-flex>
+                    </v-layout>
+                  </v-container>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="blue darken-1" flat @click.native="close">Cancel</v-btn>
+                  <v-btn color="blue darken-1" flat @click.native="save">Save</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
             <v-card-text v-if="orderDamages">
               <v-data-table
               :headers="orderHeaders"
@@ -26,6 +80,14 @@
                   <td class="text-xs-left">{{ props.item.itemType }}</td>
                   <td class="text-xs-left">{{ props.item.itemsLost }}</td>
                   <td class="text-xs-left">{{ props.item.reasonLost }}</td>
+                  <td class="justify-center layout px-0">
+                    <v-btn icon class="mx-0" @click="editItem(props.item)">
+                      <v-icon color="teal">edit</v-icon>
+                    </v-btn>
+                    <v-btn icon class="mx-0" @click="deleteItem(props.item)">
+                      <v-icon color="pink">delete</v-icon>
+                    </v-btn>
+                  </td>
                 </template>
               </v-data-table>
             </v-card-text>
@@ -44,6 +106,8 @@ export default {
   name: 'ViewOrderDamages',
   data() {
     return {
+      productCosts: null,
+      damageReasons: null,
       orderDamages: null,
       orderHeaders: [
         { text: 'Date', value: 'timestamp' },
@@ -54,30 +118,131 @@ export default {
         { text: 'Item Type', value: 'itemType' },
         { text: 'Items Lost', value: 'itemsLost' },
         { text: 'Reason Lost', value: 'reasonLost' }
-      ]
+      ],
+      dialog: false,
+      editedIndex: -1,
+      editedItem: {
+        orderNumber: 0,
+        orderTotal: 0,
+        shipingCost: 0,
+        shipingLost: 0,
+        itemType: '',
+        itemsLost: 0,
+        itemCost: 0,
+        reasonLost: ''
+      },
+      defaultItem: {
+        orderNumber: 0,
+        orderTotal: 0,
+        shipingCost: 0,
+        shipingLost: 0,
+        itemType: '',
+        itemsLost: 0,
+        itemCost: 0,
+        reasonLost: ''
+      }
+    }
+  },
+  methods: {
+    initialize() {
+      let damagesRef = db.collection('damages').orderBy('timestamp')
+      // fetch data from firestore
+      let querty = damagesRef
+        .where('damageDept', '==', 'order')
+        .get()
+        .then(snapshot => {
+          // Make orderDamages an object to add the damage reports to it
+          this.orderDamages = []
+
+          snapshot.forEach(doc => {
+            let report = doc.data()
+            report.id = doc.id
+            report.value = false
+            report.timestamp = moment(report.timestamp).format('LL')
+            this.orderDamages.push(report)
+          })
+        })
+        .catch(err => {
+          console.log(err)
+        })
+
+      // Get damage reasons from firestore
+      db
+        .collection('appData')
+        .doc('damageReasons')
+        .get()
+        .then(doc => {
+          this.damageReasons = doc.data()
+          this.damageReasons.reasons = Object.keys(this.damageReasons)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+
+      // Get product costs from firestore
+      db
+        .collection('appData')
+        .doc('productCosts')
+        .get()
+        .then(doc => {
+          this.productCosts = doc.data()
+          this.productCosts.types = Object.keys(this.productCosts)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
+    editItem(item) {
+      this.editedIndex = this.orderDamages.indexOf(item)
+      this.editedItem = Object.assign({}, item)
+      this.dialog = true
+    },
+    deleteItem(item) {
+      const index = this.orderDamages.indexOf(item)
+      confirm('Are you sure you want to delete this item?') && this.orderDamages.splice(index, 1)
+    },
+    close() {
+      this.dialog = false
+      setTimeout(() => {
+        this.editedItem = Object.assign({}, this.defaultItem)
+        this.editedIndex = -1
+      }, 300)
+    },
+    save() {
+      if (this.editedIndex > -1) {
+        Object.assign(this.orderDamages[this.editedIndex], this.editedItem)
+        let id = this.orderDamages[this.editedIndex].id
+        this.updateItem(id)
+      }
+      this.close()
+    },
+    updateItem(itemId) {
+      let damagesRef = db.collection('damages').doc(itemId)
+      // fetch data from firestore
+      let querty = damagesRef
+        .update({
+          itemsLost: this.editedItem.itemsLost,
+          itemCost: this.editedItem.itemCost,
+          reasonLost: this.editedItem.reasonLost
+        })
+        .then(console.log('Updated'))
+        .catch(err => {
+          console.log(err)
+        })
+    }
+  },
+  watch: {
+    dialog(val) {
+      val || this.close()
     }
   },
   created() {
-    let damagesRef = db.collection('damages').orderBy('timestamp')
-    // fetch data from firestore
-    let querty = damagesRef
-      .where('damageDept', '==', 'order')
-      .get()
-      .then(snapshot => {
-        // Make orderDamages an object to add the damage reports to it
-        this.orderDamages = []
-
-        snapshot.forEach(doc => {
-          let report = doc.data()
-          report.id = doc.id
-          report.value = false
-          report.timestamp = moment(report.timestamp).format('LL')
-          this.orderDamages.push(report)
-        })
-      })
-      .catch(err => {
-        console.log(err)
-      })
+    this.initialize()
+  },
+  computed: {
+    dataDownloaded() {
+      return this.damageReasons && this.productCosts
+    }
   }
 }
 </script>
