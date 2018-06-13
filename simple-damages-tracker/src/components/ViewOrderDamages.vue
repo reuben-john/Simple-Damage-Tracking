@@ -1,6 +1,28 @@
 <template>
 <div class="view-order-damages">
-  <h2>View Order Damages</h2>
+
+  <v-container text-xs-center>
+      <v-layout row wrap align-center>
+        <v-flex xs12 sm6 offset-sm1 offset-md2>
+          <v-card>
+            <v-card-title primary-title>
+              <v-flex>
+                <h1>View Order Damagest</h1>
+              </v-flex>
+            </v-card-title>
+            <v-card-text v-if="orderDamages">
+              <v-flex
+              v-for="report in orderDamages"
+              :key="report.id"
+              >
+
+                <p>{{report}}</p>
+              </v-flex>
+            </v-card-text>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
 </div>
 </template>
 
@@ -13,7 +35,7 @@ export default {
     return {
       orderDamages: null
     }
-        },
+  },
   created() {
     let damagesRef = db.collection('damages').orderBy('timestamp')
     // fetch data from firestore
