@@ -7,7 +7,7 @@
 
 <template>
     <v-container class="add-damages" text-xs-center fluid fill-height>
-      <v-layout row wrap align-center>
+      <v-layout row wrap align-center justify-center>
         <v-flex xs12 sm6>
           <v-card class="elevation-12">
             <v-card-title primary-title>
@@ -19,9 +19,9 @@
               <v-form v-if="dataDownloaded">
                 <h4>What type of damage do you wish to log?</h4>
                 <v-radio-group
-                v-model="damageReport.damageDept">
-                  <v-layout row wrap>
-                      <v-flex xs12 sm6
+                v-model="damageReport.damageDept" >
+                  <v-layout row wrap >
+                      <v-flex xs12 sm6 align-center justify-center
                       v-for="(reason, index) in damageReasons.reasons"
                       :key="index">
                         <v-radio
