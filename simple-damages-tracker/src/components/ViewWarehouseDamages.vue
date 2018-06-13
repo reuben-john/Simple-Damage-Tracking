@@ -97,6 +97,12 @@ export default {
         itemsLost: 0,
         itemCost: 0,
         reasonLost: 0
+      },
+      defaultItem: {
+        itemType: '',
+        itemsLost: 0,
+        itemCost: 0,
+        reasonLost: 0
       }
     }
   },
@@ -131,7 +137,6 @@ export default {
     editItem(item) {
       this.editedIndex = this.warehouseDamages.indexOf(item)
       this.editedItem = Object.assign({}, item)
-      console.log(this.editedItem)
       this.dialog = true
     },
     deleteItem(item) {
@@ -148,9 +153,24 @@ export default {
     save() {
       if (this.editedIndex > -1) {
         Object.assign(this.warehouseDamages[this.editedIndex], this.editedItem)
-        console.log(this.warehouseDamages[this.editedIndex])
+        let id = this.warehouseDamages[this.editedIndex].id
+        this.updateItem(id)
       }
       this.close()
+    },
+    updateItem(itemId) {
+      let damagesRef = db.collection('damages').doc(itemId)
+      // fetch data from firestore
+      let querty = damagesRef
+        .update({
+          itemsLost: this.editedItem.itemsLost,
+          itemCost: this.editedItem.itemCost,
+          reasonLost: this.editedItem.reasonLost
+        })
+        .then(console.log('Updated'))
+        .catch(err => {
+          console.log(err)
+        })
     }
   }
 }
