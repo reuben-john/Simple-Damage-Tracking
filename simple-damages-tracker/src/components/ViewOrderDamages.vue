@@ -146,7 +146,7 @@ export default {
   methods: {
     tallyNewTotals() {
       let damagesRef = db.collection('damages')
-      let ordereTally = 0
+      let orderTally = 0
       let shippingTally = 0
 
       // Tally order totals
@@ -221,9 +221,23 @@ export default {
       this.editedItem = Object.assign({}, item)
       this.dialog = true
     },
+    deleteFromDB(itemId) {
+      let damagesRef = db.collection('damages').doc(itemId)
+      // fetch data from firestore
+      let querty = damagesRef
+        .delete()
+        .then(console.log('Deleted'))
+        .catch(err => {
+          console.log(err)
+        })
+    },
     deleteItem(item) {
       const index = this.orderDamages.indexOf(item)
-      confirm('Are you sure you want to delete this item?') && this.orderDamages.splice(index, 1)
+      let id = this.orderDamages[index].id
+      confirm('Are you sure you want to delete this item?') &&
+        (this.orderDamages.splice(index, 1), this.deleteFromDB(id))
+
+      this.tallyNewTotals()
     },
     close() {
       this.dialog = false
