@@ -18,7 +18,7 @@
             </v-card-title>
             <v-form>
 
-              <v-card-text v-if="damageReasons">
+              <v-card-text v-if="dataDownloaded">
                 <h4>What type of damage do you wish to log?</h4>
                 <v-radio-group
                 v-model="damageReport.damageDept">
@@ -42,7 +42,7 @@
                     <warehouse-damages-form :damageReasons="damageReasons" :damageReport="damageReport" :productCosts="productCosts"></warehouse-damages-form>
                 </v-layout>
               </v-card-text>
-              <v-btn
+              <v-btn v-if="dataDownloaded"
                 @click="logDamages"
               >
               Log Damages
@@ -127,6 +127,11 @@ export default {
   },
   created() {
     this.initialize()
+  },
+  computed: {
+    dataDownloaded() {
+      return this.damageReasons && this.productCosts
+    }
   }
 }
 </script>
