@@ -7,7 +7,7 @@
           <v-card>
             <v-card-title primary-title>
               <v-flex>
-                <h1>View Order Damagest</h1>
+                <h1>View Order Damages</h1>
               </v-flex>
             </v-card-title>
             <v-card-text v-if="orderDamages">
@@ -31,7 +31,7 @@
               <v-flex
               v-for="report in orderDamages"
               :key="report.id"
-              >
+              @click="editDamage">
 
               </v-flex>
             </v-card-text>
