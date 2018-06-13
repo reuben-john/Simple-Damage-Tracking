@@ -221,6 +221,11 @@ export default {
       // fetch data from firestore
       let querty = damagesRef
         .update({
+          orderNumber: this.editedItem.orderNumber,
+          orderTotal: this.editedItem.orderTotal,
+          shippingCost: this.editedItem.shippingCost,
+          shippingLost: this.editedItem.shippingLost,
+          itemType: this.editedItem.itemType,
           itemsLost: this.editedItem.itemsLost,
           itemCost: this.editedItem.itemCost,
           reasonLost: this.editedItem.reasonLost
