@@ -43,16 +43,14 @@
                 </v-layout>
               </v-card-text>
               <v-btn
-                @click="submit"
+                @click="logDamages"
               >
-              Submit
+              Log Damages
             </v-btn>
             </v-form>
           </v-card>
-        <p><b>Current Damage Report</b>: {{ damageReport }}</p>
         </v-flex>
       </v-layout>
-      {{ productCosts }}
     </v-container>
   </div>
 </template>
@@ -78,10 +76,7 @@ export default {
     }
   },
   methods: {
-    addDamages() {
-      return {}
-    },
-    submit() {
+    logDamages() {
       console.log(this.damageReport)
       // Add timestamp to report
       this.damageReport.timestamp = Date.now()
