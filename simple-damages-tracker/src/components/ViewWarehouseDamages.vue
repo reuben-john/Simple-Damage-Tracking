@@ -82,6 +82,7 @@
           </v-card>
         </v-flex>
       </v-layout>
+      <v-btn @click="tallyNewTotals">tally</v-btn>
     </v-container>
 </div>
 </template>
@@ -129,10 +130,30 @@ export default {
     this.initialize()
   },
   methods: {
+    tallyNewTotals() {
+      let damagesRef = db.collection('damages')
+      let warehouseTally = 0
+      let orderTally = 0
+
+      // Tally warehouse totals
+      let warehouseQuery = damagesRef
+        .where('damageDept', '==', 'warehouse')
+        .get()
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            let cost = doc.data().itemCost
+            let numLost = doc.data().itemsLost
+            warehouseTally += cost * numLost
+          })
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
     initialize() {
       let damagesRef = db.collection('damages').orderBy('timestamp')
       // fetch data from firestore
-      let querty = damagesRef
+      let query = damagesRef
         .where('damageDept', '==', 'warehouse')
         .get()
         .then(snapshot => {
@@ -224,6 +245,8 @@ export default {
         .catch(err => {
           console.log(err)
         })
+
+      this.tallyNewTotals()
     }
   },
   computed: {
