@@ -96,34 +96,37 @@ export default {
           this.$router.push({ name: 'Index' })
         })
         .catch(err => console.log(err))
+    },
+    initialize() {
+      // Get damage reasons from firestore
+      db
+        .collection('appData')
+        .doc('damageReasons')
+        .get()
+        .then(doc => {
+          this.damageReasons = doc.data()
+          this.damageReasons.reasons = Object.keys(this.damageReasons)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+
+      // Get product costs from firestore
+      db
+        .collection('appData')
+        .doc('productCosts')
+        .get()
+        .then(doc => {
+          this.productCosts = doc.data()
+          this.productCosts.types = Object.keys(this.productCosts)
+        })
+        .catch(err => {
+          console.log(err)
+        })
     }
   },
   created() {
-    // Get damage reasons from firestore
-    db
-      .collection('appData')
-      .doc('damageReasons')
-      .get()
-      .then(doc => {
-        this.damageReasons = doc.data()
-        this.damageReasons.reasons = Object.keys(this.damageReasons)
-      })
-      .catch(err => {
-        console.log(err)
-      })
-
-    // Get product costs from firestore
-    db
-      .collection('appData')
-      .doc('productCosts')
-      .get()
-      .then(doc => {
-        this.productCosts = doc.data()
-        this.productCosts.types = Object.keys(this.productCosts)
-      })
-      .catch(err => {
-        console.log(err)
-      })
+    this.initialize()
   }
 }
 </script>
