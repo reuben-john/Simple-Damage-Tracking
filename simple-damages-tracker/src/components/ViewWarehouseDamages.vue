@@ -5,7 +5,7 @@
           <v-card>
             <v-card-title primary-title>
               <v-flex>
-                <h1>View warehouse Damages</h1>
+                <h1>Warehouse Damages</h1>
               </v-flex>
             </v-card-title>
             <v-card-text>

@@ -5,7 +5,7 @@
           <v-card>
             <v-card-title primary-title>
               <v-flex>
-                <h1>View Order Damages</h1>
+                <h1>Order Damages</h1>
               </v-flex>
             </v-card-title>
             <v-dialog v-model="dialog" max-width="500px" v-if="dataDownloaded">
