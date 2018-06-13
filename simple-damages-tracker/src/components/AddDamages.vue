@@ -111,6 +111,7 @@ export default {
           itemsLost: parseInt(report.itemsLost)
         })
       }
+      return report
     },
     initialize() {
       // Get damage reasons from firestore
