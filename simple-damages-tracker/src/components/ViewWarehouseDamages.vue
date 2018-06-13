@@ -132,7 +132,6 @@ export default {
   methods: {
     tallyNewTotals() {
       let damagesRef = db.collection('damages')
-      let warehouseTally = 0
       let orderTally = 0
 
       // Tally warehouse totals
