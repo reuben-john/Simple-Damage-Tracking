@@ -88,10 +88,27 @@ export default {
         this.damageReport.itemCost = this.productCosts[this.damageReport.itemType].itemCost
       }
 
+      let report = Object.assign(this.damageReport)
+
+      // Convert string to numbers for different fields before adding to database
+      if (report.damageDept == 'order') {
+        report = Object.assign(report, {
+          orderNumber: parseInt(report.orderNumber),
+          orderTotal: parseFloat(report.orderTotal),
+          shippingCost: parseFloat(report.shippingCost),
+          shippingLost: parseFloat(report.shippingLost),
+          itemsLost: parseInt(report.itemsLost)
+        })
+      } else if (report.damageDept == 'warehouse') {
+        report = Object.assign(report, {
+          itemsLost: parseInt(report.itemsLost)
+        })
+      }
+
       // Send damage report to database
       db
         .collection('damages')
-        .add(this.damageReport)
+        .add(report)
         .then(() => {
           this.$router.push({ name: 'Index' })
         })
