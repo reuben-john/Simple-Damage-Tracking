@@ -1,10 +1,12 @@
-# simple-damages-tracker
+# Simple Damages Tracker
 
-> A Vue.js project
+> A Vue app for tracking shipping and warehouse damages
+
+This app is built using Vue. It uses Vuetify for a css framework and vue-router to handle routing. It uses firestore for a database.
 
 ## Build Setup
 
-``` bash
+```bash
 # install dependencies
 npm install
 
