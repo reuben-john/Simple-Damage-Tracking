@@ -74,4 +74,8 @@ export default {
   color: black;
   text-decoration: none;
 }
+.index a:hover {
+  color: #4676c4;
+
+}
 </style>
