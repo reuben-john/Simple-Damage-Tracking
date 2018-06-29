@@ -43,25 +43,29 @@ export default {
     return {
       editReasons: false,
       editCosts: false,
-      damageReasons: null,
-      productCosts: null
+      damageReasons: [],
+      productCosts: []
     }
   },
   created() {
     // fetch data from firestore
-    let ref = db.collection('appData')
-    ref
-      .doc('productCosts')
+    db
+      .collection('productCosts')
       .get()
-      .then(costs => {
-        this.productCosts = costs.data()
+      .then(snapshot => {
+        snapshot.forEach(doc => {
+          this.productCosts.push(doc.data())
+        })
       })
       .catch(err => console.log(err))
-    ref
-      .doc('damageReasons')
+
+    db
+      .collection('damageReasons')
       .get()
-      .then(reasons => {
-        this.damageReasons = reasons.data()
+      .then(snapshot => {
+        snapshot.forEach(doc => {
+          this.damageReasons.push(doc.data())
+        })
       })
       .catch(err => console.log(err))
   }
