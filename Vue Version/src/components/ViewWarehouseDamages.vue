@@ -91,9 +91,7 @@ export default {
   name: 'ViewWarehouseDamages',
   data() {
     return {
-      // productCosts: null,
       productCosts: [],
-      // damageReasons: null,
       damageReasons: null,
       costsLoaded: false,
       reasonsLoaded: false,
@@ -184,6 +182,7 @@ export default {
           console.log(err)
         })
 
+      // Get product costs from firestore
       db
         .collection('productCosts')
         .get()
@@ -195,6 +194,7 @@ export default {
         })
         .catch(err => console.log(err))
 
+      // Get damage reasons from firestore
       db
         .collection('damageReasons')
         .doc('warehouse')
