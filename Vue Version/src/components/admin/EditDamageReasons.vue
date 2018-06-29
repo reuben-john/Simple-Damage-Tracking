@@ -113,9 +113,6 @@ export default {
     orderReasons() {
       return this.damageReasons.order.reasons
     }
-  },
-  created() {
-    this.formatTableData()
   }
 }
 </script>
