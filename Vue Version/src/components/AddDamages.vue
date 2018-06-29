@@ -22,12 +22,12 @@
                 v-model="damageReport.damageDept" >
                   <v-layout row wrap >
                       <v-flex xs12 sm6 align-center justify-center
-                      v-for="(reason, index) in damageReasons.reasons"
+                      v-for="(reason, index) in damageReasons"
                       :key="index">
                         <v-radio
-                          :key="reason"
-                          :label="`${reason} damage report`"
-                          :value="reason"
+                          :key="reason.department"
+                          :label="`${reason.department} damage report`"
+                          :value="reason.id"
                         ></v-radio>
                       </v-flex>
                         <h2>{{damageDept}}</h2>
@@ -66,16 +66,107 @@ export default {
   data() {
     return {
       appData: {},
-      productCosts: null,
-      damageReasons: null,
+      productCosts: {},
+      damageReasons: {},
       damageDept: null,
-      damageReport: {}
+      damageReport: {},
+      costsLoaded: false,
+      damagesLoaded: false
     }
   },
   methods: {
+    tallyNewTotals() {
+      if (this.damageReport.damageDept == 'order') {
+        this.tallyNewOrderTotals()
+      } else if (this.damageReport.damageDept == 'warehouse') {
+        this.tallyNewWarehouseTotals()
+      }
+    },
+    updateOrderTally(orderTally, shippingTally) {
+      // fetch data from firestore
+      db
+        .collection('totalLosses')
+        .doc('order')
+        .set(
+          {
+            total: orderTally + shippingTally,
+            itemTotal: orderTally,
+            shipTotal: shippingTally
+          },
+          { merge: true }
+        )
+        .then(console.log('Updated'))
+        .catch(err => {
+          console.log(err)
+        })
+    },
+    tallyNewOrderTotals() {
+      let damagesRef = db.collection('damages')
+      let orderTally = 0
+      let shippingTally = 0
+
+      // Tally order totals
+      let orderQuery = damagesRef
+        .where('damageDept', '==', 'order')
+        .get()
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            let cost = doc.data().itemCost
+            let numLost = doc.data().itemsLost
+            let shipCost = doc.data().shippingCost
+            let shipLost = doc.data().shippingLost
+            shippingTally += shipLost
+            orderTally += cost * numLost
+          })
+          console.log(orderTally, shippingTally)
+          this.updateOrderTally(orderTally, shippingTally)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
+    updateWarehouseTally(tally) {
+      // fetch data from firestore
+      db
+        .collection('totalLosses')
+        .doc('warehouse')
+        .set(
+          {
+            total: tally
+          },
+          { merge: true }
+        )
+        .then(console.log('Updated'))
+        .catch(err => {
+          console.log(err)
+        })
+    },
+    tallyNewWarehouseTotals() {
+      let damagesRef = db.collection('damages')
+      let warehouseTally = 0
+      // Tally warehouse totals
+      let warehouseQuery = damagesRef
+        .where('damageDept', '==', 'warehouse')
+        .get()
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            let cost = doc.data().itemCost
+            let numLost = doc.data().itemsLost
+            warehouseTally += cost * numLost
+          })
+          this.updateWarehouseTally(warehouseTally)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
     logDamages() {
       // Add timestamp to report
       this.damageReport.timestamp = Date.now()
+
+      // Convert itemType to lowercase to allow product costs to pull the correct numbers
+      let itemType = this.damageReport.itemType
+      this.damageReport.itemType = itemType.toLowerCase()
 
       // Pull product cost for a box loss if damage report is for bad box
       // Otherwise default to individual item cost
@@ -96,6 +187,7 @@ export default {
           this.$router.push({ name: 'Index' })
         })
         .catch(err => console.log(err))
+      this.tallyNewTotals()
     },
     convertNumbers(report) {
       // Convert string to numbers for different fields before adding to database
@@ -116,29 +208,33 @@ export default {
     initialize() {
       // Get damage reasons from firestore
       db
-        .collection('appData')
-        .doc('damageReasons')
+        .collection('damageReasons')
         .get()
-        .then(doc => {
-          this.damageReasons = doc.data()
-          this.damageReasons.reasons = Object.keys(this.damageReasons)
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            let report = doc.data()
+            report.id = doc.id
+            this.damageReasons[doc.id] = report
+          })
+          this.damagesLoaded = true
         })
-        .catch(err => {
-          console.log(err)
-        })
+        .catch(err => console.log(err))
 
       // Get product costs from firestore
+      this.productCosts.types = []
       db
-        .collection('appData')
-        .doc('productCosts')
+        .collection('productCosts')
         .get()
-        .then(doc => {
-          this.productCosts = doc.data()
-          this.productCosts.types = Object.keys(this.productCosts)
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            let report = doc.data()
+            report.id = doc.id
+            this.productCosts[doc.id] = report
+            this.productCosts.types.push(doc.data().name)
+          })
+          this.costsLoaded = true
         })
-        .catch(err => {
-          console.log(err)
-        })
+        .catch(err => console.log(err))
     }
   },
   created() {
@@ -146,7 +242,7 @@ export default {
   },
   computed: {
     dataDownloaded() {
-      return this.damageReasons && this.productCosts
+      return this.damagesLoaded && this.costsLoaded
     }
   }
 }
