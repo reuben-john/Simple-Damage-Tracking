@@ -8,6 +8,8 @@
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items>
+        <v-btn flat class="white--text" :to="{ name: 'ViewAdmin' }">Admin</v-btn>
+        <v-btn flat class="white--text" :to="{ name: 'Login' }">Login</v-btn>
         <v-btn class="add" fab top right large color="pink white--text" :to="{ name: 'AddDamages' }">
           <v-icon>add</v-icon>
         </v-btn>
