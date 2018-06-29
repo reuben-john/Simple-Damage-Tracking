@@ -98,7 +98,8 @@ export default {
     },
     deleteItem(item) {
       const index = this.testReasons.indexOf(item)
-      confirm('Are you sure you want to delete this item?')
+      let id = this.testReasons[index].id
+      confirm('Are you sure you want to delete this item?') && this.testReasons.splice(index, 1)
     },
     close() {
       this.dialog = false
