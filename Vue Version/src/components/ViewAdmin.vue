@@ -19,8 +19,8 @@
             </v-layout>
           </v-card-text>
           <v-card-text>
-            <edit-damage-reasons v-if="editReasons"></edit-damage-reasons>
-            <edit-product-costs v-if="editCosts"></edit-product-costs>
+            <edit-damage-reasons v-if="editReasons" :damageReasons="damageReasons"></edit-damage-reasons>
+            <edit-product-costs v-if="editCosts" :productCosts="productCosts"></edit-product-costs>
           </v-card-text>
         </v-card>
       </v-flex>
@@ -32,7 +32,7 @@
 <script>
 import EditDamageReasons from '@/components/EditDamageReasons'
 import EditProductCosts from '@/components/EditProductCosts'
-
+import db from '@/firebase/init'
 export default {
   name: 'ViewAdmin',
   components: {
@@ -42,8 +42,28 @@ export default {
   data() {
     return {
       editReasons: false,
-      editCosts: false
+      editCosts: false,
+      damageReasons: null,
+      productCosts: null
     }
+  },
+  created() {
+    // fetch data from firestore
+    let ref = db.collection('appData')
+    ref
+      .doc('productCosts')
+      .get()
+      .then(costs => {
+        this.productCosts = costs.data()
+      })
+      .catch(err => console.log(err))
+    ref
+      .doc('damageReasons')
+      .get()
+      .then(reasons => {
+        this.damageReasons = reasons.data()
+      })
+      .catch(err => console.log(err))
   }
 }
 </script>
