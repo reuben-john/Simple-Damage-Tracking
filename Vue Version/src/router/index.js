@@ -9,6 +9,7 @@ import ViewAdmin from '@/components/admin/ViewAdmin'
 Vue.use(Router)
 
 export default new Router({
+  mode: 'history',
   routes: [
     {
       path: '/',
