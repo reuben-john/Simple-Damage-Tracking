@@ -119,7 +119,8 @@ export default {
 
       // Convert string to numbers for different fields before adding to database
       report = Object.assign(report, {
-        test: 'test'
+        boxCost: parseFloat(report.boxCost),
+        itemCost: parseFloat(report.itemCost)
       })
       return report
     }
