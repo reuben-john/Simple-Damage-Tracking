@@ -1,6 +1,33 @@
 <template>
         <v-card>
           <v-card-text>
+            <v-dialog v-model="dialog" max-width="500px">
+              <v-card>
+                <v-card-title>
+                  <span class="headline"> Edit Item </span>
+                </v-card-title>
+                <v-card-text>
+                  <v-container grid-list-md>
+                    <v-layout wrap>
+                      <v-flex xs12 sm6 md4>
+                        <v-text-field v-model="editedItem.name" label="Category Name"></v-text-field>
+                      </v-flex>
+                      <v-flex xs12 sm6 md4>
+                        <v-text-field v-model="editedItem.boxCost" label="Box Cost"></v-text-field>
+                      </v-flex>
+                      <v-flex xs12 sm6 md4>
+                        <v-text-field v-model="editedItem.itemCost" label="Item Cost"></v-text-field>
+                      </v-flex>
+                    </v-layout>
+                  </v-container>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="blue darken-1" flat @click.native="close">Cancel</v-btn>
+                  <v-btn color="blue darken-1" flat @click.native="save">Save</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
             <v-layout row wrap justify-space-around>
               <v-flex xs12 sm8 >
                 <v-data-table
@@ -44,51 +71,62 @@ export default {
         { text: 'Box Cost', value: 'boxCost' },
         { text: 'Item Cost', value: 'itemCost' }
       ],
-      testReasons: [{ name: 'General', boxCost: 25, itemCost: 1 }, { name: 'Makeup', boxCost: 40, itemCost: 0.25 }]
+      testReasons: [{ name: 'General', boxCost: 25, itemCost: 1 }, { name: 'Makeup', boxCost: 40, itemCost: 0.25 }],
+      dialog: false,
+      editedIndex: -1,
+      editedItem: {
+        name: '',
+        boxCost: 0,
+        itemCost: 0
+      },
+      defaultItem: {
+        name: '',
+        boxCost: 0,
+        itemCost: 0
+      }
     }
   },
   methods: {
     initialize() {},
-    edit() {},
-    delete() {}
-  },
-  updateReason() {
-    let reasons = this.damageReasons[this.department].reasons
-    let index = reasons.indexOf(this.reason)
-    reasons[index] = this.updatedReason
-    this.damageReasons[this.department].reasons = reasons
+    editItem(item) {
+      this.editedIndex = this.testReasons.indexOf(item)
+      this.editedItem = Object.assign({}, item)
+      this.dialog = true
+    },
+    deleteFromDB(itemId) {
+      console.log(itemID)
+    },
+    deleteItem(item) {
+      const index = this.testReasons.indexOf(item)
+      confirm('Are you sure you want to delete this item?')
+    },
+    close() {
+      this.dialog = false
+      setTimeout(() => {
+        this.editedItem = Object.assign({}, this.defaultItem)
+        this.editedIndex = -1
+      }, 300)
+    },
+    save() {
+      if (this.editedIndex > -1) {
+        Object.assign(this.testReasons[this.editedIndex], this.editedItem)
+      }
+      this.close()
+    },
+    convertNumbers() {
+      let report = Object.assign(this.editedItem)
 
-    // update database
-    db
-      .collection('damageReasons')
-      .doc(this.department)
-      .set(
-        {
-          test: reasons
-        },
-        { merge: true }
-      )
-      .then(console.log('Updated'))
-      .catch(err => console.log)
+      // Convert string to numbers for different fields before adding to database
+      report = Object.assign(report, {
+        test: 'test'
+      })
+      return report
+    }
   },
-  deleteReason() {
-    let reasons = this.damageReasons.order.reasons
-    let index = reasons.indexOf(this.reason)
-    reasons.splice(index, 1)
-    this.damageReasons.order.reasons = reasons
-
-    // update database
-    db
-      .collection('damageReasons')
-      .doc(this.department)
-      .set(
-        {
-          test: reasons
-        },
-        { merge: true }
-      )
-      .then(console.log('Deleted'))
-      .catch(err => console.log)
+  watch: {
+    dialog(val) {
+      val || this.close()
+    }
   }
 }
 </script>
