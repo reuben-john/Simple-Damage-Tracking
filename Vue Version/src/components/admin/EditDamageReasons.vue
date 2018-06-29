@@ -36,59 +36,6 @@
                 </v-layout>
               </v-container>
           </v-card-text>
-          <v-card-text>
-            <v-layout row wrap justify-space-around>
-              <v-flex xs12 sm5 >
-                <v-data-table
-                  :headers="reasonHeaders"
-                  :items="tableFormated.order"
-                  hide-actions
-                  class="elevation-1"
-                  >
-                  <template slot="items" slot-scope="props">
-                    <td class="text-xs-left">Order</td>
-                    <td class="text-xs-left">{{ props.item.reasons }}</td>
-                    <td class="justify-center layout px-0">
-                      <v-btn icon class="mx-0" @click="editItem(props.item)">
-                        <v-icon color="teal">edit</v-icon>
-                      </v-btn>
-                      <v-btn icon class="mx-0" @click="deleteItem(props.item)">
-                        <v-icon color="pink">delete</v-icon>
-                      </v-btn>
-                    </td>
-                  </template>
-                  <template slot="no-data">
-                    <v-btn color="primary" @click="initialize">Reset</v-btn>
-                  </template>
-                </v-data-table>
-              </v-flex>
-              <v-flex xs12 sm5>
-                <v-data-table
-                  :headers="reasonHeaders"
-                  :items="tableFormated.warehouse"
-                  hide-actions
-                  class="elevation-1"
-                  >
-                  <template slot="items" slot-scope="props">
-                    <td class="text-xs-left">Warehouse</td>
-                    <td class="text-xs-left">{{ props.item.reasons }}</td>
-                    <td class="justify-center layout px-0">
-                      <v-btn icon class="mx-0" @click="editItem(props.item)">
-                        <v-icon color="teal">edit</v-icon>
-                      </v-btn>
-                      <v-btn icon class="mx-0" @click="deleteItem(props.item)">
-                        <v-icon color="pink">delete</v-icon>
-                      </v-btn>
-                    </td>
-                  </template>
-                  <template slot="no-data">
-                    <v-btn color="primary" @click="initialize">Reset</v-btn>
-                  </template>
-                </v-data-table>
-              </v-flex>
-            </v-layout>
-
-          </v-card-text>
           <v-card-actions>
             <v-layout wrap justify-center align-center>
               <v-flex xs12 >
@@ -119,32 +66,10 @@ export default {
     return {
       department: '',
       reason: '',
-      updatedReason: '',
-      reasonHeaders: [{ text: 'Department', value: 'department' }, { text: 'Reason', value: 'reasons' }],
-      testReasons: [{ department: 'Order', reasons: 'Bad Product' }, { department: 'Warehouse', reasons: 'Bad Box' }],
-      tableFormated: {
-        order: [],
-        warehouse: []
-      }
+      updatedReason: ''
     }
   },
   methods: {
-    formatTableData() {
-      let orderReasons = this.damageReasons.order.reasons
-      let warehouseReasons = this.damageReasons.warehouse.reasons
-      console.log(warehouseReasons)
-
-      orderReasons.forEach(reason => {
-        this.tableFormated.order.push({ department: this.damageReasons.order.department, reasons: reason })
-      })
-
-      warehouseReasons.forEach(reason => {
-        this.tableFormated.warehouse.push({
-          department: this.damageReasons.warehouse.department,
-          reasons: reason
-        })
-      })
-    },
     updateReason() {
       let reasons = this.damageReasons[this.department].reasons
       let index = reasons.indexOf(this.reason)
@@ -182,10 +107,7 @@ export default {
         )
         .then(console.log('Deleted'))
         .catch(err => console.log)
-    },
-    deleteItem() {},
-    editItem() {},
-    initialize() {}
+    }
   },
   computed: {
     orderReasons() {
