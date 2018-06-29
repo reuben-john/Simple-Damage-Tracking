@@ -175,10 +175,10 @@ export default {
     deleteReason() {
       let reasons = this.damageReasons.order.reasons
       let index = reasons.indexOf(this.reason)
-      reasons.splice(index, 1)
-      this.damageReasons.order.reasons = reasons
-
-      this.updateDatabase(reasons, this.department)
+      confirm('Are you sure you want to delete this item?') &&
+        (reasons.splice(index, 1),
+        (this.damageReasons.order.reasons = reasons),
+        this.updateDatabase(reasons, this.department))
       this.clearfields()
     }
   }
