@@ -54,8 +54,8 @@
 
 <script>
 import db from '@/firebase/init'
-import OrderDamagesForm from '@/components/OrderDamagesForm'
-import WarehouseDamagesForm from '@/components/WarehouseDamagesForm'
+import OrderDamagesForm from '@/components/add-damages/OrderDamagesForm'
+import WarehouseDamagesForm from '@/components/add-damages/WarehouseDamagesForm'
 
 export default {
   name: 'AddDamages',

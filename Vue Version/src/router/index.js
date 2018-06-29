@@ -1,10 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Index from '@/components/Index'
-import AddDamages from '@/components/AddDamages'
-import ViewOrderDamages from '@/components/ViewOrderDamages'
-import ViewWarehouseDamages from '@/components/ViewWarehouseDamages'
-import ViewAdmin from '@/components/ViewAdmin'
+import AddDamages from '@/components/add-damages/AddDamages'
+import ViewOrderDamages from '@/components/view-damages/ViewOrderDamages'
+import ViewWarehouseDamages from '@/components/view-damages/ViewWarehouseDamages'
+import ViewAdmin from '@/components/admin/ViewAdmin'
 
 Vue.use(Router)
 

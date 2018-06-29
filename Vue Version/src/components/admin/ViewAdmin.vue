@@ -30,8 +30,8 @@
 </template>
 
 <script>
-import EditDamageReasons from '@/components/EditDamageReasons'
-import EditProductCosts from '@/components/EditProductCosts'
+import EditDamageReasons from '@/components/admin/EditDamageReasons'
+import EditProductCosts from '@/components/admin/EditProductCosts'
 import db from '@/firebase/init'
 export default {
   name: 'ViewAdmin',
