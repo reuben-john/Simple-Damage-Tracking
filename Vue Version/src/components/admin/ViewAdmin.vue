@@ -43,7 +43,7 @@ export default {
     return {
       editReasons: false,
       editCosts: false,
-      damageReasons: [],
+      damageReasons: {},
       productCosts: []
     }
   },
@@ -59,13 +59,16 @@ export default {
       })
       .catch(err => console.log(err))
 
+    this.damageReasons.departments = []
     db
       .collection('damageReasons')
       .get()
       .then(snapshot => {
         snapshot.forEach(doc => {
-          this.damageReasons.push(doc.data())
+          this.damageReasons[doc.id] = doc.data()
+          this.damageReasons.departments.push(doc.id)
         })
+        console.log(this.damageReasons)
       })
       .catch(err => console.log(err))
   }
