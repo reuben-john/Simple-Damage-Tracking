@@ -65,7 +65,6 @@ export default {
   },
   data() {
     return {
-      appData: {},
       productCosts: {},
       damageReasons: {},
       damageDept: null,
