@@ -79,6 +79,10 @@ export default {
       // Add timestamp to report
       this.damageReport.timestamp = Date.now()
 
+      // Convert itemType to lowercase to allow product costs to pull the correct numbers
+      let itemType = this.damageReport.itemType
+      this.damageReport.itemType = itemType.toLowerCase()
+
       // Pull product cost for a box loss if damage report is for bad box
       // Otherwise default to individual item cost
       if (this.damageReport.reasonLost == 'Bad Box') {
@@ -140,7 +144,7 @@ export default {
             let report = doc.data()
             report.id = doc.id
             this.productCosts[doc.id] = report
-            this.productCosts.types.push(doc.id)
+            this.productCosts.types.push(doc.data().name)
           })
           this.costsLoaded = true
         })
