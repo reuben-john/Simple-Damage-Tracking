@@ -5,6 +5,7 @@ import AddDamages from '@/components/add-damages/AddDamages'
 import ViewOrderDamages from '@/components/view-damages/ViewOrderDamages'
 import ViewWarehouseDamages from '@/components/view-damages/ViewWarehouseDamages'
 import ViewAdmin from '@/components/admin/ViewAdmin'
+import Login from '@/components/Login'
 
 Vue.use(Router)
 
@@ -35,6 +36,11 @@ export default new Router({
       path: '/admin',
       name: 'ViewAdmin',
       component: ViewAdmin
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: Login
     }
   ]
 })
