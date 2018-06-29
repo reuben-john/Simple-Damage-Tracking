@@ -22,12 +22,12 @@
                 v-model="damageReport.damageDept" >
                   <v-layout row wrap >
                       <v-flex xs12 sm6 align-center justify-center
-                      v-for="(reason, index) in damageReasons.reasons"
+                      v-for="(reason, index) in damageReasons"
                       :key="index">
                         <v-radio
-                          :key="reason"
-                          :label="`${reason} damage report`"
-                          :value="reason"
+                          :key="reason.department"
+                          :label="`${reason.department} damage report`"
+                          :value="reason.id"
                         ></v-radio>
                       </v-flex>
                         <h2>{{damageDept}}</h2>
@@ -66,10 +66,12 @@ export default {
   data() {
     return {
       appData: {},
-      productCosts: null,
-      damageReasons: null,
+      productCosts: {},
+      damageReasons: {},
       damageDept: null,
-      damageReport: {}
+      damageReport: {},
+      costsLoaded: false,
+      damagesLoaded: false
     }
   },
   methods: {
@@ -116,29 +118,33 @@ export default {
     initialize() {
       // Get damage reasons from firestore
       db
-        .collection('appData')
-        .doc('damageReasons')
+        .collection('damageReasons')
         .get()
-        .then(doc => {
-          this.damageReasons = doc.data()
-          this.damageReasons.reasons = Object.keys(this.damageReasons)
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            let report = doc.data()
+            report.id = doc.id
+            this.damageReasons[doc.id] = report
+          })
+          this.damagesLoaded = true
         })
-        .catch(err => {
-          console.log(err)
-        })
+        .catch(err => console.log(err))
 
       // Get product costs from firestore
+      this.productCosts.types = []
       db
-        .collection('appData')
-        .doc('productCosts')
+        .collection('productCosts')
         .get()
-        .then(doc => {
-          this.productCosts = doc.data()
-          this.productCosts.types = Object.keys(this.productCosts)
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            let report = doc.data()
+            report.id = doc.id
+            this.productCosts[doc.id] = report
+            this.productCosts.types.push(doc.id)
+          })
+          this.costsLoaded = true
         })
-        .catch(err => {
-          console.log(err)
-        })
+        .catch(err => console.log(err))
     }
   },
   created() {
@@ -146,7 +152,7 @@ export default {
   },
   computed: {
     dataDownloaded() {
-      return this.damageReasons && this.productCosts
+      return this.damagesLoaded && this.costsLoaded
     }
   }
 }

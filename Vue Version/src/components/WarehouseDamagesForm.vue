@@ -2,7 +2,7 @@
   <v-layout row wrap justify-center  class="warehouse-damages-form">
     <v-flex xs8 sm4 mx-4>
       <v-select
-        :items="damageReasons.warehouse.type"
+        :items="damageReasons.warehouse.reasons"
         v-model="damageReport.reasonLost"
         label="Damage Type"
         single-line
