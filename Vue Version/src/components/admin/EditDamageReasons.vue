@@ -1,59 +1,121 @@
 <template>
+  <v-layout column>
+    <v-flex xs12 sm6>
+      <v-card>
+        <v-container fluid grid-list-md>
+          <v-layout row wrap>
+            <v-flex xs-6>
+              <v-card>
+                <v-card-title primary-title>
+                    <v-flex align-center>
+                    <h2>Edit or Delete Reason</h2>
+                    </v-flex>
+                </v-card-title>
 
-        <v-card>
-          <v-card-title primary-title>
-            <v-flex>
-              <h2>Damage Reasons</h2>
+                  <v-container fill-height fluid pa-2 >
+                    <v-layout fill-height>
+                      <v-flex xs12 sm4 >
+                        <v-select
+                          :items="damageReasons.departments"
+                          v-model="department"
+                          label="Choose Department"
+                          single-line
+                          required
+                        ></v-select>
+                      </v-flex>
+                      <v-flex xs12 sm4 v-if="department == 'order'">
+                        <v-select
+                          :items="damageReasons.order.reasons"
+                          v-model="reason"
+                          label="Damage Reason to Edit"
+                          single-line
+                          required
+                        ></v-select>
+                      </v-flex>
+                      <v-flex xs12 sm4 v-if="department == 'warehouse'">
+                        <v-select
+                          :items="damageReasons.warehouse.reasons"
+                          v-model="reason"
+                          label="Damage Reason to Edit"
+                          single-line
+                          required
+                        ></v-select>
+                      </v-flex>
+                      <v-flex xs12 sm4 v-if="reason">
+                        <v-text-field
+                          required v-model="updatedReason" label="Update Reason">
+                        </v-text-field>
+                      </v-flex>
+                    </v-layout>
+                  </v-container>
+
+                <v-card-actions>
+                  <v-layout row wrap justify-center>
+                    <v-flex xs2 >
+                      <v-btn color="success" v-if="updatedReason"
+                        @click="updateReason"
+                        >
+                        Update
+                      </v-btn>
+                    </v-flex>
+                    <v-flex xs2 >
+                      <v-btn color="error" v-if="reason"
+                        @click="deleteReason"
+                        >
+                        Delete
+                      </v-btn>
+                    </v-flex>
+                  </v-layout>
+                </v-card-actions>
+              </v-card>
             </v-flex>
-          </v-card-title>
-          <v-card-text>
-            <v-container grid-list-md>
-                <v-layout row wrap align-center justify-center>
-                  <v-flex xs12 sm6 md4>
-                    <v-select
-                      :items="damageReasons.departments"
-                      v-model="department"
-                      label="Choose Department"
-                      single-line
-                      required
-                    ></v-select>
-                  </v-flex>
-                </v-layout>
-                <v-layout align-center justify-center row wrap v-if="department == 'order'">
-                  <v-flex xs12 sm6 md4>
-                    <v-select
-                      :items="damageReasons.order.reasons"
-                      v-model="reason"
-                      label="Damage Reason to Edit"
-                      single-line
-                      required
-                    ></v-select>
-                  </v-flex>
-                  <v-flex xs12 sm6 md4>
-                    <v-text-field
-                      required v-model="updatedReason" label="Update Reason"></v-text-field>
-                  </v-flex>
-                </v-layout>
-              </v-container>
-          </v-card-text>
-          <v-card-actions>
-            <v-layout wrap justify-center align-center>
-              <v-flex xs12 >
-                <v-btn v-if="updatedReason"
-                  @click="updateReason"
-                  >
-                  Update
-                </v-btn>
-                <v-btn v-if="updatedReason"
-                  @click="deleteReason"
-                  >
-                  Delete
-                </v-btn>
-              </v-flex>
-            </v-layout>
-          </v-card-actions>
-        </v-card>
 
+            <!-- Second card -->
+            <v-flex xs-6>
+              <v-card>
+                <v-card-title primary-title>
+                    <v-flex align-center>
+                    <h2>Add New Reason</h2>
+                    </v-flex>
+                </v-card-title>
+
+                  <v-container fill-height fluid pa-2 >
+                    <v-layout fill-height>
+                      <v-flex xs12 sm4 >
+                        <v-select
+                          :items="damageReasons.departments"
+                          v-model="newDepartment"
+                          label="Choose Department"
+                          single-line
+                          required
+                        ></v-select>
+                      </v-flex>
+                      <v-flex xs12 sm4 v-if="newDepartment">
+                        <v-text-field
+                          required v-model="newReason" label="Add New Reason">
+                        </v-text-field>
+                      </v-flex>
+                    </v-layout>
+                  </v-container>
+
+                <v-card-actions>
+                  <v-layout row wrap justify-center>
+                    <v-flex xs2 >
+                      <v-btn color="info" v-if="newReason"
+                        @click="addReason"
+                        >
+                        Add
+                      </v-btn>
+                    </v-flex>
+                  </v-layout>
+                </v-card-actions>
+              </v-card>
+            </v-flex>
+          </v-layout>
+        </v-container>
+      </v-card>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
@@ -66,23 +128,44 @@ export default {
     return {
       department: '',
       reason: '',
-      updatedReason: ''
+      updatedReason: '',
+      newReason: '',
+      newDepartment: ''
     }
   },
   methods: {
+    clearfields() {
+      this.department = ''
+      this.reason = ''
+      this.updatedReason = ''
+      this.newReason = ''
+      this.newDepartment = ''
+    },
     updateReason() {
       let reasons = this.damageReasons[this.department].reasons
       let index = reasons.indexOf(this.reason)
       reasons[index] = this.updatedReason
       this.damageReasons[this.department].reasons = reasons
 
+      this.updateDatabase(reasons, this.department)
+      this.clearfields()
+    },
+    addReason() {
+      let reasons = this.damageReasons[this.newDepartment].reasons
+      this.damageReasons[this.newDepartment].reasons.push(this.newReason)
+
+      this.updateDatabase(reasons, this.newDepartment)
+      this.clearfields()
+    },
+
+    updateDatabase(reasons, department) {
       // update database
       db
         .collection('damageReasons')
-        .doc(this.department)
+        .doc(department)
         .set(
           {
-            test: reasons
+            reasons
           },
           { merge: true }
         )
@@ -95,23 +178,8 @@ export default {
       reasons.splice(index, 1)
       this.damageReasons.order.reasons = reasons
 
-      // update database
-      db
-        .collection('damageReasons')
-        .doc(this.department)
-        .set(
-          {
-            test: reasons
-          },
-          { merge: true }
-        )
-        .then(console.log('Deleted'))
-        .catch(err => console.log)
-    }
-  },
-  computed: {
-    orderReasons() {
-      return this.damageReasons.order.reasons
+      this.updateDatabase(reasons, this.department)
+      this.clearfields()
     }
   }
 }
