@@ -4,7 +4,7 @@
 // TODO make hover/mouseover on the loss sections do something to indicate it is a button/clickable
 <template>
 
-    <v-container  class="index" text-xs-center fill-height v-if="totalDamages">
+    <v-container  class="index" text-xs-center fill-height v-if="dataLoaded">
       <v-layout row wrap align-center justify-center>
         <v-flex xs12 sm10>
           <v-card class="elevation-12">
@@ -41,17 +41,21 @@ export default {
   name: 'Index',
   data() {
     return {
-      totalDamages: null
+      totalDamages: null,
+      dataLoaded: false
     }
   },
   created() {
     // fetch data from firestore
     db
-      .collection('appData')
-      .doc('totalLosses')
+      .collection('totalLosses')
       .get()
-      .then(totals => {
-        this.totalDamages = totals.data()
+      .then((this.totalDamages = {}))
+      .then(snapshot => {
+        snapshot.forEach(doc => {
+          this.totalDamages[doc.id] = doc.data()
+        })
+        this.dataLoaded = true
       })
       .catch(err => {
         console.log(err)
@@ -76,6 +80,5 @@ export default {
 }
 .index a:hover {
   color: #4676c4;
-
 }
 </style>
