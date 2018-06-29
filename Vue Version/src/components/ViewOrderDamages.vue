@@ -45,7 +45,7 @@
                       </v-flex>
                       <v-flex xs12 sm6>
                         <v-select
-                          :items="damageReasons.order.type"
+                          :items="damageReasons.order.reasons"
                           v-model="editedItem.reasonLost"
                           label="Reason Lost"
                           single-line
@@ -103,9 +103,11 @@ export default {
   name: 'ViewOrderDamages',
   data() {
     return {
-      productCosts: null,
-      damageReasons: null,
-      orderDamages: null,
+      productCosts: {},
+      costsLoaded: false,
+      damageReasons: {},
+      damagesLoaded: false,
+      orderDamages: [],
       orderHeaders: [
         { text: 'Date', value: 'timestamp' },
         { text: 'Ebay Order', value: 'orderNumber' },
@@ -144,15 +146,13 @@ export default {
     updateTally(orderTally, shippingTally) {
       // fetch data from firestore
       db
-        .collection('appData')
-        .doc('totalLosses')
+        .collection('totalLosses')
+        .doc('order')
         .set(
           {
-            order: {
-              total: orderTally + shippingTally,
-              itemTotal: orderTally,
-              shipTotal: shippingTally
-            }
+            total: orderTally + shippingTally,
+            itemTotal: orderTally,
+            shipTotal: shippingTally
           },
           { merge: true }
         )
@@ -210,29 +210,31 @@ export default {
 
       // Get damage reasons from firestore
       db
-        .collection('appData')
-        .doc('damageReasons')
+        .collection('damageReasons')
         .get()
-        .then(doc => {
-          this.damageReasons = doc.data()
-          this.damageReasons.reasons = Object.keys(this.damageReasons)
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            this.damageReasons[doc.id] = doc.data()
+          })
+          console.log(this.damageReasons.order)
+          this.damagesLoaded = true
         })
-        .catch(err => {
-          console.log(err)
-        })
+        .catch(err => console.log(err))
 
       // Get product costs from firestore
+      this.productCosts.types = []
       db
-        .collection('appData')
-        .doc('productCosts')
+        .collection('productCosts')
         .get()
-        .then(doc => {
-          this.productCosts = doc.data()
-          this.productCosts.types = Object.keys(this.productCosts)
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            this.productCosts[doc.id] = doc.data()
+            this.productCosts.types.push(doc.data().name)
+          })
+          console.log(this.productCosts)
+          this.costsLoaded = true
         })
-        .catch(err => {
-          console.log(err)
-        })
+        .catch(err => console.log(err))
     },
     editItem(item) {
       this.editedIndex = this.orderDamages.indexOf(item)
@@ -319,7 +321,7 @@ export default {
   },
   computed: {
     dataDownloaded() {
-      return this.damageReasons && this.productCosts
+      return this.ordersLoaded && this.damagesLoaded
     }
   }
 }

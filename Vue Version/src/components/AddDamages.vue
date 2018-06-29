@@ -75,6 +75,91 @@ export default {
     }
   },
   methods: {
+    tallyNewTotals() {
+      if (this.damageReport.damageDept == 'order') {
+        this.tallyNewOrderTotals()
+      } else if (this.damageReport.damageDept == 'warehouse') {
+        this.tallyNewWarehouseTotals()
+      }
+    },
+    updateOrderTally(orderTally, shippingTally) {
+      // fetch data from firestore
+      db
+        .collection('totalLosses')
+        .doc('order')
+        .set(
+          {
+            total: orderTally + shippingTally,
+            itemTotal: orderTally,
+            shipTotal: shippingTally
+          },
+          { merge: true }
+        )
+        .then(console.log('Updated'))
+        .catch(err => {
+          console.log(err)
+        })
+    },
+    tallyNewOrderTotals() {
+      let damagesRef = db.collection('damages')
+      let orderTally = 0
+      let shippingTally = 0
+
+      // Tally order totals
+      let orderQuery = damagesRef
+        .where('damageDept', '==', 'order')
+        .get()
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            let cost = doc.data().itemCost
+            let numLost = doc.data().itemsLost
+            let shipCost = doc.data().shippingCost
+            let shipLost = doc.data().shippingLost
+            shippingTally += shipLost
+            orderTally += cost * numLost
+          })
+          console.log(orderTally, shippingTally)
+          this.updateOrderTally(orderTally, shippingTally)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
+    updateWarehouseTally(tally) {
+      // fetch data from firestore
+      db
+        .collection('totalLosses')
+        .doc('warehouse')
+        .set(
+          {
+            total: tally
+          },
+          { merge: true }
+        )
+        .then(console.log('Updated'))
+        .catch(err => {
+          console.log(err)
+        })
+    },
+    tallyNewWarehouseTotals() {
+      let damagesRef = db.collection('damages')
+      let warehouseTally = 0
+      // Tally warehouse totals
+      let warehouseQuery = damagesRef
+        .where('damageDept', '==', 'warehouse')
+        .get()
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            let cost = doc.data().itemCost
+            let numLost = doc.data().itemsLost
+            warehouseTally += cost * numLost
+          })
+          this.updateWarehouseTally(warehouseTally)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
     logDamages() {
       // Add timestamp to report
       this.damageReport.timestamp = Date.now()
@@ -102,6 +187,7 @@ export default {
           this.$router.push({ name: 'Index' })
         })
         .catch(err => console.log(err))
+      this.tallyNewTotals()
     },
     convertNumbers(report) {
       // Convert string to numbers for different fields before adding to database
