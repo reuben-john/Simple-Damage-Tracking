@@ -3,6 +3,7 @@
 // TODO add button for View Damages
 // TODO make hover/mouseover on the loss sections do something to indicate it is a button/clickable
 // TODO Add updated message when saving edited items
+// TODO add form verification to verify number fields
 <template>
 
     <v-container  class="index" text-xs-center fill-height v-if="dataLoaded">
