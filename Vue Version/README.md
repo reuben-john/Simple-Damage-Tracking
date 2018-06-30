@@ -6,6 +6,8 @@ This app is built using Vue. It uses Vuetify for a css framework and vue-router 
 
 ## TODOs
 
+[] Add tests
+[] Add better comments
 [] Add form validation to ensure forms are filled out fully with correct info
 [] Add an animation that shows the new tally being added to the total before updating
 [] Add transition/loading animations
