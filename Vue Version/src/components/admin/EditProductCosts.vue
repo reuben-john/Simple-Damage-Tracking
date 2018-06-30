@@ -230,7 +230,11 @@ export default {
       let ref = db.collection('productCosts').doc(itemId)
       // fetch data from firestore
       let querty = ref
-        .set(this.item)
+        .set({
+          name: this.item.name,
+          boxCost: this.item.boxCost,
+          itemCost: this.item.itemCost
+        })
         .then(console.log('Added'))
         .catch(err => {
           console.log(err)
