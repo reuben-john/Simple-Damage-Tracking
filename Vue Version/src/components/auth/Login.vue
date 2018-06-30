@@ -1,10 +1,10 @@
 <template>
   <v-container class="view-admin" text-xs-center fill-height>
     <v-layout row wrap align-center justify-center>
-      <v-flex xs12 sm6>
+      <v-flex xs12 sm8 md6 xl4>
         <v-card>
           <v-card-text>
-            <v-form ref="form"  >
+            <v-form ref="form" @submit.prevent="login" >
               <v-text-field
                 v-model="email"
                 name="email"
@@ -20,13 +20,13 @@
                 type="password"
                 required
               ></v-text-field>
-              <v-flex  xs12 sm10>
-                <v-alert type="error" dismissible v-model="alert">
+              <v-flex xs12>
+                <v-alert type="error" dismissible v-model="alert" >
                 {{ feedback }}
               </v-alert>
               </v-flex>
               <v-btn color="primary"
-                @click="login"
+               type="submit"
                 >
                 Login
               </v-btn>
