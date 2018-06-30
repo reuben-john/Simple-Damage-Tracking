@@ -1,10 +1,3 @@
-// TODO Move order form to seperate vue template and load it in when needed.
-// TODO Create warehouse form
-// TODO Add form validation to validate numbers
-// TODO Ensure all data that should be numbers gets converted before adding it to the d-block
-// TODO Update the total damages tallies before returning to the Index page
-
-
 <template>
     <v-container class="add-damages" text-xs-center fluid fill-height>
       <v-layout row wrap align-center justify-center>
