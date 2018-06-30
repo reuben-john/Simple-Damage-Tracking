@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Index from '@/components/Index'
+import Index from '@/components/home/Index'
 import AddDamages from '@/components/add-damages/AddDamages'
 import ViewOrderDamages from '@/components/view-damages/ViewOrderDamages'
 import ViewWarehouseDamages from '@/components/view-damages/ViewWarehouseDamages'
 import ViewAdmin from '@/components/admin/ViewAdmin'
-import Login from '@/components/Login'
+import Login from '@/components/auth/Login'
 import firebase from 'firebase'
 
 Vue.use(Router)
