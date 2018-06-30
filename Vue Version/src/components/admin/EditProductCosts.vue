@@ -137,9 +137,9 @@ export default {
         itemCost: 0
       },
       defaultItem: {
-        name: 'test',
-        boxCost: 1,
-        itemCost: 1
+        name: '',
+        boxCost: 0,
+        itemCost: 0
       }
     }
   },
