@@ -112,6 +112,9 @@
                     </v-btn>
                   </td>
                 </template>
+                <template slot="no-data">
+                  <v-btn color="primary" @click="initialize">Reset</v-btn>
+                </template>
               </v-data-table>
             </v-card-text>
           </v-card>
