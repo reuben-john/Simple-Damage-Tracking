@@ -179,16 +179,17 @@ export default {
       }, 300)
     },
     save() {
+      // Convert name to lowercase as doc id is lowercase category name
       let id = this.item.name.toLowerCase()
       // Check if adding or updating item
       if (this.editedIndex > -1) {
         Object.assign(this.productCosts[this.editedIndex], this.item)
-        // Convert name to lowercase as doc id is lowercase category name
 
         if (this.editDialog == true) {
           this.updateItem(id)
         }
       } else if (this.addDialog == true) {
+        this.productCosts.push(this.item)
         this.addNewItem(id)
       }
       this.close()
