@@ -1,5 +1,14 @@
 # Simple Damages Tracker
 
+##Demo Version
+
+You may view the [app live here](https://fir-damage-tracker.firebaseapp.com/)
+
+Demo login is:
+
+- username: test@test.com
+- password: test1234
+
 > A Vue app for tracking shipping and warehouse damages
 
 This app is built using Vue. It uses Vuetify for a css framework and vue-router to handle routing. It uses firestore for a database.
