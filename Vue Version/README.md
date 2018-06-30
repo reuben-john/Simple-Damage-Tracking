@@ -1,10 +1,12 @@
 # Simple Damages Tracker
 
 ##Demo Version
+
 You may view the [app live here](https://fir-damage-tracker.firebaseapp.com/)
+
 Demo login is:
-username: test@test.com
-password: test1234
+*username: test@test.com
+*password: test1234
 
 > A Vue app for tracking shipping and warehouse damages
 
