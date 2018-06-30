@@ -44,7 +44,7 @@
               <v-flex xs12 sm8 >
                 <v-data-table
                   :headers="reasonHeaders"
-                  :items="testReasons"
+                  :items="productCosts"
                   hide-actions
                   class="elevation-1"
                   >
@@ -60,9 +60,6 @@
                         <v-icon color="pink">delete</v-icon>
                       </v-btn>
                     </td>
-                  </template>
-                  <template slot="no-data">
-                    <v-btn color="primary" @click="initialize">Reset</v-btn>
                   </template>
                 </v-data-table>
               </v-flex>
@@ -85,7 +82,6 @@ export default {
         { text: 'Box Cost', value: 'boxCost' },
         { text: 'Item Cost', value: 'itemCost' }
       ],
-      testReasons: [{ name: 'General', boxCost: 25, itemCost: 1 }, { name: 'Makeup', boxCost: 40, itemCost: 0.25 }],
       dialog: false,
       editedIndex: -1,
       editedItem: {
@@ -101,19 +97,28 @@ export default {
     }
   },
   methods: {
-    initialize() {},
     editItem(item) {
-      this.editedIndex = this.testReasons.indexOf(item)
+      this.editedIndex = this.productCosts.indexOf(item)
       this.editedItem = Object.assign({}, item)
       this.dialog = true
     },
     deleteFromDB(itemId) {
-      console.log(itemID)
+      db
+        .collection('productCosts')
+        .doc(itemId)
+        .delete()
+        .then(console.log('Deleted'))
+        .catch(err => console.log(err))
     },
     deleteItem(item) {
-      const index = this.testReasons.indexOf(item)
-      let id = this.testReasons[index].id
-      confirm('Are you sure you want to delete this item?') && this.testReasons.splice(index, 1)
+      const index = this.productCosts.indexOf(item)
+      console.log(item)
+      // Convert name to lowercase as doc id is lowercase category name
+      let id = item.name.toLowerCase()
+      console.log(id)
+
+      confirm('Are you sure you want to delete this item?') &&
+        (this.productCosts.splice(index, 1), this.deleteFromDB(id))
     },
     close() {
       this.dialog = false
@@ -124,7 +129,11 @@ export default {
     },
     save() {
       if (this.editedIndex > -1) {
-        Object.assign(this.testReasons[this.editedIndex], this.editedItem)
+        Object.assign(this.productCosts[this.editedIndex], this.editedItem)
+        // Convert name to lowercase as doc id is lowercase category name
+        let id = item.name.toLowerCase()
+
+        this.updateItem(id)
       }
       this.close()
     },
@@ -137,6 +146,24 @@ export default {
         itemCost: parseFloat(report.itemCost)
       })
       return report
+    },
+    updateItem(itemId) {
+      // Convert edited numbers to fields
+      let report = Object.assign(this.editedItem)
+      this.editedItem = this.convertNumbers(report)
+
+      let ref = db.collection('productCosts').doc(itemId)
+      // fetch data from firestore
+      let querty = ref
+        .update({
+          name: this.editedItem.name,
+          boxCost: this.editedItem.boxCost,
+          itemCost: this.editedItem.itemCost
+        })
+        .then(console.log('Updated'))
+        .catch(err => {
+          console.log(err)
+        })
     }
   },
   watch: {
