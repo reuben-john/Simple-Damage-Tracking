@@ -1,5 +1,5 @@
 {
   "projects": {
-    "default": "simple-damage-tracking"
+    "default": "fir-damage-tracker"
   }
 }
