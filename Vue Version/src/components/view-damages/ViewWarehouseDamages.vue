@@ -27,10 +27,18 @@
                           ></v-select>
                         </v-flex>
                         <v-flex xs12 sm6 md4>
-                          <v-text-field v-model="editedItem.itemCost" label="Cost"></v-text-field>
+                          <v-text-field
+                            v-model="editedItem.itemCost"
+                            label="Cost"
+                            type="number"
+                          ></v-text-field>
                         </v-flex>
                         <v-flex xs12 sm6 md4>
-                          <v-text-field v-model="editedItem.itemsLost" label="Lost"></v-text-field>
+                          <v-text-field
+                            v-model="editedItem.itemsLost"
+                            label="Lost"
+                            type="number"
+                          ></v-text-field>
                         </v-flex>
                         <v-flex xs12 sm6 md4>
                           <v-select

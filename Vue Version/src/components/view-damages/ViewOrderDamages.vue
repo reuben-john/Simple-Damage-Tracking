@@ -17,16 +17,32 @@
                   <v-container grid-list-md>
                     <v-layout wrap>
                       <v-flex xs12 sm6 md4>
-                        <v-text-field v-model="editedItem.orderNumber" label="Order Number"></v-text-field>
+                        <v-text-field
+                          v-model="editedItem.orderNumber"
+                          label="Order Number"
+                          type="text"
+                        ></v-text-field>
                       </v-flex>
                       <v-flex xs12 sm6 md4>
-                        <v-text-field v-model="editedItem.orderTotal" label="Order Total"></v-text-field>
+                        <v-text-field
+                          v-model="editedItem.orderTotal"
+                          label="Order Total"
+                          type="number"
+                        ></v-text-field>
                       </v-flex>
                       <v-flex xs12 sm6 md4>
-                        <v-text-field v-model="editedItem.shippingCost" label="Shipping Cost"></v-text-field>
+                        <v-text-field
+                          v-model="editedItem.shippingCost"
+                          label="Shipping Cost"
+                          type="number"
+                        ></v-text-field>
                       </v-flex>
                       <v-flex xs12 sm6 md4>
-                        <v-text-field v-model="editedItem.shippingLost" label="Shipping Lost"></v-text-field>
+                        <v-text-field
+                         v-model="editedItem.shippingLost"
+                         label="Shipping Lost"
+                         type="number"
+                        ></v-text-field>
                       </v-flex>
                       <v-flex xs12 sm6 md4>
                         <v-select
@@ -38,16 +54,25 @@
                         ></v-select>
                       </v-flex>
                       <v-flex xs12 sm6 md4>
-                        <v-text-field v-model="editedItem.itemCost" label="Item Cost"></v-text-field>
+                        <v-text-field
+                          v-model="editedItem.itemCost"
+                          label="Item Cost"
+                          type="number"
+                         ></v-text-field>
                       </v-flex>
                       <v-flex xs12 sm6 md4>
-                        <v-text-field v-model="editedItem.itemsLost" label="Items Lost"></v-text-field>
+                        <v-text-field
+                          v-model="editedItem.itemsLost"
+                          label="Items Lost"
+                          type="number"
+                        ></v-text-field>
                       </v-flex>
                       <v-flex xs12 sm6>
                         <v-select
                           :items="damageReasons.reasons"
                           v-model="editedItem.reasonLost"
                           label="Reason Lost"
+                          type="text"
                           single-line
                           required
                         ></v-select>
