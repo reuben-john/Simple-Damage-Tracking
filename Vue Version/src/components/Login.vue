@@ -24,7 +24,7 @@
                 <v-alert type="error" dismissible v-model="alert">
                 {{ feedback }}
               </v-alert>
-              </v-flex xs12 sm-10 >
+              </v-flex xs-12 sm-10 >
               <v-btn color="primary"
                 @click="login"
                 >
