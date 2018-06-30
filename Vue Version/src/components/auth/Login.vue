@@ -20,11 +20,11 @@
                 type="password"
                 required
               ></v-text-field>
-              <v-flex>
+              <v-flex  xs12 sm10>
                 <v-alert type="error" dismissible v-model="alert">
                 {{ feedback }}
               </v-alert>
-              </v-flex xs-12 sm-10 >
+              </v-flex>
               <v-btn color="primary"
                 @click="login"
                 >
