@@ -10,81 +10,83 @@
             </v-card-title>
             <v-dialog v-model="dialog" max-width="500px" v-if="dataDownloaded">
               <v-card>
-                <v-card-title>
-                  <span class="headline"> Edit Item </span>
-                </v-card-title>
-                <v-card-text>
-                  <v-container grid-list-md>
-                    <v-layout wrap>
-                      <v-flex xs12 sm6 md4>
-                        <v-text-field
-                          v-model="editedItem.orderNumber"
-                          label="Order Number"
-                          type="text"
-                        ></v-text-field>
-                      </v-flex>
-                      <v-flex xs12 sm6 md4>
-                        <v-text-field
-                          v-model="editedItem.orderTotal"
-                          label="Order Total"
+                <v-form @submit.prevent="save">
+                  <v-card-title>
+                    <span class="headline"> Edit Item </span>
+                  </v-card-title>
+                  <v-card-text>
+                    <v-container grid-list-md>
+                      <v-layout wrap>
+                        <v-flex xs12 sm6 md4>
+                          <v-text-field
+                            v-model="editedItem.orderNumber"
+                            label="Order Number"
+                            type="text"
+                          ></v-text-field>
+                        </v-flex>
+                        <v-flex xs12 sm6 md4>
+                          <v-text-field
+                            v-model="editedItem.orderTotal"
+                            label="Order Total"
+                            type="number"
+                          ></v-text-field>
+                        </v-flex>
+                        <v-flex xs12 sm6 md4>
+                          <v-text-field
+                            v-model="editedItem.shippingCost"
+                            label="Shipping Cost"
+                            type="number"
+                          ></v-text-field>
+                        </v-flex>
+                        <v-flex xs12 sm6 md4>
+                          <v-text-field
+                          v-model="editedItem.shippingLost"
+                          label="Shipping Lost"
                           type="number"
-                        ></v-text-field>
-                      </v-flex>
-                      <v-flex xs12 sm6 md4>
-                        <v-text-field
-                          v-model="editedItem.shippingCost"
-                          label="Shipping Cost"
-                          type="number"
-                        ></v-text-field>
-                      </v-flex>
-                      <v-flex xs12 sm6 md4>
-                        <v-text-field
-                         v-model="editedItem.shippingLost"
-                         label="Shipping Lost"
-                         type="number"
-                        ></v-text-field>
-                      </v-flex>
-                      <v-flex xs12 sm6 md4>
-                        <v-select
-                          :items="productCosts"
-                          v-model="editedItem.itemType"
-                          label="Product Type"
-                          single-line
-                          required
-                        ></v-select>
-                      </v-flex>
-                      <v-flex xs12 sm6 md4>
-                        <v-text-field
-                          v-model="editedItem.itemCost"
-                          label="Item Cost"
-                          type="number"
-                         ></v-text-field>
-                      </v-flex>
-                      <v-flex xs12 sm6 md4>
-                        <v-text-field
-                          v-model="editedItem.itemsLost"
-                          label="Items Lost"
-                          type="number"
-                        ></v-text-field>
-                      </v-flex>
-                      <v-flex xs12 sm6>
-                        <v-select
-                          :items="damageReasons.reasons"
-                          v-model="editedItem.reasonLost"
-                          label="Reason Lost"
-                          type="text"
-                          single-line
-                          required
-                        ></v-select>
-                      </v-flex>
-                    </v-layout>
-                  </v-container>
-                </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" flat @click.native="close">Cancel</v-btn>
-                  <v-btn color="blue darken-1" flat @click.native="save">Save</v-btn>
-                </v-card-actions>
+                          ></v-text-field>
+                        </v-flex>
+                        <v-flex xs12 sm6 md4>
+                          <v-select
+                            :items="productCosts"
+                            v-model="editedItem.itemType"
+                            label="Product Type"
+                            single-line
+                            required
+                          ></v-select>
+                        </v-flex>
+                        <v-flex xs12 sm6 md4>
+                          <v-text-field
+                            v-model="editedItem.itemCost"
+                            label="Item Cost"
+                            type="number"
+                          ></v-text-field>
+                        </v-flex>
+                        <v-flex xs12 sm6 md4>
+                          <v-text-field
+                            v-model="editedItem.itemsLost"
+                            label="Items Lost"
+                            type="number"
+                          ></v-text-field>
+                        </v-flex>
+                        <v-flex xs12 sm6>
+                          <v-select
+                            :items="damageReasons.reasons"
+                            v-model="editedItem.reasonLost"
+                            label="Reason Lost"
+                            type="text"
+                            single-line
+                            required
+                          ></v-select>
+                        </v-flex>
+                      </v-layout>
+                    </v-container>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="blue darken-1" flat @click.native="close">Cancel</v-btn>
+                    <v-btn color="blue darken-1" flat type="submit">Save</v-btn>
+                  </v-card-actions>
+                </v-form>
               </v-card>
             </v-dialog>
             <v-card-text v-if="orderDamages">

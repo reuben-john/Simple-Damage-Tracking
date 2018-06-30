@@ -16,7 +16,7 @@
               </v-flex>
             </v-card-title>
             <v-card-text>
-              <v-form v-if="dataDownloaded">
+              <v-form v-if="dataDownloaded" @submit.prevent="logDamages">
                 <h4>What type of damage do you wish to log?</h4>
                 <v-radio-group
                 v-model="damageReport.damageDept" >
@@ -40,7 +40,7 @@
                     <warehouse-damages-form :damageReasons="damageReasons" :damageReport="damageReport" :productCosts="productCosts"></warehouse-damages-form>
                 </v-layout>
                 <v-btn v-if="dataDownloaded"
-                  @click="logDamages"
+                  type="submit"
                   >
                   Log Damages
                 </v-btn>

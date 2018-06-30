@@ -6,12 +6,12 @@
           <v-layout row wrap>
             <v-flex xs-6>
               <v-card>
+                <v-form @submit.prevent="updateReason">
                 <v-card-title primary-title>
                     <v-flex align-center>
                     <h2>Edit or Delete Reason</h2>
                     </v-flex>
                 </v-card-title>
-
                   <v-container fill-height fluid pa-2 >
                     <v-layout fill-height>
                       <v-flex xs12 sm4 >
@@ -53,7 +53,7 @@
                   <v-layout row wrap justify-center>
                     <v-flex xs2 >
                       <v-btn color="success" v-if="updatedReason"
-                        @click="updateReason"
+                        type="submit"
                         >
                         Update
                       </v-btn>
@@ -67,12 +67,14 @@
                     </v-flex>
                   </v-layout>
                 </v-card-actions>
+                </v-form>
               </v-card>
             </v-flex>
 
             <!-- Second card -->
             <v-flex xs-6>
               <v-card>
+                <v-form @submit.prevent="addReason">
                 <v-card-title primary-title>
                     <v-flex align-center>
                     <h2>Add New Reason</h2>
@@ -102,13 +104,14 @@
                   <v-layout row wrap justify-center>
                     <v-flex xs2 >
                       <v-btn color="info" v-if="newReason"
-                        @click="addReason"
+                        type="submit"
                         >
                         Add
                       </v-btn>
                     </v-flex>
                   </v-layout>
                 </v-card-actions>
+                </v-form>
               </v-card>
             </v-flex>
           </v-layout>
