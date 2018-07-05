@@ -9,12 +9,15 @@
             </v-flex>
           </v-card-title>
           <v-card-text>
-            <v-layout row wrap>
-              <v-flex xs12 sm6>
+            <v-layout row wrap justify-center align-center>
+            <v-flex xs2>
               <v-btn color="purple darken-1 white--text" @click="editReasons = !editReasons">Edit Damage Reasons</v-btn>
             </v-flex>
-            <v-flex xs12 sm6>
+            <v-flex xs2>
               <v-btn color="purple darken-1 white--text" @click="editCosts = !editCosts">Edit Product Costs</v-btn>
+            </v-flex>
+            <v-flex xs2>
+              <v-btn color="purple darken-1 white--text" @click="downloadCSV()">Download Damage Report</v-btn>
             </v-flex>
             </v-layout>
           </v-card-text>
@@ -33,6 +36,8 @@
 import EditDamageReasons from '@/components/admin/EditDamageReasons'
 import EditProductCosts from '@/components/admin/EditProductCosts'
 import db from '@/firebase/init'
+import papaparse from 'papaparse'
+
 export default {
   name: 'ViewAdmin',
   components: {
@@ -44,7 +49,29 @@ export default {
       editReasons: false,
       editCosts: false,
       damageReasons: {},
-      productCosts: []
+      productCosts: [],
+      CSVReport: null
+    }
+  },
+  methods: {
+    downloadCSV() {
+      // Clears CSVreport
+      this.CSVReport = []
+      // fetch damages data from firestore
+      db
+        .collection('damages')
+        .get()
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            this.CSVReport.push(doc.data())
+          })
+          // saves firestore data as csv - Must be inside [] for file-saver to work
+          let csv = [papaparse.unparse(this.CSVReport, { download: true })]
+          var FileSaver = require('file-saver')
+          var blob = new Blob(csv, { type: 'text/plain;charset=utf-8' })
+          FileSaver.saveAs(blob, 'damages.csv')
+        })
+        .catch(err => console.log(err))
     }
   },
   created() {
@@ -68,7 +95,6 @@ export default {
           this.damageReasons[doc.id] = doc.data()
           this.damageReasons.departments.push(doc.id)
         })
-        console.log(this.damageReasons)
       })
       .catch(err => console.log(err))
   }
