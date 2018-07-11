@@ -314,7 +314,7 @@ export default {
   },
   computed: {
     dataDownloaded() {
-      return this.costsLoaded && this.reasonsLoaded
+      return this.costsLoaded && this.reasonsLoaded && this.accountsLoaded
     }
   }
 }
