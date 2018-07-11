@@ -26,6 +26,7 @@ This app is built using Vue. It uses Vuetify for a css framework and vue-router 
 - [ ] Make total damage tracker only show current year's damages (Jan 1 - Dec 31)
 - [ ] Allow data to be viewed by year on the damages views
 - [ ] Add archive feature to remove old reports
+- [ ] Add check for blank fields to ensure no '' strings are added
 
 ## Build Setup
 
