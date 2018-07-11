@@ -80,7 +80,7 @@
                         </v-flex>
                         <v-flex xs12 sm6>
                           <v-select
-                            :items="ebayAccounts.accounts"
+                            :items="ebayAccounts"
                             v-model="editedItem.ebayAccount"
                             label="eBay Account"
                             type="text"
@@ -279,16 +279,12 @@ export default {
 
       // Get ebay account names from firestore
       this.ebayAccounts = []
-      this.ebayAccounts.accounts = []
       db
         .collection('ebayAccounts')
         .get()
         .then(snapshot => {
           snapshot.forEach(doc => {
-            let report = doc.data()
-            report.id = doc.id
-            this.ebayAccounts.push(report)
-            this.ebayAccounts.accounts.push(doc.data().ebayAccount)
+            this.ebayAccounts.push(doc.data().ebayAccount)
           })
           this.accountsLoaded = true
           console.log(this.ebayAccounts)
