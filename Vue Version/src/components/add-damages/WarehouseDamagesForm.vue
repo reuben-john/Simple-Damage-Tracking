@@ -2,6 +2,15 @@
   <v-layout row wrap justify-center  class="warehouse-damages-form">
     <v-flex xs8 sm4 mx-4>
       <v-select
+        :items="ebayAccounts"
+        v-model="damageReport.ebayAccount"
+        label="Ebay Account"
+        single-line
+        required
+      ></v-select>
+    </v-flex>
+    <v-flex xs8 sm4 mx-4>
+      <v-select
         :items="damageReasons.warehouse.reasons"
         v-model="damageReport.reasonLost"
         label="Damage Type"
@@ -34,7 +43,7 @@
 <script>
 export default {
   name: 'WarehouseDamagesForm',
-  props: ['damageReasons', 'damageReport', 'productCosts'],
+  props: ['damageReasons', 'damageReport', 'productCosts', 'ebayAccounts'],
   data() {
     return {}
   }

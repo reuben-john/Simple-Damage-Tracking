@@ -27,10 +27,10 @@
                       </v-layout>
                     </v-radio-group>
                   <v-layout v-if="damageReport.damageDept == 'order'">
-                    <order-damages-form :damageReasons="damageReasons" :damageReport="damageReport" :productCosts="productCosts"></order-damages-form>
+                    <order-damages-form :damageReasons="damageReasons" :damageReport="damageReport" :productCosts="productCosts" :ebayAccounts="ebayAccounts"></order-damages-form>
                 </v-layout>
                 <v-layout v-else-if="damageReport.damageDept == 'warehouse'">
-                    <warehouse-damages-form :damageReasons="damageReasons" :damageReport="damageReport" :productCosts="productCosts"></warehouse-damages-form>
+                    <warehouse-damages-form :damageReasons="damageReasons" :damageReport="damageReport" :productCosts="productCosts" :ebayAccounts="ebayAccounts"></warehouse-damages-form>
                 </v-layout>
                 <v-btn v-if="dataDownloaded"
                   type="submit"
@@ -63,7 +63,9 @@ export default {
       damageDept: null,
       damageReport: {},
       costsLoaded: false,
-      damagesLoaded: false
+      damagesLoaded: false,
+      ebayAccounts: null,
+      accountsLoaded: false
     }
   },
   methods: {
@@ -225,6 +227,19 @@ export default {
             this.productCosts.types.push(doc.data().name)
           })
           this.costsLoaded = true
+        })
+        .catch(err => console.log(err))
+      // Get ebay account names from firestore
+      this.ebayAccounts = []
+      db
+        .collection('ebayAccounts')
+        .get()
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            this.ebayAccounts.push(doc.data().ebayAccount)
+          })
+          this.accountsLoaded = true
+          console.log(this.ebayAccounts)
         })
         .catch(err => console.log(err))
     }
