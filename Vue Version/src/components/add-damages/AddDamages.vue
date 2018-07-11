@@ -249,7 +249,7 @@ export default {
   },
   computed: {
     dataDownloaded() {
-      return this.damagesLoaded && this.costsLoaded
+      return this.damagesLoaded && this.costsLoaded && this.accountsLoaded
     }
   }
 }
