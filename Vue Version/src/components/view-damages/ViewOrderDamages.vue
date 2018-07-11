@@ -78,6 +78,16 @@
                             required
                           ></v-select>
                         </v-flex>
+                        <v-flex xs12 sm6>
+                          <v-select
+                            :items="ebayAccounts.accounts"
+                            v-model="editedItem.ebayAccount"
+                            label="eBay Account"
+                            type="text"
+                            single-line
+                            required
+                          ></v-select>
+                        </v-flex>
                       </v-layout>
                     </v-container>
                   </v-card-text>
@@ -105,6 +115,7 @@
                   <td class="text-xs-left">{{ props.item.itemType }}</td>
                   <td class="text-xs-left">{{ props.item.itemsLost }}</td>
                   <td class="text-xs-left">{{ props.item.reasonLost }}</td>
+                  <td class="text-xs-left">{{ props.item.ebayAccount }}</td>
                   <td class="justify-center layout px-0">
                     <v-btn icon class="mx-0" @click="editItem(props.item)">
                       <v-icon color="teal">edit</v-icon>
@@ -138,6 +149,8 @@ export default {
       costsLoaded: false,
       reasonsLoaded: false,
       orderDamages: null,
+      ebayAccounts: null,
+      accountsLoaded: false,
       orderHeaders: [
         { text: 'Date', value: 'timestamp' },
         { text: 'Ebay Order', value: 'orderNumber' },
@@ -146,7 +159,8 @@ export default {
         { text: 'Shipping Lost', value: 'shippingLost' },
         { text: 'Item Type', value: 'itemType' },
         { text: 'Items Lost', value: 'itemsLost' },
-        { text: 'Reason Lost', value: 'reasonLost' }
+        { text: 'Reason Lost', value: 'reasonLost' },
+        { text: 'eBay Account', value: 'ebayAccount' }
       ],
       dialog: false,
       editedIndex: -1,
@@ -158,7 +172,8 @@ export default {
         itemType: '',
         itemsLost: 0,
         itemCost: 0,
-        reasonLost: ''
+        reasonLost: '',
+        ebayAccount: ''
       },
       defaultItem: {
         orderNumber: 0,
@@ -168,7 +183,8 @@ export default {
         itemType: '',
         itemsLost: 0,
         itemCost: 0,
-        reasonLost: ''
+        reasonLost: '',
+        ebayAccount: ''
       }
     }
   },
@@ -260,6 +276,24 @@ export default {
           this.reasonsLoaded = true
         })
         .catch(err => console.log(err))
+
+      // Get ebay account names from firestore
+      this.ebayAccounts = []
+      this.ebayAccounts.accounts = []
+      db
+        .collection('ebayAccounts')
+        .get()
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            let report = doc.data()
+            report.id = doc.id
+            this.ebayAccounts.push(report)
+            this.ebayAccounts.accounts.push(doc.data().ebayAccount)
+          })
+          this.accountsLoaded = true
+          console.log(this.ebayAccounts)
+        })
+        .catch(err => console.log(err))
     },
     editItem(item) {
       this.editedIndex = this.orderDamages.indexOf(item)
@@ -328,7 +362,8 @@ export default {
           itemType: this.editedItem.itemType,
           itemsLost: this.editedItem.itemsLost,
           itemCost: this.editedItem.itemCost,
-          reasonLost: this.editedItem.reasonLost
+          reasonLost: this.editedItem.reasonLost,
+          ebayAccount: this.editedItem.ebayAccount
         })
         .then(console.log('Updated'), this.tallyNewTotals())
         .catch(err => {
@@ -346,7 +381,7 @@ export default {
   },
   computed: {
     dataDownloaded() {
-      return this.costsLoaded && this.reasonsLoaded
+      return this.costsLoaded && this.reasonsLoaded && this.accountsLoaded
     }
   }
 }
