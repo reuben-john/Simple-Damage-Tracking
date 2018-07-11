@@ -119,7 +119,6 @@ export default {
           this.ebayAccounts.accounts.push(doc.data().ebayAccount)
         })
         this.accountsLoaded = true
-        console.log(this.ebayAccounts)
       })
       .catch(err => console.log(err))
   }
