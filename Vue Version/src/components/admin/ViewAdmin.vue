@@ -17,6 +17,9 @@
               <v-btn color="purple darken-1 white--text" @click="editCosts = !editCosts">Edit Product Costs</v-btn>
             </v-flex>
             <v-flex xs2>
+              <v-btn color="purple darken-1 white--text" @click="editAccounts = !editAccounts">Edit Ebay Accounts</v-btn>
+            </v-flex>
+            <v-flex xs2>
               <v-btn color="purple darken-1 white--text" @click="downloadCSV()">Download Damage Report</v-btn>
             </v-flex>
             </v-layout>
@@ -24,6 +27,7 @@
           <v-card-text>
             <edit-damage-reasons v-if="editReasons" :damageReasons="damageReasons"></edit-damage-reasons>
             <edit-product-costs v-if="editCosts" :productCosts="productCosts"></edit-product-costs>
+            <edit-ebay-accounts v-if="editAccounts" :ebayAccounts="ebayAccounts"></edit-ebay-accounts>
           </v-card-text>
         </v-card>
       </v-flex>
@@ -35,6 +39,7 @@
 <script>
 import EditDamageReasons from '@/components/admin/EditDamageReasons'
 import EditProductCosts from '@/components/admin/EditProductCosts'
+import EditEbayAccounts from '@/components/admin/EditEbayAccounts'
 import db from '@/firebase/init'
 import papaparse from 'papaparse'
 
@@ -42,12 +47,17 @@ export default {
   name: 'ViewAdmin',
   components: {
     EditProductCosts,
-    EditDamageReasons
+    EditDamageReasons,
+    EditEbayAccounts
   },
   data() {
     return {
       editReasons: false,
       editCosts: false,
+      editAccounts: false,
+      ebayAccounts: {
+        accounts: null
+      },
       damageReasons: {},
       productCosts: [],
       CSVReport: null
@@ -95,6 +105,21 @@ export default {
           this.damageReasons[doc.id] = doc.data()
           this.damageReasons.departments.push(doc.id)
         })
+      })
+      .catch(err => console.log(err))
+
+    // Get ebay account names from firestore
+    this.ebayAccounts.accounts = []
+    db
+      .collection('ebayAccounts')
+      .get()
+      .then(snapshot => {
+        snapshot.forEach(doc => {
+          this.ebayAccounts[doc.id] = doc.data()
+          this.ebayAccounts.accounts.push(doc.data().ebayAccount)
+        })
+        this.accountsLoaded = true
+        console.log(this.ebayAccounts)
       })
       .catch(err => console.log(err))
   }
