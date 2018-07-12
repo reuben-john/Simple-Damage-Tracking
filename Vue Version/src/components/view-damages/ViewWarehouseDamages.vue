@@ -78,7 +78,7 @@
               class="elevation-1"
               >
                 <template slot="items" slot-scope="props">
-                  <td class="text-xs-left">{{ props.item.timestamp }}</td>
+                  <td class="text-xs-left">{{ props.item.date }}</td>
                   <td class="text-xs-left">{{ props.item.itemType }}</td>
                   <td class="text-xs-left">{{ props.item.itemCost }}</td>
                   <td class="text-xs-left">{{ props.item.itemsLost }}</td>
@@ -190,7 +190,7 @@ export default {
         })
     },
     initialize() {
-      let damagesRef = db.collection('damages').orderBy('timestamp')
+      let damagesRef = db.collection('damages')
       // fetch data from firestore
       let query = damagesRef
         .where('damageDept', '==', 'warehouse')
@@ -200,7 +200,7 @@ export default {
             let report = doc.data()
             report.id = doc.id
             report.value = false
-            report.timestamp = moment(report.timestamp).format('LL')
+            report.date = moment(report.timestamp).format('LL')
             this.warehouseDamages.push(report)
           })
         })
