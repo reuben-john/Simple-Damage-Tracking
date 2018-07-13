@@ -53,6 +53,9 @@ export default {
 </script>
 
 <style>
+.nav-bar {
+  margin-bottom: 30px;
+}
 .nav-bar .add {
   margin-top: 1em;
 }
