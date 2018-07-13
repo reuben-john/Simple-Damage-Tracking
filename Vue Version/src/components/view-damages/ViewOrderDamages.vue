@@ -106,6 +106,7 @@
               :search="search"
               :custom-filter="customFilter"
               :pagination.sync="pagination"
+              :rows-per-page-items="rows"
               class="elevation-1"
               >
                 <template slot="items" slot-scope="props">
@@ -161,6 +162,7 @@ export default {
         sortBy: 'timestamp',
         descending: true
       },
+      rows: [10, 25, { text: 'All', value: -1 }],
       productCosts: [],
       damageReasons: null,
       costsLoaded: false,
