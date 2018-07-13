@@ -104,7 +104,7 @@
                     <v-flex xs6 sm1>
                       <v-select
                       label="Year"
-                      :items="['2017', '2018', '2019']"
+                      :items="damageYears"
                       v-model="search"
                     ></v-select>
                     </v-flex>
@@ -137,6 +137,7 @@ export default {
       reasonsLoaded: false,
       ebayAccounts: null,
       accountsLoaded: false,
+      damageYears: [],
       warehouseDamages: [],
       warehouseHeaders: [
         { text: 'Date', value: 'timestamp' },
@@ -177,6 +178,10 @@ export default {
     customFilter(items, search, filter) {
       search = search.toString().toLowerCase()
       return items.filter(row => filter(row['date'], search))
+    },
+    removeDuplicates(arr) {
+      let uniqueArr = Array.from(new Set(arr))
+      return uniqueArr
     },
     updateTally(tally) {
       // fetch data from firestore
@@ -226,7 +231,9 @@ export default {
             report.value = false
             report.date = moment(report.timestamp).format('LL')
             this.warehouseDamages.push(report)
+            this.damageYears.push(moment(report.timestamp).format('GGGG'))
           })
+          this.damageYears = this.removeDuplicates(this.damageYears)
         })
         .catch(err => {
           console.log(err)
