@@ -71,10 +71,12 @@
                   </v-form>
                 </v-card>
               </v-dialog>
+
               <v-data-table
               :headers="warehouseHeaders"
               :items="warehouseDamages"
-              hide-actions
+              :search="search"
+              :pagination.sync="pagination"
               class="elevation-1"
               >
                 <template slot="items" slot-scope="props">
@@ -112,6 +114,10 @@ export default {
   name: 'ViewWarehouseDamages',
   data() {
     return {
+      pagination: {
+        sortBy: 'timestamp',
+        descending: true
+      },
       productCosts: [],
       damageReasons: null,
       costsLoaded: false,
