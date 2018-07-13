@@ -76,6 +76,7 @@
               :headers="warehouseHeaders"
               :items="warehouseDamages"
               :search="search"
+              :custom-filter="customFilter"
               :pagination.sync="pagination"
               class="elevation-1"
               >
@@ -97,6 +98,18 @@
                 </template>
                 <template slot="no-data">
                   <v-btn color="primary" @click="initialize">Reset</v-btn>
+                </template>
+                <template slot="footer">
+                  <td colspan="100%">
+                    <v-flex xs6 sm1>
+                      <v-select
+                      label="Year"
+                      :items="['2017', '2018', '2019']"
+                      v-model="search"
+                    ></v-select>
+                    </v-flex>
+
+                  </td>
                 </template>
               </v-data-table>
             </v-card-text>
@@ -148,7 +161,8 @@ export default {
         itemCost: 0,
         reasonLost: '',
         ebayAccount: ''
-      }
+      },
+      search: ''
     }
   },
   watch: {
@@ -160,6 +174,10 @@ export default {
     this.initialize()
   },
   methods: {
+    customFilter(items, search, filter) {
+      search = search.toString().toLowerCase()
+      return items.filter(row => filter(row['date'], search))
+    },
     updateTally(tally) {
       // fetch data from firestore
       db
