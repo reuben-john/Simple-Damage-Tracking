@@ -108,7 +108,6 @@
                       v-model="search"
                     ></v-select>
                     </v-flex>
-
                   </td>
                 </template>
               </v-data-table>
