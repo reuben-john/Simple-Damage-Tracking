@@ -68,6 +68,19 @@
                             type="number"
                           ></v-text-field>
                         </v-flex>
+                        <v-flex xs12 sm6 md4>
+                          <v-checkbox
+                              label="Return Label"
+                              v-model="editedItem.returnLabel"
+                            ></v-checkbox>
+                        </v-flex>
+                        <v-flex xs12 sm6 md4  v-if="editedItem.returnLabel">
+                          <v-text-field
+                            v-model="editedItem.returnCost"
+                            label="Return Label Cost"
+                            type="number"
+                          ></v-text-field>
+                        </v-flex>
                         <v-flex xs12 sm6>
                           <v-select
                             :items="damageReasons.reasons"
@@ -115,6 +128,7 @@
                   <td class="text-xs-left">${{ props.item.orderTotal }}</td>
                   <td class="text-xs-left">${{ props.item.shippingCost }}</td>
                   <td class="text-xs-left">${{ props.item.shippingLost }}</td>
+                  <td class="text-xs-left">${{ props.item.returnCost }}</td>
                   <td class="text-xs-left">{{ props.item.itemType }}</td>
                   <td class="text-xs-left">{{ props.item.itemsLost }}</td>
                   <td class="text-xs-left">{{ props.item.reasonLost }}</td>
@@ -177,6 +191,7 @@ export default {
         { text: 'Order Total', value: 'orderTotal' },
         { text: 'Shipping Cost', value: 'shippingCost' },
         { text: 'Shipping Lost', value: 'shippingLost' },
+        { text: 'Return Label Cost', value: 'returnCost' },
         { text: 'Item Type', value: 'itemType' },
         { text: 'Items Lost', value: 'itemsLost' },
         { text: 'Reason Lost', value: 'reasonLost' },
@@ -189,6 +204,8 @@ export default {
         orderTotal: 0,
         shippingCost: 0,
         shippingLost: 0,
+        returnLabel: false,
+        returnCost: 0,
         itemType: '',
         itemsLost: 0,
         itemCost: 0,
@@ -200,6 +217,8 @@ export default {
         orderTotal: 0,
         shippingCost: 0,
         shippingLost: 0,
+        returnLabel: false,
+        returnCost: 0,
         itemType: '',
         itemsLost: 0,
         itemCost: 0,

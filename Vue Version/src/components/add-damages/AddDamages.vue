@@ -196,6 +196,11 @@ export default {
           shippingLost: parseFloat(report.shippingLost),
           itemsLost: parseInt(report.itemsLost)
         })
+        if (report.returnLabel) {
+          report.returnCost = parseFloat(report.returnCost)
+        } else {
+          report.returnCost = 0
+        }
       } else if (report.damageDept == 'warehouse') {
         report = Object.assign(report, {
           itemsLost: parseInt(report.itemsLost)
