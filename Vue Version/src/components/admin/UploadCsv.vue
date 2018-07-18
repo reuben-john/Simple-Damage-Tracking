@@ -40,6 +40,7 @@ export default {
   props: ['damageReasons'],
   data() {
     return {
+      csvFile: null,
       department: '',
       feedback: '',
       headers: {
@@ -61,6 +62,18 @@ export default {
     }
   },
   methods: {
+    logDamages() {
+      for (let report in this.csvFile) {
+        // Send damage report to database
+        db
+          .collection('damages')
+          .add(this.csvFile[report])
+          .then(console.log('Added', this.csvFile[report]))
+          .catch(err => console.log(err))
+      }
+
+      // this.tallyNewTotals()
+    },
     formatWarehouseFile(file) {
       let newFile = []
       for (let line in file) {
@@ -77,7 +90,8 @@ export default {
         newFile.push(updatedFile)
       }
 
-      console.log(newFile)
+      this.csvFile = newFile
+      this.logDamages()
     },
     formatOrderFile(file) {
       let newFile = []
@@ -99,7 +113,8 @@ export default {
         newFile.push(updatedFile)
       }
 
-      console.log(newFile)
+      this.csvFile = newFile
+      this.logDamages()
     },
     uploadCsvFile(e) {
       let files = e.target.files || e.dataTransfer.files
