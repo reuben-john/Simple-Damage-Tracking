@@ -31,7 +31,7 @@
             <edit-damage-reasons v-if="editReasons" :damageReasons="damageReasons"></edit-damage-reasons>
             <edit-product-costs v-if="editCosts" :productCosts="productCosts"></edit-product-costs>
             <edit-ebay-accounts v-if="editAccounts" :ebayAccounts="ebayAccounts"></edit-ebay-accounts>
-            <upload-csv v-if="uploadCsv"></upload-csv>
+            <upload-csv v-if="uploadCsv" :damageReasons="damageReasons"></upload-csv>
           </v-card-text>
         </v-card>
       </v-flex>
