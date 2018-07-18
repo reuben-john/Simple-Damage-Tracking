@@ -270,9 +270,14 @@ export default {
             let numLost = doc.data().itemsLost
             let shipCost = doc.data().shippingCost
             let shipLost = doc.data().shippingLost
-            shippingTally += shipLost
+            let returnCost = 0
+            if (doc.data().returnCost) {
+              returnCost = doc.data().returnCost
+            }
+            shippingTally += shipLost + returnCost
             orderTally += cost * numLost
           })
+          console.log(orderTally, shippingTally)
           // Normalize cost to 2 decimal places so it is accurate for money display $xx.xx
           orderTally = parseFloat(orderTally.toFixed(2))
           shippingTally = parseFloat(shippingTally.toFixed(2))
@@ -391,6 +396,11 @@ export default {
         itemCost: parseFloat(report.itemCost),
         itemsLost: parseInt(report.itemsLost)
       })
+      if (report.returnLabel) {
+        report.returnCost = parseFloat(report.returnCost)
+      } else {
+        report.returnCost = 0
+      }
       return report
     },
     updateItem(itemId) {
@@ -406,6 +416,8 @@ export default {
           orderTotal: this.editedItem.orderTotal,
           shippingCost: this.editedItem.shippingCost,
           shippingLost: this.editedItem.shippingLost,
+          returnLabel: this.editedItem.returnLabel,
+          returnCost: this.editedItem.returnCost,
           itemType: this.editedItem.itemType,
           itemsLost: this.editedItem.itemsLost,
           itemCost: this.editedItem.itemCost,

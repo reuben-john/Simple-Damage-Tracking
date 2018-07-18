@@ -109,7 +109,11 @@ export default {
             let numLost = doc.data().itemsLost
             let shipCost = doc.data().shippingCost
             let shipLost = doc.data().shippingLost
-            shippingTally += shipLost
+            let returnCost = 0
+            if (doc.data().returnCost) {
+              returnCost = doc.data().returnCost
+            }
+            shippingTally += shipLost + returnCost
             orderTally += cost * numLost
           })
           // Normalize cost to 2 decimal places so it is accurate for money display $xx.xx
