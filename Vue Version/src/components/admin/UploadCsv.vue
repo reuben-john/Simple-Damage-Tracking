@@ -77,6 +77,15 @@ export default {
     formatWarehouseFile(file) {
       let newFile = []
       for (let line in file) {
+        // Rename old damage reasons to new ones
+        if (file[line].reasonLost == 'Box loss') {
+          file[line].reasonLost = 'Bad Box'
+        }
+
+        if (file[line].reasonLost == 'Item loss') {
+          file[line].reasonLost = 'Bad Product'
+        }
+
         let updatedFile = {
           timestamp: parseInt(moment(file[line].timestamp, 'MM-DD-YYYY').format('x')),
           itemType: file[line].itemType,
@@ -96,6 +105,15 @@ export default {
     formatOrderFile(file) {
       let newFile = []
       for (let line in file) {
+        // Rename old damage reasons to new ones
+        if (file[line].reasonLost == 'Order lost in transit') {
+          file[line].reasonLost = 'Lost in Transit'
+        }
+
+        if (file[line].reasonLost == 'Returned product') {
+          file[line].reasonLost = 'Returned Product'
+        }
+
         let updatedFile = {
           timestamp: parseInt(moment(file[line].timestamp, 'MM-DD-YYYY').format('x')),
           orderNumber: file[line].orderNumber,
