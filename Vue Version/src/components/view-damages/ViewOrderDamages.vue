@@ -254,6 +254,9 @@ export default {
             shippingTally += shipLost
             orderTally += cost * numLost
           })
+          // Normalize cost to 2 decimal places so it is accurate for money display $xx.xx
+          orderTally = orderTally.toFixed(2)
+          shippingTally = shippingTally.toFixed(2)
           console.log(orderTally, shippingTally)
           this.updateTally(orderTally, shippingTally)
         })

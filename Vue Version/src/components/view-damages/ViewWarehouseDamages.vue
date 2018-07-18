@@ -213,6 +213,8 @@ export default {
             let numLost = doc.data().itemsLost
             warehouseTally += cost * numLost
           })
+          // Normalize cost to 2 decimal places so it is accurate for money display $xx.xx
+          warehouseTally = warehouseTally.toFixed(2)
           this.updateTally(warehouseTally)
         })
         .catch(err => {
