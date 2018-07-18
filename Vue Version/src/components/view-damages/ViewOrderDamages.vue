@@ -225,7 +225,7 @@ export default {
         .doc('order')
         .set(
           {
-            total: orderTally + shippingTally,
+            total: parseFloat((orderTally + shippingTally).toFixed(2)),
             itemTotal: orderTally,
             shipTotal: shippingTally
           },

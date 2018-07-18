@@ -83,7 +83,7 @@ export default {
         .doc('order')
         .set(
           {
-            total: orderTally + shippingTally,
+            total: parseFloat((orderTally + shippingTally).toFixed(2)),
             itemTotal: orderTally,
             shipTotal: shippingTally
           },
@@ -112,7 +112,9 @@ export default {
             shippingTally += shipLost
             orderTally += cost * numLost
           })
-          console.log(orderTally, shippingTally)
+          // Normalize cost to 2 decimal places so it is accurate for money display $xx.xx
+          orderTally = parseFloat(orderTally.toFixed(2))
+          shippingTally = parseFloat(shippingTally.toFixed(2))
           this.updateOrderTally(orderTally, shippingTally)
         })
         .catch(err => {
@@ -148,6 +150,8 @@ export default {
             let numLost = doc.data().itemsLost
             warehouseTally += cost * numLost
           })
+          // Normalize cost to 2 decimal places so it is accurate for money display $xx.xx
+          warehouseTally = parseFloat(warehouseTally.toFixed(2))
           this.updateWarehouseTally(warehouseTally)
         })
         .catch(err => {
