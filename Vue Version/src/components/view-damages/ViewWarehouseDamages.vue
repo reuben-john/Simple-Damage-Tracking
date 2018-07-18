@@ -214,7 +214,7 @@ export default {
             warehouseTally += cost * numLost
           })
           // Normalize cost to 2 decimal places so it is accurate for money display $xx.xx
-          warehouseTally = warehouseTally.toFixed(2)
+          warehouseTally = parseFloat(warehouseTally.toFixed(2))
           this.updateTally(warehouseTally)
         })
         .catch(err => {
