@@ -22,12 +22,16 @@
             <v-flex xs2>
               <v-btn color="purple darken-1 white--text" @click="downloadCSV()">Download Damage Report</v-btn>
             </v-flex>
+            <v-flex xs2>
+              <v-btn color="purple darken-1 white--text" @click="uploadCsv = !uploadCsv">Upload CSV Data</v-btn>
+            </v-flex>
             </v-layout>
           </v-card-text>
           <v-card-text>
             <edit-damage-reasons v-if="editReasons" :damageReasons="damageReasons"></edit-damage-reasons>
             <edit-product-costs v-if="editCosts" :productCosts="productCosts"></edit-product-costs>
             <edit-ebay-accounts v-if="editAccounts" :ebayAccounts="ebayAccounts"></edit-ebay-accounts>
+            <upload-csv v-if="uploadCsv" :damageReasons="damageReasons"></upload-csv>
           </v-card-text>
         </v-card>
       </v-flex>
@@ -40,6 +44,7 @@
 import EditDamageReasons from '@/components/admin/EditDamageReasons'
 import EditProductCosts from '@/components/admin/EditProductCosts'
 import EditEbayAccounts from '@/components/admin/EditEbayAccounts'
+import UploadCsv from '@/components/admin/UploadCsv'
 import db from '@/firebase/init'
 import papaparse from 'papaparse'
 
@@ -48,7 +53,8 @@ export default {
   components: {
     EditProductCosts,
     EditDamageReasons,
-    EditEbayAccounts
+    EditEbayAccounts,
+    UploadCsv
   },
   data() {
     return {
@@ -60,7 +66,8 @@ export default {
       },
       damageReasons: {},
       productCosts: [],
-      CSVReport: null
+      CSVReport: null,
+      uploadCsv: false
     }
   },
   methods: {
