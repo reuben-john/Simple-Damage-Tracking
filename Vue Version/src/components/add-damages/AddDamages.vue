@@ -83,7 +83,7 @@ export default {
         .doc('order')
         .set(
           {
-            total: orderTally + shippingTally,
+            total: parseFloat((orderTally + shippingTally).toFixed(2)),
             itemTotal: orderTally,
             shipTotal: shippingTally
           },
@@ -109,10 +109,16 @@ export default {
             let numLost = doc.data().itemsLost
             let shipCost = doc.data().shippingCost
             let shipLost = doc.data().shippingLost
-            shippingTally += shipLost
+            let returnCost = 0
+            if (doc.data().returnCost) {
+              returnCost = doc.data().returnCost
+            }
+            shippingTally += shipLost + returnCost
             orderTally += cost * numLost
           })
-          console.log(orderTally, shippingTally)
+          // Normalize cost to 2 decimal places so it is accurate for money display $xx.xx
+          orderTally = parseFloat(orderTally.toFixed(2))
+          shippingTally = parseFloat(shippingTally.toFixed(2))
           this.updateOrderTally(orderTally, shippingTally)
         })
         .catch(err => {
@@ -148,6 +154,8 @@ export default {
             let numLost = doc.data().itemsLost
             warehouseTally += cost * numLost
           })
+          // Normalize cost to 2 decimal places so it is accurate for money display $xx.xx
+          warehouseTally = parseFloat(warehouseTally.toFixed(2))
           this.updateWarehouseTally(warehouseTally)
         })
         .catch(err => {
@@ -192,6 +200,11 @@ export default {
           shippingLost: parseFloat(report.shippingLost),
           itemsLost: parseInt(report.itemsLost)
         })
+        if (report.returnLabel) {
+          report.returnCost = parseFloat(report.returnCost)
+        } else {
+          report.returnCost = 0
+        }
       } else if (report.damageDept == 'warehouse') {
         report = Object.assign(report, {
           itemsLost: parseInt(report.itemsLost)

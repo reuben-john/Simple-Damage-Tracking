@@ -77,6 +77,23 @@
         required
       ></v-text-field>
     </v-flex>
+    <v-flex xs6 sm3 mx-4>
+      <v-checkbox
+          label="Return Label"
+          v-model="damageReport.returnLabel"
+        ></v-checkbox>
+    </v-flex>
+    <v-flex xs6 sm3 mx-4 v-if="damageReport.returnLabel">
+      <p>{{damageReport.returnLabel}}</p>
+      <v-text-field
+        name="returnCost"
+        label="Return Label Cost"
+        id="return-cost"
+        v-model="damageReport.returnCost"
+        type="number"
+        required
+      ></v-text-field>
+    </v-flex>
   </v-layout>
 </template>
 
