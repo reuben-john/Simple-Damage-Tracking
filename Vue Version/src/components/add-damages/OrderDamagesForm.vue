@@ -84,7 +84,6 @@
         ></v-checkbox>
     </v-flex>
     <v-flex xs6 sm3 mx-4 v-if="damageReport.returnLabel">
-      <p>{{damageReport.returnLabel}}</p>
       <v-text-field
         name="returnCost"
         label="Return Label Cost"
