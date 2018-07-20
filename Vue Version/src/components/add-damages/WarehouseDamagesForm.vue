@@ -34,7 +34,7 @@
 <script>
 export default {
   name: 'WarehouseDamagesForm',
-  props: ['damageReasons', 'damageReport', 'productCosts', 'ebayAccounts'],
+  props: ['damageReasons', 'damageReport', 'productCosts'],
   data() {
     return {}
   }
