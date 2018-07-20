@@ -44,7 +44,7 @@ export default {
       department: '',
       feedback: '',
       headers: {
-        warehouse: ['timestamp', 'itemType', 'itemCost', 'itemsLost', 'reasonLost', 'damageDept', 'ebayAccount'],
+        warehouse: ['timestamp', 'itemType', 'itemCost', 'itemsLost', 'reasonLost', 'damageDept'],
         order: [
           'timestamp',
           'orderNumber',
@@ -92,8 +92,7 @@ export default {
           itemCost: parseFloat(file[line].itemCost),
           itemsLost: parseFloat(file[line].itemsLost),
           reasonLost: file[line].reasonLost,
-          damageDept: file[line].damageDept,
-          ebayAccount: file[line].ebayAccount
+          damageDept: file[line].damageDept
         }
 
         newFile.push(updatedFile)
@@ -148,9 +147,9 @@ export default {
     },
     parseFile(file, e) {
       // Check if department matches csv data
-      // Subtracts 2 for the 2 headers that don't exist in the csv file
+      // Subtracts 2 for the extra headers that don't exist in the csv file
       let orderLength = this.headers.order.length - 2
-      let warehouseLength = this.headers.warehouse.length - 2
+      let warehouseLength = this.headers.warehouse.length - 1
       if (
         (this.department == 'order' && file[0].length != orderLength) ||
         (this.department == 'warehouse' && file[0].length != warehouseLength)
