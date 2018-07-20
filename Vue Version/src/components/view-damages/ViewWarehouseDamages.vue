@@ -74,7 +74,7 @@
                 <template slot="items" slot-scope="props">
                   <td class="text-xs-left">{{ props.item.date }}</td>
                   <td class="text-xs-left">{{ props.item.itemType }}</td>
-                  <td class="text-xs-left">{{ props.item.itemCost }}</td>
+                  <td class="text-xs-left">${{ props.item.itemCost }}</td>
                   <td class="text-xs-left">{{ props.item.itemsLost }}</td>
                   <td class="text-xs-left">{{ props.item.reasonLost }}</td>
                   <td class="justify-center layout px-0">
@@ -131,8 +131,8 @@ export default {
       warehouseHeaders: [
         { text: 'Date', value: 'timestamp' },
         { text: 'Item Type', value: 'itemType' },
-        { text: 'Items Lost', value: 'itemsLost' },
         { text: 'Item Cost', value: 'itemCost' },
+        { text: 'Items Lost', value: 'itemsLost' },
         { text: 'Reason Lost', value: 'reasonLost' }
       ],
       dialog: false,
