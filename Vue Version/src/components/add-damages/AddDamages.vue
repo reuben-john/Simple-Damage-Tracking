@@ -30,7 +30,7 @@
                     <order-damages-form :damageReasons="damageReasons" :damageReport="damageReport" :productCosts="productCosts" :ebayAccounts="ebayAccounts"></order-damages-form>
                 </v-layout>
                 <v-layout v-else-if="damageReport.damageDept == 'warehouse'">
-                    <warehouse-damages-form :damageReasons="damageReasons" :damageReport="damageReport" :productCosts="productCosts" :ebayAccounts="ebayAccounts"></warehouse-damages-form>
+                    <warehouse-damages-form :damageReasons="damageReasons" :damageReport="damageReport" :productCosts="productCosts"></warehouse-damages-form>
                 </v-layout>
                 <v-btn v-if="dataDownloaded"
                   type="submit"
