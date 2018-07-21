@@ -64,7 +64,7 @@
                         <v-flex xs12 sm6 md4>
                           <v-text-field
                             v-model="editedItem.itemsLost"
-                            label="Items Lost"
+                            label="# Lost"
                             type="number"
                           ></v-text-field>
                         </v-flex>
@@ -193,7 +193,7 @@ export default {
         { text: 'Shipping Lost', value: 'shippingLost' },
         { text: 'Return Label Cost', value: 'returnCost' },
         { text: 'Item Type', value: 'itemType' },
-        { text: 'Items Lost', value: 'itemsLost' },
+        { text: '# Lost', value: 'itemsLost' },
         { text: 'Reason Lost', value: 'reasonLost' },
         { text: 'eBay Account', value: 'ebayAccount' }
       ],
