@@ -70,7 +70,7 @@
     <v-flex xs6 sm3 mx-4>
       <v-text-field
         name="itemsLost"
-        label="Items Lost"
+        label="# Lost"
         id="items-lost"
         v-model="damageReport.itemsLost"
         type="number"

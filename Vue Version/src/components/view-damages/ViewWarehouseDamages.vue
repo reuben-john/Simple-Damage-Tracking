@@ -37,7 +37,7 @@
                           <v-flex xs12 sm6 md4>
                             <v-text-field
                               v-model="editedItem.itemsLost"
-                              label="Lost"
+                              label="# Lost"
                               type="number"
                             ></v-text-field>
                           </v-flex>
@@ -132,7 +132,7 @@ export default {
         { text: 'Date', value: 'timestamp' },
         { text: 'Item Type', value: 'itemType' },
         { text: 'Item Cost', value: 'itemCost' },
-        { text: 'Items Lost', value: 'itemsLost' },
+        { text: '# Lost', value: 'itemsLost' },
         { text: 'Reason Lost', value: 'reasonLost' }
       ],
       dialog: false,
