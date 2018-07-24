@@ -2,6 +2,15 @@
   <v-layout row wrap justify-center  class="order-damages-form">
     <v-flex xs8 sm4 mx-4>
       <v-select
+        :items="ebayAccounts"
+        v-model="damageReport.ebayAccount"
+        label="Ebay Account"
+        single-line
+        required
+      ></v-select>
+    </v-flex>
+    <v-flex xs8 sm4 mx-4>
+      <v-select
         :items="damageReasons.order.reasons"
         v-model="damageReport.reasonLost"
         label="Damage Type"
@@ -61,9 +70,25 @@
     <v-flex xs6 sm3 mx-4>
       <v-text-field
         name="itemsLost"
-        label="Items Lost"
+        label="# Lost"
         id="items-lost"
         v-model="damageReport.itemsLost"
+        type="number"
+        required
+      ></v-text-field>
+    </v-flex>
+    <v-flex xs6 sm3 mx-4>
+      <v-checkbox
+          label="Return Label"
+          v-model="damageReport.returnLabel"
+        ></v-checkbox>
+    </v-flex>
+    <v-flex xs6 sm3 mx-4 v-if="damageReport.returnLabel">
+      <v-text-field
+        name="returnCost"
+        label="Return Label Cost"
+        id="return-cost"
+        v-model="damageReport.returnCost"
         type="number"
         required
       ></v-text-field>
@@ -74,7 +99,7 @@
 <script>
 export default {
   name: 'OrderDamagesForm',
-  props: ['damageReasons', 'damageReport', 'productCosts'],
+  props: ['damageReasons', 'damageReport', 'productCosts', 'ebayAccounts'],
   data() {
     return {}
   }

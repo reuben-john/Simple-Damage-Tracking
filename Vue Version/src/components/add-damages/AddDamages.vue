@@ -27,7 +27,7 @@
                       </v-layout>
                     </v-radio-group>
                   <v-layout v-if="damageReport.damageDept == 'order'">
-                    <order-damages-form :damageReasons="damageReasons" :damageReport="damageReport" :productCosts="productCosts"></order-damages-form>
+                    <order-damages-form :damageReasons="damageReasons" :damageReport="damageReport" :productCosts="productCosts" :ebayAccounts="ebayAccounts"></order-damages-form>
                 </v-layout>
                 <v-layout v-else-if="damageReport.damageDept == 'warehouse'">
                     <warehouse-damages-form :damageReasons="damageReasons" :damageReport="damageReport" :productCosts="productCosts"></warehouse-damages-form>
@@ -63,7 +63,9 @@ export default {
       damageDept: null,
       damageReport: {},
       costsLoaded: false,
-      damagesLoaded: false
+      damagesLoaded: false,
+      ebayAccounts: null,
+      accountsLoaded: false
     }
   },
   methods: {
@@ -81,7 +83,7 @@ export default {
         .doc('order')
         .set(
           {
-            total: orderTally + shippingTally,
+            total: parseFloat((orderTally + shippingTally).toFixed(2)),
             itemTotal: orderTally,
             shipTotal: shippingTally
           },
@@ -107,10 +109,16 @@ export default {
             let numLost = doc.data().itemsLost
             let shipCost = doc.data().shippingCost
             let shipLost = doc.data().shippingLost
-            shippingTally += shipLost
+            let returnCost = 0
+            if (doc.data().returnCost) {
+              returnCost = doc.data().returnCost
+            }
+            shippingTally += shipLost + returnCost
             orderTally += cost * numLost
           })
-          console.log(orderTally, shippingTally)
+          // Normalize cost to 2 decimal places so it is accurate for money display $xx.xx
+          orderTally = parseFloat(orderTally.toFixed(2))
+          shippingTally = parseFloat(shippingTally.toFixed(2))
           this.updateOrderTally(orderTally, shippingTally)
         })
         .catch(err => {
@@ -146,6 +154,8 @@ export default {
             let numLost = doc.data().itemsLost
             warehouseTally += cost * numLost
           })
+          // Normalize cost to 2 decimal places so it is accurate for money display $xx.xx
+          warehouseTally = parseFloat(warehouseTally.toFixed(2))
           this.updateWarehouseTally(warehouseTally)
         })
         .catch(err => {
@@ -190,6 +200,11 @@ export default {
           shippingLost: parseFloat(report.shippingLost),
           itemsLost: parseInt(report.itemsLost)
         })
+        if (report.returnLabel) {
+          report.returnCost = parseFloat(report.returnCost)
+        } else {
+          report.returnCost = 0
+        }
       } else if (report.damageDept == 'warehouse') {
         report = Object.assign(report, {
           itemsLost: parseInt(report.itemsLost)
@@ -227,6 +242,18 @@ export default {
           this.costsLoaded = true
         })
         .catch(err => console.log(err))
+      // Get ebay account names from firestore
+      this.ebayAccounts = []
+      db
+        .collection('ebayAccounts')
+        .get()
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            this.ebayAccounts.push(doc.data().ebayAccount)
+          })
+          this.accountsLoaded = true
+        })
+        .catch(err => console.log(err))
     }
   },
   created() {
@@ -234,7 +261,7 @@ export default {
   },
   computed: {
     dataDownloaded() {
-      return this.damagesLoaded && this.costsLoaded
+      return this.damagesLoaded && this.costsLoaded && this.accountsLoaded
     }
   }
 }

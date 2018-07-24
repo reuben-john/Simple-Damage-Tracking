@@ -6,7 +6,7 @@
           <v-card class="elevation-12">
             <v-card class="elevation-5">
               <router-link :to="{ name: totalDamages.order.slug}">
-              <h2>Total Order Losses</h2>
+              <h2 class="pt-2">Total Order Losses</h2>
               <p class="loss loss-money">${{ totalDamages.order.total }}</p>
               <v-layout row wrap>
                 <v-flex class="loss">
@@ -20,8 +20,8 @@
             </v-card>
             <v-card class="elevation-3">
             <router-link :to="{ name: totalDamages.warehouse.slug}">
-              <h2>Total Warehouse Losses</h2>
-              <p class="loss loss-money">${{ totalDamages.warehouse.total }}</p>
+              <h2 class="pt-2">Total Warehouse Losses</h2>
+              <p class="loss loss-money pb-2">${{ totalDamages.warehouse.total }}</p>
             </router-link>
           </v-card>
           </v-card>

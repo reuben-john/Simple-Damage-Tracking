@@ -3,15 +3,15 @@
       <v-toolbar color="primary">
       <v-toolbar-title>
         <router-link :to="{ name: 'Index' }">
-          <span class="white--text">Damage Tracker</span>
+          <span class="white--text ml-2">Damage Tracker</span>
         </router-link>
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items>
         <v-btn v-if="user" flat class="white--text" :to="{ name: 'ViewAdmin' }">Admin</v-btn>
-        <v-btn v-if="!user" flat class="white--text" :to="{ name: 'Login' }">Login</v-btn>
-        <v-btn v-if="user" flat class="white--text" @click="logout">Logout</v-btn>
-        <v-btn class="add" fab top right large color="pink white--text" :to="{ name: 'AddDamages' }">
+        <v-btn v-if="!user" flat class="white--text mr-4" :to="{ name: 'Login' }">Login</v-btn>
+        <v-btn v-if="user" flat class="white--text mr-4" @click="logout">Logout</v-btn>
+        <v-btn class="add" fab top right large color="pink white--text mt-2" :to="{ name: 'AddDamages' }">
           <v-icon>add</v-icon>
         </v-btn>
       </v-toolbar-items>
@@ -20,7 +20,8 @@
 </template>
 
 <script>
-import firebase from 'firebase'
+import firebase from 'firebase/app'
+import 'firebase/auth'
 
 export default {
   name: 'Navbar',
@@ -52,7 +53,7 @@ export default {
 </script>
 
 <style>
-.nav-bar .add {
-  margin-top: 1em;
+.nav-bar {
+  margin-bottom: 30px;
 }
 </style>

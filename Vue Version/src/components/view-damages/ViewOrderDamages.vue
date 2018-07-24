@@ -64,7 +64,20 @@
                         <v-flex xs12 sm6 md4>
                           <v-text-field
                             v-model="editedItem.itemsLost"
-                            label="Items Lost"
+                            label="# Lost"
+                            type="number"
+                          ></v-text-field>
+                        </v-flex>
+                        <v-flex xs12 sm6 md4>
+                          <v-checkbox
+                              label="Return Label"
+                              v-model="editedItem.returnLabel"
+                            ></v-checkbox>
+                        </v-flex>
+                        <v-flex xs12 sm6 md4  v-if="editedItem.returnLabel">
+                          <v-text-field
+                            v-model="editedItem.returnCost"
+                            label="Return Label Cost"
                             type="number"
                           ></v-text-field>
                         </v-flex>
@@ -73,6 +86,16 @@
                             :items="damageReasons.reasons"
                             v-model="editedItem.reasonLost"
                             label="Reason Lost"
+                            type="text"
+                            single-line
+                            required
+                          ></v-select>
+                        </v-flex>
+                        <v-flex xs12 sm6>
+                          <v-select
+                            :items="ebayAccounts"
+                            v-model="editedItem.ebayAccount"
+                            label="eBay Account"
                             type="text"
                             single-line
                             required
@@ -93,18 +116,23 @@
               <v-data-table
               :headers="orderHeaders"
               :items="orderDamages"
-              hide-actions
+              :search="search"
+              :custom-filter="customFilter"
+              :pagination.sync="pagination"
+              :rows-per-page-items="rows"
               class="elevation-1"
               >
                 <template slot="items" slot-scope="props">
-                  <td class="text-xs-left">{{ props.item.timestamp }}</td>
+                  <td class="text-xs-left">{{ props.item.date }}</td>
                   <td class="text-xs-left">{{ props.item.orderNumber }}</td>
                   <td class="text-xs-left">${{ props.item.orderTotal }}</td>
                   <td class="text-xs-left">${{ props.item.shippingCost }}</td>
                   <td class="text-xs-left">${{ props.item.shippingLost }}</td>
+                  <td class="text-xs-left">${{ props.item.returnCost }}</td>
                   <td class="text-xs-left">{{ props.item.itemType }}</td>
                   <td class="text-xs-left">{{ props.item.itemsLost }}</td>
                   <td class="text-xs-left">{{ props.item.reasonLost }}</td>
+                  <td class="text-xs-left">{{ props.item.ebayAccount }}</td>
                   <td class="justify-center layout px-0">
                     <v-btn icon class="mx-0" @click="editItem(props.item)">
                       <v-icon color="teal">edit</v-icon>
@@ -116,6 +144,17 @@
                 </template>
                 <template slot="no-data">
                   <v-btn color="primary" @click="initialize">Reset</v-btn>
+                </template>
+                <template slot="footer">
+                  <td colspan="100%">
+                    <v-flex xs6 sm1>
+                      <v-select
+                      label="Year"
+                      :items="damageYears"
+                      v-model="search"
+                    ></v-select>
+                    </v-flex>
+                  </td>
                 </template>
               </v-data-table>
             </v-card-text>
@@ -133,20 +172,30 @@ export default {
   name: 'ViewOrderDamages',
   data() {
     return {
+      pagination: {
+        sortBy: 'timestamp',
+        descending: true
+      },
+      rows: [10, 25, { text: 'All', value: -1 }],
       productCosts: [],
       damageReasons: null,
       costsLoaded: false,
       reasonsLoaded: false,
       orderDamages: null,
+      ebayAccounts: null,
+      accountsLoaded: false,
+      damageYears: [],
       orderHeaders: [
         { text: 'Date', value: 'timestamp' },
         { text: 'Ebay Order', value: 'orderNumber' },
         { text: 'Order Total', value: 'orderTotal' },
         { text: 'Shipping Cost', value: 'shippingCost' },
         { text: 'Shipping Lost', value: 'shippingLost' },
+        { text: 'Return Label Cost', value: 'returnCost' },
         { text: 'Item Type', value: 'itemType' },
-        { text: 'Items Lost', value: 'itemsLost' },
-        { text: 'Reason Lost', value: 'reasonLost' }
+        { text: '# Lost', value: 'itemsLost' },
+        { text: 'Reason Lost', value: 'reasonLost' },
+        { text: 'eBay Account', value: 'ebayAccount' }
       ],
       dialog: false,
       editedIndex: -1,
@@ -155,24 +204,39 @@ export default {
         orderTotal: 0,
         shippingCost: 0,
         shippingLost: 0,
+        returnLabel: false,
+        returnCost: 0,
         itemType: '',
         itemsLost: 0,
         itemCost: 0,
-        reasonLost: ''
+        reasonLost: '',
+        ebayAccount: ''
       },
       defaultItem: {
         orderNumber: 0,
         orderTotal: 0,
         shippingCost: 0,
         shippingLost: 0,
+        returnLabel: false,
+        returnCost: 0,
         itemType: '',
         itemsLost: 0,
         itemCost: 0,
-        reasonLost: ''
-      }
+        reasonLost: '',
+        ebayAccount: ''
+      },
+      search: ''
     }
   },
   methods: {
+    customFilter(items, search, filter) {
+      search = search.toString().toLowerCase()
+      return items.filter(row => filter(row['date'], search))
+    },
+    removeDuplicates(arr) {
+      let uniqueArr = Array.from(new Set(arr))
+      return uniqueArr
+    },
     updateTally(orderTally, shippingTally) {
       // fetch data from firestore
       db
@@ -180,7 +244,7 @@ export default {
         .doc('order')
         .set(
           {
-            total: orderTally + shippingTally,
+            total: parseFloat((orderTally + shippingTally).toFixed(2)),
             itemTotal: orderTally,
             shipTotal: shippingTally
           },
@@ -206,10 +270,17 @@ export default {
             let numLost = doc.data().itemsLost
             let shipCost = doc.data().shippingCost
             let shipLost = doc.data().shippingLost
-            shippingTally += shipLost
+            let returnCost = 0
+            if (doc.data().returnCost) {
+              returnCost = doc.data().returnCost
+            }
+            shippingTally += shipLost + returnCost
             orderTally += cost * numLost
           })
           console.log(orderTally, shippingTally)
+          // Normalize cost to 2 decimal places so it is accurate for money display $xx.xx
+          orderTally = parseFloat(orderTally.toFixed(2))
+          shippingTally = parseFloat(shippingTally.toFixed(2))
           this.updateTally(orderTally, shippingTally)
         })
         .catch(err => {
@@ -217,7 +288,7 @@ export default {
         })
     },
     initialize() {
-      let damagesRef = db.collection('damages').orderBy('timestamp')
+      let damagesRef = db.collection('damages')
       // fetch data from firestore
       let querty = damagesRef
         .where('damageDept', '==', 'order')
@@ -230,9 +301,11 @@ export default {
             let report = doc.data()
             report.id = doc.id
             report.value = false
-            report.timestamp = moment(report.timestamp).format('LL')
+            report.date = moment(report.timestamp).format('LL')
             this.orderDamages.push(report)
+            this.damageYears.push(moment(report.timestamp).format('GGGG'))
           })
+          this.damageYears = this.removeDuplicates(this.damageYears)
         })
         .catch(err => {
           console.log(err)
@@ -258,6 +331,19 @@ export default {
         .then(doc => {
           this.damageReasons = doc.data()
           this.reasonsLoaded = true
+        })
+        .catch(err => console.log(err))
+
+      // Get ebay account names from firestore
+      this.ebayAccounts = []
+      db
+        .collection('ebayAccounts')
+        .get()
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            this.ebayAccounts.push(doc.data().ebayAccount)
+          })
+          this.accountsLoaded = true
         })
         .catch(err => console.log(err))
     },
@@ -310,6 +396,11 @@ export default {
         itemCost: parseFloat(report.itemCost),
         itemsLost: parseInt(report.itemsLost)
       })
+      if (report.returnLabel) {
+        report.returnCost = parseFloat(report.returnCost)
+      } else {
+        report.returnCost = 0
+      }
       return report
     },
     updateItem(itemId) {
@@ -325,10 +416,13 @@ export default {
           orderTotal: this.editedItem.orderTotal,
           shippingCost: this.editedItem.shippingCost,
           shippingLost: this.editedItem.shippingLost,
+          returnLabel: this.editedItem.returnLabel,
+          returnCost: this.editedItem.returnCost,
           itemType: this.editedItem.itemType,
           itemsLost: this.editedItem.itemsLost,
           itemCost: this.editedItem.itemCost,
-          reasonLost: this.editedItem.reasonLost
+          reasonLost: this.editedItem.reasonLost,
+          ebayAccount: this.editedItem.ebayAccount
         })
         .then(console.log('Updated'), this.tallyNewTotals())
         .catch(err => {
@@ -346,7 +440,7 @@ export default {
   },
   computed: {
     dataDownloaded() {
-      return this.costsLoaded && this.reasonsLoaded
+      return this.costsLoaded && this.reasonsLoaded && this.accountsLoaded
     }
   }
 }

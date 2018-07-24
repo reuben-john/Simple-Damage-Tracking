@@ -5,7 +5,7 @@ import Vuetify from 'vuetify'
 import App from './App'
 import router from './router'
 import 'vuetify/dist/vuetify.min.css'
-import firebase from 'firebase' // Ensure you are using css-loader
+import firebase from 'firebase/app' // Ensure you are using css-loader
 
 Vue.config.productionTip = false
 

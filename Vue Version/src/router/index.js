@@ -6,7 +6,8 @@ import ViewOrderDamages from '@/components/view-damages/ViewOrderDamages'
 import ViewWarehouseDamages from '@/components/view-damages/ViewWarehouseDamages'
 import ViewAdmin from '@/components/admin/ViewAdmin'
 import Login from '@/components/auth/Login'
-import firebase from 'firebase'
+import firebase from 'firebase/app'
+import 'firebase/auth'
 
 Vue.use(Router)
 

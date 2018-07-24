@@ -37,7 +37,7 @@
                           <v-flex xs12 sm6 md4>
                             <v-text-field
                               v-model="editedItem.itemsLost"
-                              label="Lost"
+                              label="# Lost"
                               type="number"
                             ></v-text-field>
                           </v-flex>
@@ -61,16 +61,20 @@
                   </v-form>
                 </v-card>
               </v-dialog>
+
               <v-data-table
               :headers="warehouseHeaders"
               :items="warehouseDamages"
-              hide-actions
+              :search="search"
+              :custom-filter="customFilter"
+              :pagination.sync="pagination"
+              :rows-per-page-items="rows"
               class="elevation-1"
               >
                 <template slot="items" slot-scope="props">
-                  <td class="text-xs-left">{{ props.item.timestamp }}</td>
+                  <td class="text-xs-left">{{ props.item.date }}</td>
                   <td class="text-xs-left">{{ props.item.itemType }}</td>
-                  <td class="text-xs-left">{{ props.item.itemCost }}</td>
+                  <td class="text-xs-left">${{ props.item.itemCost }}</td>
                   <td class="text-xs-left">{{ props.item.itemsLost }}</td>
                   <td class="text-xs-left">{{ props.item.reasonLost }}</td>
                   <td class="justify-center layout px-0">
@@ -84,6 +88,17 @@
                 </template>
                 <template slot="no-data">
                   <v-btn color="primary" @click="initialize">Reset</v-btn>
+                </template>
+                <template slot="footer">
+                  <td colspan="100%">
+                    <v-flex xs6 sm1>
+                      <v-select
+                      label="Year"
+                      :items="damageYears"
+                      v-model="search"
+                    ></v-select>
+                    </v-flex>
+                  </td>
                 </template>
               </v-data-table>
             </v-card-text>
@@ -101,16 +116,23 @@ export default {
   name: 'ViewWarehouseDamages',
   data() {
     return {
+      pagination: {
+        sortBy: 'timestamp',
+        descending: true
+      },
+      rows: [10, 25, { text: 'All', value: -1 }],
       productCosts: [],
       damageReasons: null,
       costsLoaded: false,
       reasonsLoaded: false,
+      accountsLoaded: false,
+      damageYears: [],
       warehouseDamages: [],
       warehouseHeaders: [
         { text: 'Date', value: 'timestamp' },
         { text: 'Item Type', value: 'itemType' },
-        { text: 'Items Lost', value: 'itemsLost' },
         { text: 'Item Cost', value: 'itemCost' },
+        { text: '# Lost', value: 'itemsLost' },
         { text: 'Reason Lost', value: 'reasonLost' }
       ],
       dialog: false,
@@ -126,7 +148,8 @@ export default {
         itemsLost: 0,
         itemCost: 0,
         reasonLost: ''
-      }
+      },
+      search: ''
     }
   },
   watch: {
@@ -138,6 +161,14 @@ export default {
     this.initialize()
   },
   methods: {
+    customFilter(items, search, filter) {
+      search = search.toString().toLowerCase()
+      return items.filter(row => filter(row['date'], search))
+    },
+    removeDuplicates(arr) {
+      let uniqueArr = Array.from(new Set(arr))
+      return uniqueArr
+    },
     updateTally(tally) {
       // fetch data from firestore
       db
@@ -167,6 +198,8 @@ export default {
             let numLost = doc.data().itemsLost
             warehouseTally += cost * numLost
           })
+          // Normalize cost to 2 decimal places so it is accurate for money display $xx.xx
+          warehouseTally = parseFloat(warehouseTally.toFixed(2))
           this.updateTally(warehouseTally)
         })
         .catch(err => {
@@ -174,7 +207,7 @@ export default {
         })
     },
     initialize() {
-      let damagesRef = db.collection('damages').orderBy('timestamp')
+      let damagesRef = db.collection('damages')
       // fetch data from firestore
       let query = damagesRef
         .where('damageDept', '==', 'warehouse')
@@ -184,9 +217,11 @@ export default {
             let report = doc.data()
             report.id = doc.id
             report.value = false
-            report.timestamp = moment(report.timestamp).format('LL')
+            report.date = moment(report.timestamp).format('LL')
             this.warehouseDamages.push(report)
+            this.damageYears.push(moment(report.timestamp).format('GGGG'))
           })
+          this.damageYears = this.removeDuplicates(this.damageYears)
         })
         .catch(err => {
           console.log(err)
@@ -283,7 +318,7 @@ export default {
   },
   computed: {
     dataDownloaded() {
-      return this.costsLoaded && this.reasonsLoaded
+      return this.costsLoaded && this.reasonsLoaded && this.accountsLoaded
     }
   }
 }
