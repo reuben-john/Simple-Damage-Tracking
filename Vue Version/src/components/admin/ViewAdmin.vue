@@ -67,6 +67,7 @@ export default {
       editAccounts: false,
       uploadCsv: false,
       loading: true,
+      accountsLoaded: false,
 
       // Data holders
       ebayAccounts: {
