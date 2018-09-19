@@ -121,18 +121,15 @@ export default {
   },
   data() {
     return {
+      // Table settings
+      // Sets default table view to pages and default sort by timestamp
       pagination: {
         sortBy: 'timestamp',
         descending: true
       },
+      // Number of rows to show and options to show more
       rows: [10, 25, { text: 'All', value: -1 }],
-      productCosts: [],
-      damageReasons: null,
-      costsLoaded: false,
-      reasonsLoaded: false,
-      Loaded: false,
-      damageYears: [],
-      warehouseDamages: [],
+      // Table Headers
       warehouseHeaders: [
         { text: 'Date', value: 'timestamp' },
         { text: 'Item Type', value: 'itemType' },
@@ -140,6 +137,19 @@ export default {
         { text: '# Lost', value: 'itemsLost' },
         { text: 'Reason Lost', value: 'reasonLost' }
       ],
+
+      // Database info gets added to these items
+      productCosts: [],
+      damageReasons: null,
+      damageYears: [],
+      warehouseDamages: [],
+
+      // Used to show/hide page sections during page render
+      costsLoaded: false,
+      reasonsLoaded: false,
+      loading: true,
+
+      // Settings for edit item card
       dialog: false,
       editedIndex: -1,
       editedItem: {
@@ -154,29 +164,42 @@ export default {
         itemCost: 0,
         reasonLost: ''
       },
-      search: '',
-      loading: true
+
+      // Search by Year
+      search: ''
     }
   },
   watch: {
     dialog(val) {
+      // Watches for closing the dialog window
       val || this.close()
     }
   },
   created() {
+    // Display loading graphic during page load, closes it after last database call
     this.loading = true
     this.initialize()
   },
+  computed: {
+    // Checks for each database call to be finished
+    dataDownloaded() {
+      return this.costsLoaded && this.reasonsLoaded
+    }
+  },
   methods: {
     customFilter(items, search, filter) {
+      // Filters table results based on Year dropdown
       search = search.toString().toLowerCase()
       return items.filter(row => filter(row['date'], search))
     },
     removeDuplicates(arr) {
+      // Removes duplicate items from array
       let uniqueArr = Array.from(new Set(arr))
       return uniqueArr
     },
     updateTally(tally) {
+      // Updates running damages tallies in firestore
+
       // fetch data from firestore
       db
         .collection('totalLosses')
@@ -193,9 +216,12 @@ export default {
         })
     },
     tallyNewTotals() {
+      // Queries firestore for current order damages and tallies total
+
       let damagesRef = db.collection('damages')
       let warehouseTally = 0
-      // Tally warehouse totals
+
+      // Tally warehouse totals from firestore
       let warehouseQuery = damagesRef
         .where('damageDept', '==', 'warehouse')
         .get()
@@ -215,7 +241,7 @@ export default {
     },
     initialize() {
       let damagesRef = db.collection('damages')
-      // fetch data from firestore
+      // Get all warehouse damage reports from firestore
       let query = damagesRef
         .where('damageDept', '==', 'warehouse')
         .get()
@@ -253,6 +279,8 @@ export default {
         .get()
         .then(doc => {
           this.damageReasons = doc.data()
+
+          // Displays loading graphic for 800ms before showing table
           let vm = this
           setTimeout(() => {
             this.loading = false
@@ -262,11 +290,15 @@ export default {
         .catch(err => console.log(err))
     },
     editItem(item) {
+      // copies selected item info into temp holder to make changes to
+
       this.editedIndex = this.warehouseDamages.indexOf(item)
       this.editedItem = Object.assign({}, item)
       this.dialog = true
     },
     deleteFromDB(itemId) {
+      // Deletes damage report from firestore
+
       let damagesRef = db.collection('damages').doc(itemId)
       // fetch data from firestore
       let query = damagesRef
@@ -277,6 +309,8 @@ export default {
         })
     },
     deleteItem(item) {
+      // Confirms you want to delete item, then deletes item
+
       const index = this.warehouseDamages.indexOf(item)
       let id = this.warehouseDamages[index].id
       confirm('Are you sure you want to delete this item?') &&
@@ -285,6 +319,8 @@ export default {
       this.tallyNewTotals()
     },
     close() {
+      // Closes dialog window and resets editedItem to default settings
+
       this.dialog = false
       setTimeout(() => {
         this.editedItem = Object.assign({}, this.defaultItem)
@@ -292,6 +328,8 @@ export default {
       }, 300)
     },
     save() {
+      // Saves changes made in dialog window
+
       if (this.editedIndex > -1) {
         Object.assign(this.warehouseDamages[this.editedIndex], this.editedItem)
         let id = this.warehouseDamages[this.editedIndex].id
@@ -301,6 +339,7 @@ export default {
     },
     convertNumbers(report) {
       // Convert string to numbers for different fields before adding to database
+
       report = Object.assign(report, {
         itemsLost: parseInt(report.itemsLost),
         itemCost: parseFloat(report.itemCost)
@@ -309,12 +348,14 @@ export default {
       return report
     },
     updateItem(itemId) {
+      // Update edited item in firestore
+
       // Convert edited numbers to fields
       let report = Object.assign(this.editedItem)
       this.editedItem = this.convertNumbers(report)
 
       let damagesRef = db.collection('damages').doc(itemId)
-      // fetch data from firestore
+      // Updates firestore doc
       let query = damagesRef
         .update({
           itemsLost: this.editedItem.itemsLost,
@@ -325,11 +366,6 @@ export default {
         .catch(err => {
           console.log(err)
         })
-    }
-  },
-  computed: {
-    dataDownloaded() {
-      return this.costsLoaded && this.reasonsLoaded
     }
   }
 }
