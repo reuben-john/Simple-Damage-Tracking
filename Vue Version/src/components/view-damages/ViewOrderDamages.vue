@@ -277,7 +277,7 @@ export default {
     updateTally(orderTally, shippingTally) {
       // Updates running damages tallies in firestore
 
-      // fetch data from firestore
+      // Update tally in firestore
       db
         .collection('totalLosses')
         .doc('order')

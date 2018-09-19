@@ -80,6 +80,9 @@ export default {
   },
   methods: {
     tallyNewTotals() {
+      // Queries firestore for current damages and tallies total
+
+      // Check whether adding order report or warehouse report
       if (this.damageReport.damageDept == 'order') {
         this.tallyNewOrderTotals()
       } else if (this.damageReport.damageDept == 'warehouse') {
@@ -87,7 +90,9 @@ export default {
       }
     },
     updateOrderTally(orderTally, shippingTally) {
-      // fetch data from firestore
+      // Update order tally in firestore
+
+      // Update tally in firestore
       db
         .collection('totalLosses')
         .doc('order')
@@ -105,6 +110,8 @@ export default {
         })
     },
     tallyNewOrderTotals() {
+      // Tallies total damages for orders
+
       let damagesRef = db.collection('damages')
       let orderTally = 0
       let shippingTally = 0
@@ -136,7 +143,7 @@ export default {
         })
     },
     updateWarehouseTally(tally) {
-      // fetch data from firestore
+      // Update warehouse tally in firestore
       db
         .collection('totalLosses')
         .doc('warehouse')
@@ -152,6 +159,7 @@ export default {
         })
     },
     tallyNewWarehouseTotals() {
+      // Tallies total damages for warehouse
       let damagesRef = db.collection('damages')
       let warehouseTally = 0
       // Tally warehouse totals
