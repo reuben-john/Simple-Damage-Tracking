@@ -1,17 +1,18 @@
 <template>
   <v-layout row wrap align-center justify-center>
-    <spinner></spinner>
+    <!-- <spinner></spinner> -->
+    <v-progress-circular
+      :size="70"
+      :width="7"
+      color="green"
+      indeterminate
+    ></v-progress-circular>
   </v-layout>
 </template>
 
 <script>
-import Spinner from 'vue-loading-spinner/src/components/Circle4.vue'
-
 export default {
   name: 'Loading',
-  components: {
-    Spinner
-  },
   data() {
     return {}
   }
