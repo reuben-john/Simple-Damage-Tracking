@@ -32,6 +32,7 @@ export default {
   },
   methods: {
     logout() {
+      // Logs user out
       firebase
         .auth()
         .signOut()
@@ -41,6 +42,7 @@ export default {
     }
   },
   created() {
+    // Checks if user is logged in
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
         this.user = user
