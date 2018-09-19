@@ -8,7 +8,7 @@
                 <h1>Add Damage Report</h1>
               </v-flex>
             </v-card-title>
-            <v-card-text>
+            <v-card-text v-if="!reportLogged">
               <v-form v-if="dataDownloaded" @submit.prevent="logDamages">
                 <h4>What type of damage do you wish to log?</h4>
                 <v-radio-group
@@ -39,6 +39,9 @@
                 </v-btn>
               </v-form>
             </v-card-text>
+            <v-card-text v-if="reportLogged">
+              <damage-report-thanks></damage-report-thanks>
+            </v-card-text>
           </v-card>
         </v-flex>
       </v-layout>
@@ -49,12 +52,14 @@
 import db from '@/firebase/init'
 import OrderDamagesForm from '@/components/add-damages/OrderDamagesForm'
 import WarehouseDamagesForm from '@/components/add-damages/WarehouseDamagesForm'
+import DamageReportThanks from '@/components/add-damages/DamageReportThanks'
 
 export default {
   name: 'AddDamages',
   components: {
     OrderDamagesForm,
-    WarehouseDamagesForm
+    WarehouseDamagesForm,
+    DamageReportThanks
   },
   data() {
     return {
@@ -65,7 +70,8 @@ export default {
       costsLoaded: false,
       damagesLoaded: false,
       ebayAccounts: null,
-      accountsLoaded: false
+      accountsLoaded: false,
+      reportLogged: false
     }
   },
   methods: {
@@ -162,6 +168,14 @@ export default {
           console.log(err)
         })
     },
+    showReportLogged() {
+      // Show thanks message
+      this.reportLogged = true
+      let vm = this
+      setTimeout(function() {
+        vm.$router.push({ name: 'Index' })
+      }, 2000)
+    },
     logDamages() {
       // Add timestamp to report
       this.damageReport.timestamp = Date.now()
@@ -181,12 +195,13 @@ export default {
       let report = Object.assign(this.damageReport)
       this.damageReport = this.convertNumbers(report)
 
+      let vm = this
       // Send damage report to database
       db
         .collection('damages')
         .add(this.damageReport)
         .then(() => {
-          this.$router.push({ name: 'Index' })
+          this.showReportLogged()
         })
         .catch(err => console.log(err))
       this.tallyNewTotals()
