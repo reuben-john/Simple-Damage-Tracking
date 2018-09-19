@@ -138,6 +138,7 @@ export default {
   },
   methods: {
     clearfields() {
+      // Clears fields after saving changes
       this.department = ''
       this.reason = ''
       this.updatedReason = ''
@@ -145,6 +146,8 @@ export default {
       this.newDepartment = ''
     },
     updateReason() {
+      // Updates damage reason
+
       let reasons = this.damageReasons[this.department].reasons
       let index = reasons.indexOf(this.reason)
       reasons[index] = this.updatedReason
@@ -154,6 +157,7 @@ export default {
       this.clearfields()
     },
     addReason() {
+      // Adds new damage reason
       let reasons = this.damageReasons[this.newDepartment].reasons
       this.damageReasons[this.newDepartment].reasons.push(this.newReason)
 
@@ -162,7 +166,7 @@ export default {
     },
 
     updateDatabase(reasons, department) {
-      // update database
+      // updates firestore database
       db
         .collection('damageReasons')
         .doc(department)
@@ -176,6 +180,7 @@ export default {
         .catch(err => console.log)
     },
     deleteReason() {
+      // Delete reason from database
       let reasons = this.damageReasons[this.department].reasons
       let index = reasons.indexOf(this.reason)
       confirm('Are you sure you want to delete this item?') &&
