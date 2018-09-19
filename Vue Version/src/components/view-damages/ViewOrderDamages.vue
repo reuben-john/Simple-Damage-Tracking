@@ -296,7 +296,7 @@ export default {
     initialize() {
       let damagesRef = db.collection('damages')
       // fetch data from firestore
-      let querty = damagesRef
+      let query = damagesRef
         .where('damageDept', '==', 'order')
         .get()
         .then(snapshot => {
@@ -365,7 +365,7 @@ export default {
     deleteFromDB(itemId) {
       let damagesRef = db.collection('damages').doc(itemId)
       // fetch data from firestore
-      let querty = damagesRef
+      let query = damagesRef
         .delete()
         .then(console.log('Deleted'))
         .catch(err => {
@@ -420,7 +420,7 @@ export default {
 
       let damagesRef = db.collection('damages').doc(itemId)
       // fetch data from firestore
-      let querty = damagesRef
+      let query = damagesRef
         .update({
           orderNumber: this.editedItem.orderNumber,
           orderTotal: this.editedItem.orderTotal,
