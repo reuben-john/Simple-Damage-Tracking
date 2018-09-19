@@ -61,21 +61,26 @@ export default {
   },
   data() {
     return {
+      // Used to show or hide different parts of the app
       editReasons: false,
       editCosts: false,
       editAccounts: false,
+      uploadCsv: false,
+      loading: true,
+
+      // Data holders
       ebayAccounts: {
         accounts: null
       },
       damageReasons: {},
       productCosts: [],
-      CSVReport: null,
-      uploadCsv: false,
-      loading: true
+      CSVReport: null
     }
   },
   methods: {
     downloadCSV() {
+      // Creates CSV file of all damage reports
+
       // Clears CSVreport
       this.CSVReport = []
       // fetch damages data from firestore
@@ -96,8 +101,9 @@ export default {
     }
   },
   created() {
+    // Display loading graphic during page load, closes it after last database call
     this.loading = true
-    // fetch data from firestore
+    // fetch product costs from firestore
     db
       .collection('productCosts')
       .get()
@@ -108,6 +114,7 @@ export default {
       })
       .catch(err => console.log(err))
 
+    // Fetch damage reasons from firestore
     this.damageReasons.departments = []
     db
       .collection('damageReasons')
@@ -131,6 +138,7 @@ export default {
           this.ebayAccounts.accounts.push(doc.data().ebayAccount)
         })
 
+        // Displays loading graphic for 800ms before showing table
         let vm = this
         setTimeout(() => {
           this.loading = false

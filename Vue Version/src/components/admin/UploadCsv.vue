@@ -43,6 +43,8 @@ export default {
       csvFile: null,
       department: '',
       feedback: '',
+
+      // Table headers
       headers: {
         warehouse: ['timestamp', 'itemType', 'itemCost', 'itemsLost', 'reasonLost', 'damageDept'],
         order: [
@@ -63,6 +65,8 @@ export default {
   },
   methods: {
     logDamages() {
+      // Saves damage report
+
       for (let report in this.csvFile) {
         // Send damage report to database
         db
@@ -71,10 +75,11 @@ export default {
           .then(console.log('Added', this.csvFile[report]))
           .catch(err => console.log(err))
       }
-
-      // this.tallyNewTotals()
     },
     formatWarehouseFile(file) {
+      // Formats warehouse file to match desired firestore doc format
+      // This is for migrating data from python version to Vue version
+
       let newFile = []
       for (let line in file) {
         // Rename old damage reasons to new ones
@@ -102,6 +107,9 @@ export default {
       this.logDamages()
     },
     formatOrderFile(file) {
+      // Formats warehouse file to match desired firestore doc format
+      // This is for migrating data from python version to Vue version
+
       let newFile = []
       for (let line in file) {
         // Rename old damage reasons to new ones
@@ -134,6 +142,9 @@ export default {
       this.logDamages()
     },
     uploadCsvFile(e) {
+      // Allows user to upload CSV file to process
+      // This is for migrating data from python version to Vue version
+
       let files = e.target.files || e.dataTransfer.files
       if (!files.length) return
 
@@ -183,9 +194,10 @@ export default {
       }
     },
     convertNumbers() {
+      // Convert string to numbers for different fields before adding to database
+
       let report = Object.assign(this.item)
 
-      // Convert string to numbers for different fields before adding to database
       report = Object.assign(report, {
         boxCost: parseFloat(report.boxCost),
         itemCost: parseFloat(report.itemCost)

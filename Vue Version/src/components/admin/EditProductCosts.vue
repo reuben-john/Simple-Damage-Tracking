@@ -127,6 +127,7 @@ export default {
   props: ['productCosts'],
   data() {
     return {
+      // Table Headers
       reasonHeaders: [
         { text: 'Name', value: 'name' },
         { text: 'Box Cost', value: 'boxCost' },
@@ -149,16 +150,21 @@ export default {
   },
   methods: {
     addItem(item) {
-      this.editedIndex = this.productCosts.indexOf(item)
+      // copies selected item info into temp holder to make changes to
+      // Then opens add item dialog
       this.item = Object.assign({}, item)
       this.addDialog = true
     },
     editItem(item) {
+      // copies selected item info into temp holder to make changes to
+      // Then opens edit item dialog
       this.editedIndex = this.productCosts.indexOf(item)
       this.item = Object.assign({}, item)
       this.editDialog = true
     },
     deleteFromDB(itemId) {
+      // Deletes damage report from firestore
+
       db
         .collection('productCosts')
         .doc(itemId)
@@ -167,6 +173,8 @@ export default {
         .catch(err => console.log(err))
     },
     deleteItem(item) {
+      // Confirms you want to delete item, then deletes item
+
       const index = this.productCosts.indexOf(item)
       // Convert name to lowercase as doc id is lowercase category name
       let id = item.name.toLowerCase()
@@ -175,6 +183,8 @@ export default {
         (this.productCosts.splice(index, 1), this.deleteFromDB(id))
     },
     close() {
+      // Closes dialog window and resets item to default settings
+
       this.editDialog = false
       this.addDialog = false
       setTimeout(() => {
@@ -183,6 +193,8 @@ export default {
       }, 300)
     },
     save() {
+      // Saves changes made in dialog window
+
       // Convert name to lowercase as doc id is lowercase category name
       let id = this.item.name.toLowerCase()
       // Check if adding or updating item
@@ -199,9 +211,10 @@ export default {
       this.close()
     },
     convertNumbers() {
+      // Convert string to numbers for different fields before adding to database
+
       let report = Object.assign(this.item)
 
-      // Convert string to numbers for different fields before adding to database
       report = Object.assign(report, {
         boxCost: parseFloat(report.boxCost),
         itemCost: parseFloat(report.itemCost)
@@ -209,12 +222,14 @@ export default {
       return report
     },
     updateItem(itemId) {
+      // Update edited item in firestore
+
       // Convert edited numbers to fields
       let report = Object.assign(this.item)
       this.item = this.convertNumbers(report)
 
       let ref = db.collection('productCosts').doc(itemId)
-      // fetch data from firestore
+      // Updates firestore doc
       let querty = ref
         .update({
           name: this.item.name,
@@ -227,12 +242,14 @@ export default {
         })
     },
     addNewItem(itemId) {
+      // Add new item in firestore
+
       // Convert edited numbers to fields
       let report = Object.assign(this.item)
       this.item = this.convertNumbers(report)
 
       let ref = db.collection('productCosts').doc(itemId)
-      // fetch data from firestore
+      // Create new firestore doc
       let querty = ref
         .set({
           name: this.item.name,
@@ -247,9 +264,11 @@ export default {
   },
   watch: {
     editDialog(val) {
+      // Watches for closing of edit dialog
       val || this.close()
     },
     addDialog(val) {
+      // Watches for closing of add dialog
       val || this.close()
     }
   }
