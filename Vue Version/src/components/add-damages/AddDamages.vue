@@ -1,6 +1,7 @@
 <template>
     <v-container class="add-damages" text-xs-center fluid fill-height>
-      <v-layout row wrap align-center justify-center>
+      <loading v-if="loading"></loading>
+      <v-layout row wrap align-center justify-center v-if="dataDownloaded" >
         <v-flex xs12 sm6>
           <v-card class="elevation-12">
             <v-card-title primary-title>
@@ -9,7 +10,7 @@
               </v-flex>
             </v-card-title>
             <v-card-text v-if="!reportLogged">
-              <v-form v-if="dataDownloaded" @submit.prevent="logDamages">
+              <v-form @submit.prevent="logDamages">
                 <h4>What type of damage do you wish to log?</h4>
                 <v-radio-group
                 v-model="damageReport.damageDept" >
@@ -53,13 +54,15 @@ import db from '@/firebase/init'
 import OrderDamagesForm from '@/components/add-damages/OrderDamagesForm'
 import WarehouseDamagesForm from '@/components/add-damages/WarehouseDamagesForm'
 import DamageReportThanks from '@/components/add-damages/DamageReportThanks'
+import Loading from '@/components/layout/Loading'
 
 export default {
   name: 'AddDamages',
   components: {
     OrderDamagesForm,
     WarehouseDamagesForm,
-    DamageReportThanks
+    DamageReportThanks,
+    Loading
   },
   data() {
     return {
@@ -71,7 +74,8 @@ export default {
       damagesLoaded: false,
       ebayAccounts: null,
       accountsLoaded: false,
-      reportLogged: false
+      reportLogged: false,
+      loading: true
     }
   },
   methods: {
@@ -266,16 +270,25 @@ export default {
           snapshot.forEach(doc => {
             this.ebayAccounts.push(doc.data().ebayAccount)
           })
-          this.accountsLoaded = true
+
+          // Displays loading graphic for 800ms before showing table
+          let vm = this
+          setTimeout(() => {
+            this.loading = false
+            this.accountsLoaded = true
+          }, 800)
         })
         .catch(err => console.log(err))
     }
   },
   created() {
+    // Display loading graphic during page load, closes it after last database call
+    this.loading = true
     this.initialize()
   },
   computed: {
     dataDownloaded() {
+      // Checks for each database call to be finished
       return this.damagesLoaded && this.costsLoaded && this.accountsLoaded
     }
   }
