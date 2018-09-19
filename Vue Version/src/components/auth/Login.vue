@@ -59,6 +59,7 @@ export default {
   },
   methods: {
     login() {
+      // Attempts to log in using firebase auth
       if (this.email && this.password) {
         this.feedback = null
         firebase

@@ -47,8 +47,9 @@ export default {
     }
   },
   created() {
+    // Display loading graphic during page load, closes it after last database call
     this.loading = true
-    // fetch data from firestore
+    // fetch damage tallies from firestore
     db
       .collection('totalLosses')
       .get()
@@ -57,6 +58,8 @@ export default {
         snapshot.forEach(doc => {
           this.totalDamages[doc.id] = doc.data()
         })
+
+        // Displays loading graphic for 800ms before showing table
         let vm = this
         setTimeout(() => {
           this.loading = false
