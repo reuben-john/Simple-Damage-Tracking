@@ -390,7 +390,7 @@ export default {
           setTimeout(() => {
             this.loading = false
             this.accountsLoaded = true
-          }, 800)
+          }, 400)
         })
         .catch(err => console.log(err))
     },

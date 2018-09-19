@@ -186,7 +186,7 @@ export default {
       let vm = this
       setTimeout(function() {
         vm.$router.push({ name: 'Index' })
-      }, 2000)
+      }, 1000)
     },
     logDamages() {
       // Add timestamp to report
@@ -284,7 +284,7 @@ export default {
           setTimeout(() => {
             this.loading = false
             this.accountsLoaded = true
-          }, 800)
+          }, 400)
         })
         .catch(err => console.log(err))
     }

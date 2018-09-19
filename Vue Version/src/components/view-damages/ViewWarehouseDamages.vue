@@ -285,7 +285,7 @@ export default {
           setTimeout(() => {
             this.loading = false
             this.reasonsLoaded = true
-          }, 800)
+          }, 400)
         })
         .catch(err => console.log(err))
     },
