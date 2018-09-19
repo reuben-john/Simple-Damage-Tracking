@@ -1,6 +1,7 @@
 <template>
   <v-container text-xs-center fill-height class="view-warehouse-damages">
-      <v-layout row wrap align-center>
+      <loading v-if="loading"></loading>
+      <v-layout row wrap align-center v-if="dataDownloaded">
         <v-flex>
           <v-card>
             <v-card-title primary-title>
@@ -9,7 +10,7 @@
               </v-flex>
             </v-card-title>
             <v-card-text>
-              <v-dialog v-model="dialog" max-width="500px" v-if="dataDownloaded">
+              <v-dialog v-model="dialog" max-width="500px">
                 <v-card>
                   <v-form @submit.prevent="save">
                     <v-card-title>
@@ -111,9 +112,13 @@
 <script>
 import db from '@/firebase/init'
 import moment from 'moment'
+import Loading from '@/components/layout/Loading'
 
 export default {
   name: 'ViewWarehouseDamages',
+  components: {
+    Loading
+  },
   data() {
     return {
       pagination: {
@@ -125,7 +130,7 @@ export default {
       damageReasons: null,
       costsLoaded: false,
       reasonsLoaded: false,
-      accountsLoaded: false,
+      Loaded: false,
       damageYears: [],
       warehouseDamages: [],
       warehouseHeaders: [
@@ -149,7 +154,8 @@ export default {
         itemCost: 0,
         reasonLost: ''
       },
-      search: ''
+      search: '',
+      loading: true
     }
   },
   watch: {
@@ -158,6 +164,7 @@ export default {
     }
   },
   created() {
+    this.loading = true
     this.initialize()
   },
   methods: {
@@ -246,7 +253,11 @@ export default {
         .get()
         .then(doc => {
           this.damageReasons = doc.data()
-          this.reasonsLoaded = true
+          let vm = this
+          setTimeout(() => {
+            this.loading = false
+            this.reasonsLoaded = true
+          }, 800)
         })
         .catch(err => console.log(err))
     },
@@ -318,7 +329,7 @@ export default {
   },
   computed: {
     dataDownloaded() {
-      return this.costsLoaded && this.reasonsLoaded && this.accountsLoaded
+      return this.costsLoaded && this.reasonsLoaded
     }
   }
 }

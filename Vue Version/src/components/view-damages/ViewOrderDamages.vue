@@ -1,6 +1,7 @@
 <template>
   <v-container text-xs-center fill-height class="view-order-damages">
-      <v-layout row wrap align-center>
+      <loading v-if="loading"></loading>
+      <v-layout row wrap align-center v-if="dataDownloaded">
         <v-flex>
           <v-card>
             <v-card-title primary-title>
@@ -8,7 +9,7 @@
                 <h1>Order Damages</h1>
               </v-flex>
             </v-card-title>
-            <v-dialog v-model="dialog" max-width="500px" v-if="dataDownloaded">
+            <v-dialog v-model="dialog" max-width="500px">
               <v-card>
                 <v-form @submit.prevent="save">
                   <v-card-title>
@@ -167,9 +168,13 @@
 <script>
 import db from '@/firebase/init'
 import moment from 'moment'
+import Loading from '@/components/layout/Loading'
 
 export default {
   name: 'ViewOrderDamages',
+  components: {
+    Loading
+  },
   data() {
     return {
       pagination: {
@@ -225,7 +230,8 @@ export default {
         reasonLost: '',
         ebayAccount: ''
       },
-      search: ''
+      search: '',
+      loading: true
     }
   },
   methods: {
@@ -343,7 +349,11 @@ export default {
           snapshot.forEach(doc => {
             this.ebayAccounts.push(doc.data().ebayAccount)
           })
-          this.accountsLoaded = true
+          let vm = this
+          setTimeout(() => {
+            this.loading = false
+            this.accountsLoaded = true
+          }, 800)
         })
         .catch(err => console.log(err))
     },
@@ -436,6 +446,7 @@ export default {
     }
   },
   created() {
+    this.loading = true
     this.initialize()
   },
   computed: {
