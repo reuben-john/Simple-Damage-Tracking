@@ -1,7 +1,7 @@
 <template>
-
-    <v-container  class="index" text-xs-center fill-height v-if="dataLoaded">
-      <v-layout row wrap align-center justify-center>
+    <v-container class="index" text-xs-center fill-height>
+      <loading v-if="loading"></loading>
+      <v-layout row wrap align-center justify-center v-if="dataLoaded">
         <v-flex xs12 sm10>
           <v-card class="elevation-12">
             <v-card class="elevation-5">
@@ -32,16 +32,22 @@
 
 <script>
 import db from '@/firebase/init'
+import Loading from '@/components/layout/Loading'
 
 export default {
   name: 'Index',
+  components: {
+    Loading
+  },
   data() {
     return {
       totalDamages: null,
-      dataLoaded: false
+      dataLoaded: false,
+      loading: true
     }
   },
   created() {
+    this.loading = true
     // fetch data from firestore
     db
       .collection('totalLosses')
@@ -51,7 +57,11 @@ export default {
         snapshot.forEach(doc => {
           this.totalDamages[doc.id] = doc.data()
         })
-        this.dataLoaded = true
+        let vm = this
+        setTimeout(() => {
+          this.loading = false
+          this.dataLoaded = true
+        }, 1500)
       })
       .catch(err => {
         console.log(err)
