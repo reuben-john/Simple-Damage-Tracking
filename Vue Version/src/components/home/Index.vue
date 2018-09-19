@@ -61,7 +61,7 @@ export default {
         setTimeout(() => {
           this.loading = false
           this.dataLoaded = true
-        }, 1500)
+        }, 800)
       })
       .catch(err => {
         console.log(err)
