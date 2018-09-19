@@ -110,14 +110,18 @@ export default {
   },
   methods: {
     clearfields() {
+      // Clears fields after saving changes
       this.account = ''
       this.updatedAccount = ''
       this.newAccount = ''
     },
     getKeyByValue(object, value) {
+      // Gets key based on selected ebay account
+      // This is used to ensure we are accessing the correct firestore doc
       return Object.keys(object).find(key => object[key].ebayAccount === value)
     },
     updateEbayAccount() {
+      // Update ebay account with new name
       let accounts = this.ebayAccounts.accounts
       let id = this.getKeyByValue(this.ebayAccounts, this.account)
       let index = accounts.indexOf(this.account)
@@ -127,6 +131,8 @@ export default {
       this.clearfields()
     },
     addEbayAccount() {
+      // Adds new ebay account
+
       let accounts = this.ebayAccounts.accounts
       // Generate new id
       let id = this.newAccount.toLowerCase()
@@ -137,6 +143,8 @@ export default {
       this.clearfields()
     },
     updateDatabase(account, id) {
+      // Propogate changes to firestore
+
       console.log(this.updatedAccount, id)
       // update database
       db
@@ -152,7 +160,7 @@ export default {
         .catch(err => console.log)
     },
     deleteFromDatabase(id) {
-      // delte item from database
+      // delete item from database
       db
         .collection('ebayAccounts')
         .doc(id)
@@ -161,6 +169,8 @@ export default {
         .catch(err => console.log)
     },
     deleteAccount() {
+      // Deletes ebay account
+
       let accounts = this.ebayAccounts.accounts
       let id = this.getKeyByValue(this.ebayAccounts, this.account)
       let index = accounts.indexOf(this.account)
