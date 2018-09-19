@@ -8,7 +8,7 @@
 
 <script>
 export default {
-  name: 'Damage Report Thanks',
+  name: 'DamageReportThanks',
   data() {
     return {}
   }
