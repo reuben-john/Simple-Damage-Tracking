@@ -1,7 +1,8 @@
 <template>
   <v-container class="view-admin" text-xs-center fill-height>
     <v-layout row wrap align-center justify-center>
-      <v-flex xs12 sm10>
+      <loading v-if="loading"></loading>
+      <v-flex xs12 sm10 v-if="accountsLoaded">
         <v-card>
           <v-card-title primary-title>
             <v-flex>
@@ -44,6 +45,7 @@
 import EditDamageReasons from '@/components/admin/EditDamageReasons'
 import EditProductCosts from '@/components/admin/EditProductCosts'
 import EditEbayAccounts from '@/components/admin/EditEbayAccounts'
+import Loading from '@/components/layout/Loading'
 import UploadCsv from '@/components/admin/UploadCsv'
 import db from '@/firebase/init'
 import papaparse from 'papaparse'
@@ -54,7 +56,8 @@ export default {
     EditProductCosts,
     EditDamageReasons,
     EditEbayAccounts,
-    UploadCsv
+    UploadCsv,
+    Loading
   },
   data() {
     return {
@@ -67,7 +70,8 @@ export default {
       damageReasons: {},
       productCosts: [],
       CSVReport: null,
-      uploadCsv: false
+      uploadCsv: false,
+      loading: true
     }
   },
   methods: {
@@ -92,6 +96,7 @@ export default {
     }
   },
   created() {
+    this.loading = true
     // fetch data from firestore
     db
       .collection('productCosts')
@@ -125,7 +130,12 @@ export default {
           this.ebayAccounts[doc.id] = doc.data()
           this.ebayAccounts.accounts.push(doc.data().ebayAccount)
         })
-        this.accountsLoaded = true
+
+        let vm = this
+        setTimeout(() => {
+          this.loading = false
+          this.accountsLoaded = true
+        }, 800)
       })
       .catch(err => console.log(err))
   }
