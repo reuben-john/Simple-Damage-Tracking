@@ -19,8 +19,8 @@ This app is built using Vue. It uses Vuetify for a css framework and vue-router 
 - [ ] Add better comments
 - [ ] Add better form validation to ensure forms are filled out fully with correct info
 - [ ] Add an animation that shows the new tally being added to the total before updating
-- [ ] Add transition/loading animations
-- [ ] Add form feedback messages to show something has happened
+- [x] Add transition/loading animations
+- [x] Add form feedback messages to show something has happened
 - [x] Add upload form to upload csv file from python version into web version
 - [x] Add export option to download data as csv file
 - [ ] Make total damage tracker only show current year's damages (Jan 1 - Dec 31)
