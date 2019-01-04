@@ -1,120 +1,109 @@
 <template>
   <v-container text-xs-center fill-height class="view-order-damages">
-      <loading v-if="loading"></loading>
-      <v-layout row wrap align-center v-if="dataDownloaded">
-        <v-flex>
-          <v-card>
-            <v-card-title primary-title>
-              <v-flex>
-                <h1>Order Damages</h1>
-              </v-flex>
-            </v-card-title>
-            <v-dialog v-model="dialog" max-width="500px">
-              <v-card>
-                <v-form @submit.prevent="save">
-                  <v-card-title>
-                    <span class="headline"> Edit Item </span>
-                  </v-card-title>
-                  <v-card-text>
-                    <v-container grid-list-md>
-                      <v-layout wrap>
-                        <v-flex xs12 sm6 md4>
-                          <v-text-field
-                            v-model="editedItem.orderNumber"
-                            label="Order Number"
-                            type="text"
-                          ></v-text-field>
-                        </v-flex>
-                        <v-flex xs12 sm6 md4>
-                          <v-text-field
-                            v-model="editedItem.orderTotal"
-                            label="Order Total"
-                            type="number"
-                          ></v-text-field>
-                        </v-flex>
-                        <v-flex xs12 sm6 md4>
-                          <v-text-field
-                            v-model="editedItem.shippingCost"
-                            label="Shipping Cost"
-                            type="number"
-                          ></v-text-field>
-                        </v-flex>
-                        <v-flex xs12 sm6 md4>
-                          <v-text-field
+    <loading v-if="loading"></loading>
+    <v-layout row wrap align-center v-if="dataDownloaded">
+      <v-flex>
+        <v-card>
+          <v-card-title primary-title>
+            <v-flex>
+              <h1>Order Damages</h1>
+            </v-flex>
+          </v-card-title>
+          <v-dialog v-model="dialog" max-width="500px">
+            <v-card>
+              <v-form @submit.prevent="save">
+                <v-card-title>
+                  <span class="headline">Edit Item</span>
+                </v-card-title>
+                <v-card-text>
+                  <v-container grid-list-md>
+                    <v-layout wrap>
+                      <v-flex xs12 sm6 md4>
+                        <v-text-field
+                          v-model="editedItem.orderNumber"
+                          label="Order Number"
+                          type="text"
+                        ></v-text-field>
+                      </v-flex>
+                      <v-flex xs12 sm6 md4>
+                        <v-text-field
+                          v-model="editedItem.orderTotal"
+                          label="Order Total"
+                          type="number"
+                        ></v-text-field>
+                      </v-flex>
+                      <v-flex xs12 sm6 md4>
+                        <v-text-field
+                          v-model="editedItem.shippingCost"
+                          label="Shipping Cost"
+                          type="number"
+                        ></v-text-field>
+                      </v-flex>
+                      <v-flex xs12 sm6 md4>
+                        <v-text-field
                           v-model="editedItem.shippingLost"
                           label="Shipping Lost"
                           type="number"
-                          ></v-text-field>
-                        </v-flex>
-                        <v-flex xs12 sm6 md4>
-                          <v-select
-                            :items="productCosts"
-                            v-model="editedItem.itemType"
-                            label="Product Type"
-                            single-line
-                            required
-                          ></v-select>
-                        </v-flex>
-                        <v-flex xs12 sm6 md4>
-                          <v-text-field
-                            v-model="editedItem.itemCost"
-                            label="Item Cost"
-                            type="number"
-                          ></v-text-field>
-                        </v-flex>
-                        <v-flex xs12 sm6 md4>
-                          <v-text-field
-                            v-model="editedItem.itemsLost"
-                            label="# Lost"
-                            type="number"
-                          ></v-text-field>
-                        </v-flex>
-                        <v-flex xs12 sm6 md4>
-                          <v-checkbox
-                              label="Return Label"
-                              v-model="editedItem.returnLabel"
-                            ></v-checkbox>
-                        </v-flex>
-                        <v-flex xs12 sm6 md4  v-if="editedItem.returnLabel">
-                          <v-text-field
-                            v-model="editedItem.returnCost"
-                            label="Return Label Cost"
-                            type="number"
-                          ></v-text-field>
-                        </v-flex>
-                        <v-flex xs12 sm6>
-                          <v-select
-                            :items="damageReasons.reasons"
-                            v-model="editedItem.reasonLost"
-                            label="Reason Lost"
-                            type="text"
-                            single-line
-                            required
-                          ></v-select>
-                        </v-flex>
-                        <v-flex xs12 sm6>
-                          <v-select
-                            :items="ebayAccounts"
-                            v-model="editedItem.ebayAccount"
-                            label="eBay Account"
-                            type="text"
-                            single-line
-                            required
-                          ></v-select>
-                        </v-flex>
-                      </v-layout>
-                    </v-container>
-                  </v-card-text>
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" flat @click.native="close">Cancel</v-btn>
-                    <v-btn color="blue darken-1" flat type="submit">Save</v-btn>
-                  </v-card-actions>
-                </v-form>
-              </v-card>
-            </v-dialog>
-            <v-card-text v-if="orderDamages">
-              <v-data-table
+                        ></v-text-field>
+                      </v-flex>
+                      <v-flex xs12 sm6 md4>
+                        <v-select
+                          :items="productCosts"
+                          v-model="editedItem.itemType"
+                          label="Product Type"
+                          single-line
+                          required
+                        ></v-select>
+                      </v-flex>
+                      <v-flex xs12 sm6 md4>
+                        <v-text-field v-model="editedItem.itemCost" label="Item Cost" type="number"></v-text-field>
+                      </v-flex>
+                      <v-flex xs12 sm6 md4>
+                        <v-text-field v-model="editedItem.itemsLost" label="# Lost" type="number"></v-text-field>
+                      </v-flex>
+                      <v-flex xs12 sm6 md4>
+                        <v-checkbox label="Return Label" v-model="editedItem.returnLabel"></v-checkbox>
+                      </v-flex>
+                      <v-flex xs12 sm6 md4 v-if="editedItem.returnLabel">
+                        <v-text-field
+                          v-model="editedItem.returnCost"
+                          label="Return Label Cost"
+                          type="number"
+                        ></v-text-field>
+                      </v-flex>
+                      <v-flex xs12 sm6>
+                        <v-select
+                          :items="damageReasons.reasons"
+                          v-model="editedItem.reasonLost"
+                          label="Reason Lost"
+                          type="text"
+                          single-line
+                          required
+                        ></v-select>
+                      </v-flex>
+                      <v-flex xs12 sm6>
+                        <v-select
+                          :items="ebayAccounts"
+                          v-model="editedItem.ebayAccount"
+                          label="eBay Account"
+                          type="text"
+                          single-line
+                          required
+                        ></v-select>
+                      </v-flex>
+                    </v-layout>
+                  </v-container>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="blue darken-1" flat @click.native="close">Cancel</v-btn>
+                  <v-btn color="blue darken-1" flat type="submit">Save</v-btn>
+                </v-card-actions>
+              </v-form>
+            </v-card>
+          </v-dialog>
+          <v-card-text v-if="orderDamages">
+            <v-data-table
               :headers="orderHeaders"
               :items="orderDamages"
               :search="search"
@@ -122,47 +111,43 @@
               :pagination.sync="pagination"
               :rows-per-page-items="rows"
               class="elevation-1"
-              >
-                <template slot="items" slot-scope="props">
-                  <td class="text-xs-left">{{ props.item.date }}</td>
-                  <td class="text-xs-left">{{ props.item.orderNumber }}</td>
-                  <td class="text-xs-left">${{ props.item.orderTotal }}</td>
-                  <td class="text-xs-left">${{ props.item.shippingCost }}</td>
-                  <td class="text-xs-left">${{ props.item.shippingLost }}</td>
-                  <td class="text-xs-left">${{ props.item.returnCost }}</td>
-                  <td class="text-xs-left">{{ props.item.itemType }}</td>
-                  <td class="text-xs-left">{{ props.item.itemsLost }}</td>
-                  <td class="text-xs-left">{{ props.item.reasonLost }}</td>
-                  <td class="text-xs-left">{{ props.item.ebayAccount }}</td>
-                  <td class="justify-center layout px-0">
-                    <v-btn icon class="mx-0" @click="editItem(props.item)">
-                      <v-icon color="teal">edit</v-icon>
-                    </v-btn>
-                    <v-btn icon class="mx-0" @click="deleteItem(props.item)">
-                      <v-icon color="pink">delete</v-icon>
-                    </v-btn>
-                  </td>
-                </template>
-                <template slot="no-data">
-                  <v-btn color="primary" @click="initialize">Reset</v-btn>
-                </template>
-                <template slot="footer">
-                  <td colspan="100%">
-                    <v-flex xs6 sm1>
-                      <v-select
-                      label="Year"
-                      :items="damageYears"
-                      v-model="search"
-                    ></v-select>
-                    </v-flex>
-                  </td>
-                </template>
-              </v-data-table>
-            </v-card-text>
-          </v-card>
-        </v-flex>
-      </v-layout>
-    </v-container>
+            >
+              <template slot="items" slot-scope="props">
+                <td class="text-xs-left">{{ props.item.date }}</td>
+                <td class="text-xs-left">{{ props.item.orderNumber }}</td>
+                <td class="text-xs-left">${{ props.item.orderTotal }}</td>
+                <td class="text-xs-left">${{ props.item.shippingCost }}</td>
+                <td class="text-xs-left">${{ props.item.shippingLost }}</td>
+                <td class="text-xs-left">${{ props.item.returnCost }}</td>
+                <td class="text-xs-left">{{ props.item.itemType }}</td>
+                <td class="text-xs-left">{{ props.item.itemsLost }}</td>
+                <td class="text-xs-left">{{ props.item.reasonLost }}</td>
+                <td class="text-xs-left">{{ props.item.ebayAccount }}</td>
+                <td class="justify-center layout px-0">
+                  <v-btn icon class="mx-0" @click="editItem(props.item)">
+                    <v-icon color="teal">edit</v-icon>
+                  </v-btn>
+                  <v-btn icon class="mx-0" @click="deleteItem(props.item)">
+                    <v-icon color="pink">delete</v-icon>
+                  </v-btn>
+                </td>
+              </template>
+              <template slot="no-data">
+                <v-btn color="primary" @click="initialize">Reset</v-btn>
+              </template>
+              <template slot="footer">
+                <td colspan="100%">
+                  <v-flex xs6 sm1>
+                    <v-select label="Year" :items="damageYears" v-model="search"></v-select>
+                  </v-flex>
+                </td>
+              </template>
+            </v-data-table>
+          </v-card-text>
+        </v-card>
+      </v-flex>
+    </v-layout>
+  </v-container>
 </template>
 
 <script>
@@ -278,8 +263,7 @@ export default {
       // Updates running damages tallies in firestore
 
       // Update tally in firestore
-      db
-        .collection('totalLosses')
+      db.collection('totalLosses')
         .doc('order')
         .set(
           {
@@ -312,11 +296,15 @@ export default {
             let shipCost = doc.data().shippingCost
             let shipLost = doc.data().shippingLost
             let returnCost = 0
+            let currentYear = moment().format('YYYY')
+            let year = moment(doc.data().timestamp).format('YYYY')
             if (doc.data().returnCost) {
               returnCost = doc.data().returnCost
             }
-            shippingTally += shipLost + returnCost
-            orderTally += cost * numLost
+            if (currentYear === year) {
+              shippingTally += shipLost + returnCost
+              orderTally += cost * numLost
+            }
           })
           console.log(orderTally, shippingTally)
           // Normalize cost to 2 decimal places so it is accurate for money display $xx.xx
@@ -353,8 +341,7 @@ export default {
         })
 
       // Get product costs from firestore
-      db
-        .collection('productCosts')
+      db.collection('productCosts')
         .get()
         .then(snapshot => {
           snapshot.forEach(doc => {
@@ -365,8 +352,7 @@ export default {
         .catch(err => console.log(err))
 
       // Get damage reasons from firestore
-      db
-        .collection('damageReasons')
+      db.collection('damageReasons')
         .doc('order')
         .get()
         .then(doc => {
@@ -377,8 +363,7 @@ export default {
 
       // Get ebay account names from firestore
       this.ebayAccounts = []
-      db
-        .collection('ebayAccounts')
+      db.collection('ebayAccounts')
         .get()
         .then(snapshot => {
           snapshot.forEach(doc => {

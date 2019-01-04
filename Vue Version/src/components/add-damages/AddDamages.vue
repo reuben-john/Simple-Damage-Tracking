@@ -1,52 +1,61 @@
 <template>
-    <v-container class="add-damages" text-xs-center fluid fill-height>
-      <loading v-if="loading"></loading>
-      <v-layout row wrap align-center justify-center v-if="dataDownloaded" >
-        <v-flex xs12 sm6>
-          <v-card class="elevation-12">
-            <v-card-title primary-title>
-              <v-flex>
-                <h1>Add Damage Report</h1>
-              </v-flex>
-            </v-card-title>
-            <v-card-text v-if="!reportLogged">
-              <v-form @submit.prevent="logDamages">
-                <h4>What type of damage do you wish to log?</h4>
-                <v-radio-group
-                v-model="damageReport.damageDept" >
-                  <v-layout row wrap >
-                      <v-flex xs12 sm6 align-center justify-center
-                      v-for="(reason, index) in damageReasons"
-                      :key="index">
-                        <v-radio
-                          :key="reason.department"
-                          :label="`${reason.department} damage report`"
-                          :value="reason.id"
-                        ></v-radio>
-                      </v-flex>
-                        <h2>{{damageDept}}</h2>
-                      </v-layout>
-                    </v-radio-group>
-                  <v-layout v-if="damageReport.damageDept == 'order'">
-                    <order-damages-form :damageReasons="damageReasons" :damageReport="damageReport" :productCosts="productCosts" :ebayAccounts="ebayAccounts"></order-damages-form>
-                </v-layout>
-                <v-layout v-else-if="damageReport.damageDept == 'warehouse'">
-                    <warehouse-damages-form :damageReasons="damageReasons" :damageReport="damageReport" :productCosts="productCosts"></warehouse-damages-form>
-                </v-layout>
-                <v-btn v-if="dataDownloaded"
-                  type="submit"
+  <v-container class="add-damages" text-xs-center fluid fill-height>
+    <loading v-if="loading"></loading>
+    <v-layout row wrap align-center justify-center v-if="dataDownloaded">
+      <v-flex xs12 sm6>
+        <v-card class="elevation-12">
+          <v-card-title primary-title>
+            <v-flex>
+              <h1>Add Damage Report</h1>
+            </v-flex>
+          </v-card-title>
+          <v-card-text v-if="!reportLogged">
+            <v-form @submit.prevent="logDamages">
+              <h4>What type of damage do you wish to log?</h4>
+              <v-radio-group v-model="damageReport.damageDept">
+                <v-layout row wrap>
+                  <v-flex
+                    xs12
+                    sm6
+                    align-center
+                    justify-center
+                    v-for="(reason, index) in damageReasons"
+                    :key="index"
                   >
-                  Log Damages
-                </v-btn>
-              </v-form>
-            </v-card-text>
-            <v-card-text v-if="reportLogged">
-              <damage-report-thanks></damage-report-thanks>
-            </v-card-text>
-          </v-card>
-        </v-flex>
-      </v-layout>
-    </v-container>
+                    <v-radio
+                      :key="reason.department"
+                      :label="`${reason.department} damage report`"
+                      :value="reason.id"
+                    ></v-radio>
+                  </v-flex>
+                  <h2>{{damageDept}}</h2>
+                </v-layout>
+              </v-radio-group>
+              <v-layout v-if="damageReport.damageDept == 'order'">
+                <order-damages-form
+                  :damageReasons="damageReasons"
+                  :damageReport="damageReport"
+                  :productCosts="productCosts"
+                  :ebayAccounts="ebayAccounts"
+                ></order-damages-form>
+              </v-layout>
+              <v-layout v-else-if="damageReport.damageDept == 'warehouse'">
+                <warehouse-damages-form
+                  :damageReasons="damageReasons"
+                  :damageReport="damageReport"
+                  :productCosts="productCosts"
+                ></warehouse-damages-form>
+              </v-layout>
+              <v-btn v-if="dataDownloaded" type="submit">Log Damages</v-btn>
+            </v-form>
+          </v-card-text>
+          <v-card-text v-if="reportLogged">
+            <damage-report-thanks></damage-report-thanks>
+          </v-card-text>
+        </v-card>
+      </v-flex>
+    </v-layout>
+  </v-container>
 </template>
 
 <script>
@@ -55,6 +64,7 @@ import OrderDamagesForm from '@/components/add-damages/OrderDamagesForm'
 import WarehouseDamagesForm from '@/components/add-damages/WarehouseDamagesForm'
 import DamageReportThanks from '@/components/add-damages/DamageReportThanks'
 import Loading from '@/components/layout/Loading'
+import moment from 'moment'
 
 export default {
   name: 'AddDamages',
@@ -93,8 +103,7 @@ export default {
       // Update order tally in firestore
 
       // Update tally in firestore
-      db
-        .collection('totalLosses')
+      db.collection('totalLosses')
         .doc('order')
         .set(
           {
@@ -127,11 +136,15 @@ export default {
             let shipCost = doc.data().shippingCost
             let shipLost = doc.data().shippingLost
             let returnCost = 0
+            let currentYear = moment().format('YYYY')
+            let year = moment(doc.data().timestamp).format('YYYY')
             if (doc.data().returnCost) {
               returnCost = doc.data().returnCost
             }
-            shippingTally += shipLost + returnCost
-            orderTally += cost * numLost
+            if (currentYear === year) {
+              shippingTally += shipLost + returnCost
+              orderTally += cost * numLost
+            }
           })
           // Normalize cost to 2 decimal places so it is accurate for money display $xx.xx
           orderTally = parseFloat(orderTally.toFixed(2))
@@ -144,8 +157,7 @@ export default {
     },
     updateWarehouseTally(tally) {
       // Update warehouse tally in firestore
-      db
-        .collection('totalLosses')
+      db.collection('totalLosses')
         .doc('warehouse')
         .set(
           {
@@ -170,7 +182,11 @@ export default {
           snapshot.forEach(doc => {
             let cost = doc.data().itemCost
             let numLost = doc.data().itemsLost
-            warehouseTally += cost * numLost
+            let currentYear = moment().format('YYYY')
+            let year = moment(doc.data().timestamp).format('YYYY')
+            if (currentYear === year) {
+              warehouseTally += cost * numLost
+            }
           })
           // Normalize cost to 2 decimal places so it is accurate for money display $xx.xx
           warehouseTally = parseFloat(warehouseTally.toFixed(2))
@@ -209,8 +225,7 @@ export default {
 
       let vm = this
       // Send damage report to database
-      db
-        .collection('damages')
+      db.collection('damages')
         .add(this.damageReport)
         .then(() => {
           this.showReportLogged()
@@ -241,8 +256,7 @@ export default {
     },
     initialize() {
       // Get damage reasons from firestore
-      db
-        .collection('damageReasons')
+      db.collection('damageReasons')
         .get()
         .then(snapshot => {
           snapshot.forEach(doc => {
@@ -256,8 +270,7 @@ export default {
 
       // Get product costs from firestore
       this.productCosts.types = []
-      db
-        .collection('productCosts')
+      db.collection('productCosts')
         .get()
         .then(snapshot => {
           snapshot.forEach(doc => {
@@ -271,8 +284,7 @@ export default {
         .catch(err => console.log(err))
       // Get ebay account names from firestore
       this.ebayAccounts = []
-      db
-        .collection('ebayAccounts')
+      db.collection('ebayAccounts')
         .get()
         .then(snapshot => {
           snapshot.forEach(doc => {
