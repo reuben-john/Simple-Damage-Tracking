@@ -55,11 +55,18 @@
               </v-card>
             </v-dialog>
 
+            <v-text-field
+              v-model="search"
+              append-icon="search"
+              label="Search"
+              single-line
+              hide-details
+            ></v-text-field>
+            <v-spacer></v-spacer>
             <v-data-table
               :headers="warehouseHeaders"
               :items="warehouseDamages"
               :search="search"
-              :custom-filter="customFilter"
               :pagination.sync="pagination"
               :rows-per-page-items="rows"
               class="elevation-1"
@@ -82,13 +89,12 @@
               <template slot="no-data">
                 <v-btn color="primary" @click="initialize">Reset</v-btn>
               </template>
-              <template slot="footer">
-                <td colspan="100%">
-                  <v-flex xs6 sm1>
-                    <v-select label="Year" :items="damageYears" v-model="search"></v-select>
-                  </v-flex>
-                </td>
-              </template>
+              <v-alert
+                slot="no-results"
+                :value="true"
+                color="error"
+                icon="warning"
+              >Your search for "{{ search }}" found no results.</v-alert>
             </v-data-table>
           </v-card-text>
         </v-card>
@@ -119,7 +125,7 @@ export default {
       rows: [10, 25, { text: 'All', value: -1 }],
       // Table Headers
       warehouseHeaders: [
-        { text: 'Date', value: 'timestamp' },
+        { text: 'Date', value: 'date' },
         { text: 'Item Type', value: 'itemType' },
         { text: 'Item Cost', value: 'itemCost' },
         { text: '# Lost', value: 'itemsLost' },
@@ -175,16 +181,6 @@ export default {
     }
   },
   methods: {
-    customFilter(items, search, filter) {
-      // Filters table results based on Year dropdown
-      search = search.toString().toLowerCase()
-      return items.filter(row => filter(row['date'], search))
-    },
-    removeDuplicates(arr) {
-      // Removes duplicate items from array
-      let uniqueArr = Array.from(new Set(arr))
-      return uniqueArr
-    },
     updateTally(tally) {
       // Updates running damages tallies in firestore
 
@@ -243,9 +239,7 @@ export default {
             report.value = false
             report.date = moment(report.timestamp).format('LL')
             this.warehouseDamages.push(report)
-            this.damageYears.push(moment(report.timestamp).format('GGGG'))
           })
-          this.damageYears = this.removeDuplicates(this.damageYears)
         })
         .catch(err => {
           console.log(err)
