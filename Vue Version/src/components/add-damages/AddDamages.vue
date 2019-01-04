@@ -245,6 +245,7 @@ export default {
         if (report.returnLabel) {
           report.returnCost = parseFloat(report.returnCost)
         } else {
+          report.returnLabel = false
           report.returnCost = 0
         }
       } else if (report.damageDept == 'warehouse') {
