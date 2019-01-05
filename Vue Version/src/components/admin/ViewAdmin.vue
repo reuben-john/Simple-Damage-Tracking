@@ -11,21 +11,36 @@
           </v-card-title>
           <v-card-text>
             <v-layout row wrap justify-center align-center>
-            <v-flex xs2>
-              <v-btn color="purple darken-1 white--text" @click="editReasons = !editReasons">Edit Damage Reasons</v-btn>
-            </v-flex>
-            <v-flex xs2>
-              <v-btn color="purple darken-1 white--text" @click="editCosts = !editCosts">Edit Product Costs</v-btn>
-            </v-flex>
-            <v-flex xs2>
-              <v-btn color="purple darken-1 white--text" @click="editAccounts = !editAccounts">Edit Ebay Accounts</v-btn>
-            </v-flex>
-            <v-flex xs2>
-              <v-btn color="purple darken-1 white--text" @click="downloadCSV()">Download Damage Report</v-btn>
-            </v-flex>
-            <v-flex xs2>
-              <v-btn color="purple darken-1 white--text" @click="uploadCsv = !uploadCsv">Upload CSV Data</v-btn>
-            </v-flex>
+              <v-flex xs2>
+                <v-btn
+                  color="purple darken-1 white--text"
+                  @click="editReasons = !editReasons"
+                >Edit Damage Reasons</v-btn>
+              </v-flex>
+              <v-flex xs2>
+                <v-btn
+                  color="purple darken-1 white--text"
+                  @click="editCosts = !editCosts"
+                >Edit Product Costs</v-btn>
+              </v-flex>
+              <v-flex xs2>
+                <v-btn
+                  color="purple darken-1 white--text"
+                  @click="editAccounts = !editAccounts"
+                >Edit Ebay Accounts</v-btn>
+              </v-flex>
+              <v-flex xs2>
+                <v-btn
+                  color="purple darken-1 white--text"
+                  @click="downloadCSV()"
+                >Download Damage Report</v-btn>
+              </v-flex>
+              <v-flex xs2>
+                <v-btn
+                  color="purple darken-1 white--text"
+                  @click="uploadCsv = !uploadCsv"
+                >Upload CSV Data</v-btn>
+              </v-flex>
             </v-layout>
           </v-card-text>
           <v-card-text>
@@ -36,7 +51,6 @@
           </v-card-text>
         </v-card>
       </v-flex>
-
     </v-layout>
   </v-container>
 </template>
@@ -49,6 +63,7 @@ import Loading from '@/components/layout/Loading'
 import UploadCsv from '@/components/admin/UploadCsv'
 import db from '@/firebase/init'
 import papaparse from 'papaparse'
+import moment from 'moment'
 
 export default {
   name: 'ViewAdmin',
@@ -85,12 +100,13 @@ export default {
       // Clears CSVreport
       this.CSVReport = []
       // fetch damages data from firestore
-      db
-        .collection('damages')
+      db.collection('damages')
         .get()
         .then(snapshot => {
           snapshot.forEach(doc => {
-            this.CSVReport.push(doc.data())
+            let report = doc.data()
+            report.date = moment(report.timestamp).format('LL')
+            this.CSVReport.push(report)
           })
           // saves firestore data as csv - Must be inside [] for file-saver to work
           let csv = [papaparse.unparse(this.CSVReport, { download: true })]
@@ -105,8 +121,7 @@ export default {
     // Display loading graphic during page load, closes it after last database call
     this.loading = true
     // fetch product costs from firestore
-    db
-      .collection('productCosts')
+    db.collection('productCosts')
       .get()
       .then(snapshot => {
         snapshot.forEach(doc => {
@@ -117,8 +132,7 @@ export default {
 
     // Fetch damage reasons from firestore
     this.damageReasons.departments = []
-    db
-      .collection('damageReasons')
+    db.collection('damageReasons')
       .get()
       .then(snapshot => {
         snapshot.forEach(doc => {
@@ -130,8 +144,7 @@ export default {
 
     // Get ebay account names from firestore
     this.ebayAccounts.accounts = []
-    db
-      .collection('ebayAccounts')
+    db.collection('ebayAccounts')
       .get()
       .then(snapshot => {
         snapshot.forEach(doc => {
