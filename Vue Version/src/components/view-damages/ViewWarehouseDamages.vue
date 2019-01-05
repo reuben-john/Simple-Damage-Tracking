@@ -141,9 +141,9 @@ export default {
       warehouseDamages: [],
 
       // Used to show/hide page sections during page render
-      costsLoaded: false,
-      reasonsLoaded: false,
-      loading: true,
+      // costsLoaded: false,
+      // reasonsLoaded: false,
+      // loading: true,
 
       // Settings for edit item card
       dialog: false,
@@ -174,12 +174,13 @@ export default {
   created() {
     // Display loading graphic during page load, closes it after last database call
     this.loading = true
+    this.loaded = false
     this.initialize()
   },
   computed: {
     // Checks for each database call to be finished
     dataDownloaded() {
-      return this.costsLoaded && this.reasonsLoaded
+      return this.costsLoaded && this.reasonsLoaded && this.loaded
     }
   },
   methods: {
@@ -201,50 +202,11 @@ export default {
         })
     },
     initialize() {
-      let damagesRef = db.collection('damages')
-      // Get all warehouse damage reports from firestore
-      let query = damagesRef
-        .where('damageDept', '==', 'warehouse')
-        .get()
-        .then(snapshot => {
-          snapshot.forEach(doc => {
-            let report = doc.data()
-            report.id = doc.id
-            report.value = false
-            report.date = moment(report.timestamp).format('LL')
-            this.warehouseDamages.push(report)
-          })
-        })
-        .catch(err => {
-          console.log(err)
-        })
-
-      // Get product costs from firestore
-      db.collection('productCosts')
-        .get()
-        .then(snapshot => {
-          snapshot.forEach(doc => {
-            this.productCosts.push(doc.id)
-          })
-          this.costsLoaded = true
-        })
-        .catch(err => console.log(err))
-
-      // Get damage reasons from firestore
-      db.collection('damageReasons')
-        .doc('warehouse')
-        .get()
-        .then(doc => {
-          this.damageReasons = doc.data()
-
-          // Displays loading graphic for 800ms before showing table
-          let vm = this
-          setTimeout(() => {
-            this.loading = false
-            this.reasonsLoaded = true
-          }, 400)
-        })
-        .catch(err => console.log(err))
+      let dept = 'warehouse'
+      this.warehouseDamages = this.fetchDamages(dept)
+      this.productCosts = this.fetchProductCosts()
+      this.damageReasons = this.fetchDamageReasons(dept)
+      this.displayLoading(800)
     },
     editItem(item) {
       // copies selected item info into temp holder to make changes to

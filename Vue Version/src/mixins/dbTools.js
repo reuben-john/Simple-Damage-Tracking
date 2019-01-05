@@ -3,6 +3,15 @@ import moment from 'moment'
 
 export default {
   name: 'dbTools',
+  data () {
+    return {
+      costsLoaded: false,
+      reasonsLoaded: false,
+      loading: true,
+      accountsLoaded: false,
+      loaded: false
+    }
+  },
   methods: {
     hello () {
       console.log('hello from mixin!')
@@ -116,6 +125,77 @@ export default {
         .catch(err => {
           console.log(err)
         })
+    },
+    fetchDamages (dept) {
+      let damagesRef = db.collection('damages')
+      // Get all order damage reports from firestore
+      let damagesReport = []
+
+      let orderQuery = damagesRef
+        .where('damageDept', '==', dept)
+        .get()
+        .then(snapshot => {
+          // Make orderDamages an object to add the damage reports to it
+
+          snapshot.forEach(doc => {
+            let report = doc.data()
+            report.id = doc.id
+            report.value = false
+            report.date = moment(report.timestamp).format('LL')
+            damagesReport.push(report)
+          })
+        })
+        .catch(err => {
+          console.log(err)
+        })
+      return damagesReport
+    },
+    fetchProductCosts () {
+      let productCosts = []
+      // Get product costs from firestore
+      db.collection('productCosts')
+        .get()
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            productCosts.push(doc.id)
+          })
+          this.costsLoaded = true
+        })
+        .catch(err => console.log(err))
+      return productCosts
+    },
+    fetchDamageReasons (dept) {
+      let damageReasons = {}
+      // Get damage reasons from firestore
+      db.collection('damageReasons')
+        .doc(dept)
+        .get()
+        .then(doc => {
+          damageReasons = doc.data()
+          this.reasonsLoaded = true
+        })
+        .catch(err => console.log(err))
+      return damageReasons
+    },
+    fetchEbayAccounts () {
+      // Get ebay account names from firestore
+      let ebayAccounts = []
+      db.collection('ebayAccounts')
+        .get()
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            ebayAccounts.push(doc.data().ebayAccount)
+          })
+          this.accountsLoaded = true
+        })
+        .catch(err => console.log(err))
+      return ebayAccounts
+    },
+    displayLoading (time) {
+      setTimeout(() => {
+        this.loading = false
+        this.loaded = true
+      }, time)
     }
   }
 }

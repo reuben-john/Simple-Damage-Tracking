@@ -197,13 +197,8 @@ export default {
       damageReasons: null,
       orderDamages: null,
       ebayAccounts: null,
-      damageYears: [],
 
       // Used to show/hide page sections during page render
-      costsLoaded: false,
-      reasonsLoaded: false,
-      accountsLoaded: false,
-      loading: true,
 
       // Settings for edit item card
       dialog: false,
@@ -248,12 +243,13 @@ export default {
   created() {
     // Display loading graphic during page load, closes it after last database call
     this.loading = true
+    this.loaded = false
     this.initialize()
   },
   computed: {
     dataDownloaded() {
       // Checks for each database call to be finished
-      return this.costsLoaded && this.reasonsLoaded && this.accountsLoaded
+      return this.costsLoaded && this.reasonsLoaded && this.accountsLoaded && this.loaded
     }
   },
   methods: {
@@ -277,65 +273,12 @@ export default {
         })
     },
     initialize() {
-      let damagesRef = db.collection('damages')
-      // Get all order damage reports from firestore
-      let query = damagesRef
-        .where('damageDept', '==', 'order')
-        .get()
-        .then(snapshot => {
-          // Make orderDamages an object to add the damage reports to it
-          this.orderDamages = []
-
-          snapshot.forEach(doc => {
-            let report = doc.data()
-            report.id = doc.id
-            report.value = false
-            report.date = moment(report.timestamp).format('LL')
-            this.orderDamages.push(report)
-          })
-        })
-        .catch(err => {
-          console.log(err)
-        })
-
-      // Get product costs from firestore
-      db.collection('productCosts')
-        .get()
-        .then(snapshot => {
-          snapshot.forEach(doc => {
-            this.productCosts.push(doc.id)
-          })
-          this.costsLoaded = true
-        })
-        .catch(err => console.log(err))
-
-      // Get damage reasons from firestore
-      db.collection('damageReasons')
-        .doc('order')
-        .get()
-        .then(doc => {
-          this.damageReasons = doc.data()
-          this.reasonsLoaded = true
-        })
-        .catch(err => console.log(err))
-
-      // Get ebay account names from firestore
-      this.ebayAccounts = []
-      db.collection('ebayAccounts')
-        .get()
-        .then(snapshot => {
-          snapshot.forEach(doc => {
-            this.ebayAccounts.push(doc.data().ebayAccount)
-          })
-
-          // Displays loading graphic for 800ms before showing table
-          let vm = this
-          setTimeout(() => {
-            this.loading = false
-            this.accountsLoaded = true
-          }, 400)
-        })
-        .catch(err => console.log(err))
+      let dept = 'order'
+      this.orderDamages = this.fetchDamages(dept)
+      this.productCosts = this.fetchProductCosts()
+      this.damageReasons = this.fetchDamageReasons(dept)
+      this.ebayAccounts = this.fetchEbayAccounts()
+      this.displayLoading(800)
     },
     editItem(item) {
       // copies selected item info into temp holder to make changes to
