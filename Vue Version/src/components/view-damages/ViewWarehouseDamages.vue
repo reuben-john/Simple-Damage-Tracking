@@ -107,9 +107,11 @@
 import db from '@/firebase/init'
 import moment from 'moment'
 import Loading from '@/components/layout/Loading'
+import dbTools from '@/mixins/dbTools.js'
 
 export default {
   name: 'ViewWarehouseDamages',
+  mixins: [dbTools],
   components: {
     Loading
   },
@@ -198,34 +200,6 @@ export default {
           console.log(err)
         })
     },
-    tallyNewTotals() {
-      // Queries firestore for current order damages and tallies total
-
-      let damagesRef = db.collection('damages')
-      let warehouseTally = 0
-
-      // Tally warehouse totals from firestore
-      let warehouseQuery = damagesRef
-        .where('damageDept', '==', 'warehouse')
-        .get()
-        .then(snapshot => {
-          snapshot.forEach(doc => {
-            let cost = doc.data().itemCost
-            let numLost = doc.data().itemsLost
-            let currentYear = moment().format('YYYY')
-            let year = moment(doc.data().timestamp).format('YYYY')
-            if (currentYear === year) {
-              warehouseTally += cost * numLost
-            }
-          })
-          // Normalize cost to 2 decimal places so it is accurate for money display $xx.xx
-          warehouseTally = parseFloat(warehouseTally.toFixed(2))
-          this.updateTally(warehouseTally)
-        })
-        .catch(err => {
-          console.log(err)
-        })
-    },
     initialize() {
       let damagesRef = db.collection('damages')
       // Get all warehouse damage reports from firestore
@@ -299,7 +273,7 @@ export default {
       confirm('Are you sure you want to delete this item?') &&
         (this.warehouseDamages.splice(index, 1), this.deleteFromDB(id))
 
-      this.tallyNewTotals()
+      this.tallyNewWarehouseTotals()
     },
     close() {
       // Closes dialog window and resets editedItem to default settings
@@ -345,7 +319,7 @@ export default {
           itemCost: this.editedItem.itemCost,
           reasonLost: this.editedItem.reasonLost
         })
-        .then(console.log('Updated'), this.tallyNewTotals())
+        .then(console.log('Updated'), this.tallyNewWarehouseTotals())
         .catch(err => {
           console.log(err)
         })

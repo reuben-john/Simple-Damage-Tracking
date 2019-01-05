@@ -160,9 +160,11 @@
 import db from '@/firebase/init'
 import moment from 'moment'
 import Loading from '@/components/layout/Loading'
+import dbTools from '@/mixins/dbTools.js'
 
 export default {
   name: 'ViewOrderDamages',
+  mixins: [dbTools],
   components: {
     Loading
   },
@@ -274,44 +276,6 @@ export default {
           console.log(err)
         })
     },
-    tallyNewTotals() {
-      // Queries firestore for current order damages and tallies total
-
-      let damagesRef = db.collection('damages')
-      let orderTally = 0
-      let shippingTally = 0
-
-      // Tally order totals from firestore
-      let orderQuery = damagesRef
-        .where('damageDept', '==', 'order')
-        .get()
-        .then(snapshot => {
-          snapshot.forEach(doc => {
-            let cost = doc.data().itemCost
-            let numLost = doc.data().itemsLost
-            let shipCost = doc.data().shippingCost
-            let shipLost = doc.data().shippingLost
-            let returnCost = 0
-            let currentYear = moment().format('YYYY')
-            let year = moment(doc.data().timestamp).format('YYYY')
-            if (doc.data().returnCost) {
-              returnCost = doc.data().returnCost
-            }
-            if (currentYear === year) {
-              shippingTally += shipLost + returnCost
-              orderTally += cost * numLost
-            }
-          })
-          console.log(orderTally, shippingTally)
-          // Normalize cost to 2 decimal places so it is accurate for money display $xx.xx
-          orderTally = parseFloat(orderTally.toFixed(2))
-          shippingTally = parseFloat(shippingTally.toFixed(2))
-          this.updateTally(orderTally, shippingTally)
-        })
-        .catch(err => {
-          console.log(err)
-        })
-    },
     initialize() {
       let damagesRef = db.collection('damages')
       // Get all order damage reports from firestore
@@ -398,7 +362,7 @@ export default {
       confirm('Are you sure you want to delete this item?') &&
         (this.orderDamages.splice(index, 1), this.deleteFromDB(id))
 
-      this.tallyNewTotals()
+      this.tallyNewOrderTotals()
     },
     close() {
       // Closes dialog window and resets editedItem to default settings
@@ -461,7 +425,7 @@ export default {
           reasonLost: this.editedItem.reasonLost,
           ebayAccount: this.editedItem.ebayAccount
         })
-        .then(console.log('Updated'), this.tallyNewTotals())
+        .then(console.log('Updated'), this.tallyNewOrderTotals())
         .catch(err => {
           console.log(err)
         })

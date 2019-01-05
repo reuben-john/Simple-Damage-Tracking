@@ -65,9 +65,11 @@ import WarehouseDamagesForm from '@/components/add-damages/WarehouseDamagesForm'
 import DamageReportThanks from '@/components/add-damages/DamageReportThanks'
 import Loading from '@/components/layout/Loading'
 import moment from 'moment'
+import dbTools from '@/mixins/dbTools.js'
 
 export default {
   name: 'AddDamages',
+  mixins: [dbTools],
   components: {
     OrderDamagesForm,
     WarehouseDamagesForm,
@@ -99,7 +101,7 @@ export default {
         this.tallyNewWarehouseTotals()
       }
     },
-    updateOrderTally(orderTally, shippingTally) {
+    OLDupdateOrderTally(orderTally, shippingTally) {
       // Update order tally in firestore
 
       // Update tally in firestore
@@ -118,7 +120,7 @@ export default {
           console.log(err)
         })
     },
-    tallyNewOrderTotals() {
+    OLDtallyNewOrderTotals() {
       // Tallies total damages for orders
 
       let damagesRef = db.collection('damages')
@@ -155,7 +157,7 @@ export default {
           console.log(err)
         })
     },
-    updateWarehouseTally(tally) {
+    OLDupdateWarehouseTally(tally) {
       // Update warehouse tally in firestore
       db.collection('totalLosses')
         .doc('warehouse')
@@ -170,7 +172,7 @@ export default {
           console.log(err)
         })
     },
-    tallyNewWarehouseTotals() {
+    OLDtallyNewWarehouseTotals() {
       // Tallies total damages for warehouse
       let damagesRef = db.collection('damages')
       let warehouseTally = 0

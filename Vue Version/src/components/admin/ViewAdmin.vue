@@ -32,7 +32,7 @@
               <v-flex xs2>
                 <v-btn
                   color="purple darken-1 white--text"
-                  @click="downloadCSV()"
+                  @click="downloadDamages()"
                 >Download Damage Report</v-btn>
               </v-flex>
               <v-flex xs2>
@@ -64,9 +64,12 @@ import UploadCsv from '@/components/admin/UploadCsv'
 import db from '@/firebase/init'
 import papaparse from 'papaparse'
 import moment from 'moment'
+import jsPDF from 'jspdf'
+import dbTools from '@/mixins/dbTools.js'
 
 export default {
   name: 'ViewAdmin',
+  mixins: [dbTools],
   components: {
     EditProductCosts,
     EditDamageReasons,
@@ -94,6 +97,20 @@ export default {
     }
   },
   methods: {
+    downloadDamages() {
+      this.tallyNewWarehouseTotals()
+      // this.downloadPDF()
+      // this.downloadCSV()
+    },
+    downloadPDF() {
+      // Create pdf file for damage report
+      let doc = new jsPDF()
+      doc.text(['Kendy Corporation', 'Damage Report'], 110, 10, {
+        align: 'center'
+      })
+      doc.text([])
+      doc.save('damages.pdf')
+    },
     downloadCSV() {
       // Creates CSV file of all damage reports
 
