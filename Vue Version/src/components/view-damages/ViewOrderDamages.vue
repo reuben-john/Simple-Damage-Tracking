@@ -253,25 +253,6 @@ export default {
     }
   },
   methods: {
-    updateTally(orderTally, shippingTally) {
-      // Updates running damages tallies in firestore
-
-      // Update tally in firestore
-      db.collection('totalLosses')
-        .doc('order')
-        .set(
-          {
-            total: parseFloat((orderTally + shippingTally).toFixed(2)),
-            itemTotal: orderTally,
-            shipTotal: shippingTally
-          },
-          { merge: true }
-        )
-        .then(console.log('Updated'))
-        .catch(err => {
-          console.log(err)
-        })
-    },
     initialize() {
       let dept = 'order'
       this.orderDamages = this.fetchDamages(dept)

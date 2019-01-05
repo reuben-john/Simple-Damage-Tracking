@@ -184,23 +184,6 @@ export default {
     }
   },
   methods: {
-    updateTally(tally) {
-      // Updates running damages tallies in firestore
-
-      // fetch data from firestore
-      db.collection('totalLosses')
-        .doc('warehouse')
-        .set(
-          {
-            total: tally
-          },
-          { merge: true }
-        )
-        .then(console.log('Updated'))
-        .catch(err => {
-          console.log(err)
-        })
-    },
     initialize() {
       let dept = 'warehouse'
       this.warehouseDamages = this.fetchDamages(dept)
