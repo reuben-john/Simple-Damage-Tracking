@@ -253,18 +253,6 @@ export default {
       this.editedItem = Object.assign({}, item)
       this.dialog = true
     },
-    deleteFromDB(itemId) {
-      // Deletes damage report from firestore
-
-      let damagesRef = db.collection('damages').doc(itemId)
-      // fetch data from firestore
-      let query = damagesRef
-        .delete()
-        .then(console.log('Deleted'))
-        .catch(err => {
-          console.log(err)
-        })
-    },
     deleteItem(item) {
       // Confirms you want to delete item, then deletes item
 
