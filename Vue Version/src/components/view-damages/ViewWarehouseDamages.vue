@@ -135,10 +135,11 @@ export default {
       ],
 
       // Database info gets added to these items
-      productCosts: [],
-      damageReasons: null,
-      damageYears: [],
-      warehouseDamages: [],
+      // productCosts: [],
+      // damageReasons: null,
+      // warehouseDamages: null,
+      // orderDamages: null,
+      // ebayAccounts: null,
 
       // Used to show/hide page sections during page render
       // costsLoaded: false,

@@ -193,10 +193,10 @@ export default {
       ],
 
       // Database info gets added to these items
-      productCosts: [],
-      damageReasons: null,
-      orderDamages: null,
-      ebayAccounts: null,
+      // productCosts: [],
+      // damageReasons: null,
+      // orderDamages: null,
+      // ebayAccounts: null,
 
       // Used to show/hide page sections during page render
 

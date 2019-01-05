@@ -9,7 +9,14 @@ export default {
       reasonsLoaded: false,
       loading: true,
       accountsLoaded: false,
-      loaded: false
+      loaded: false,
+
+      // Database info gets added to these items
+      productCosts: [],
+      damageReasons: null,
+      damageYears: [],
+      warehouseDamages: [],
+      ebayAccounts: []
     }
   },
   methods: {
@@ -165,17 +172,16 @@ export default {
       return productCosts
     },
     fetchDamageReasons (dept) {
-      let damageReasons = {}
       // Get damage reasons from firestore
       db.collection('damageReasons')
         .doc(dept)
         .get()
         .then(doc => {
-          damageReasons = doc.data()
+          this.damageReasons = doc.data()
           this.reasonsLoaded = true
         })
         .catch(err => console.log(err))
-      return damageReasons
+      return this.damageReasons
     },
     fetchEbayAccounts () {
       // Get ebay account names from firestore
