@@ -5,6 +5,7 @@
   "main": "",
   "dependencies": {
     "buefy": "^0.6.7",
+    "jspdf": "^1.5.3",
     "lodash": "^4.17.11",
     "npm": "^6.5.0",
     "vue": "^2.5.21",
