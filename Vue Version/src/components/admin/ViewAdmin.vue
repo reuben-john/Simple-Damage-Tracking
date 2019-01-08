@@ -41,6 +41,12 @@
                   @click="uploadCsv = !uploadCsv"
                 >Upload CSV Data</v-btn>
               </v-flex>
+              <v-flex xs3>
+                <v-btn
+                  color="purple darken-1 white--text"
+                  @click="uploadEbayInventory = !uploadEbayInventory"
+                >Ebay Inventory Tools</v-btn>
+              </v-flex>
             </v-layout>
           </v-card-text>
           <v-card-text>
@@ -48,6 +54,7 @@
             <edit-product-costs v-if="editCosts" :productCosts="productCosts"></edit-product-costs>
             <edit-ebay-accounts v-if="editAccounts" :ebayAccounts="ebayAccounts"></edit-ebay-accounts>
             <upload-csv v-if="uploadCsv" :damageReasons="damageReasons"></upload-csv>
+            <upload-ebay-inventory v-if="uploadEbayInventory"></upload-ebay-inventory>
           </v-card-text>
         </v-card>
       </v-flex>
@@ -66,6 +73,7 @@ import papaparse from 'papaparse'
 import moment from 'moment'
 import jsPDF from 'jspdf'
 import dbTools from '@/mixins/dbTools.js'
+import UploadEbayInventory from '@/components/admin/UploadEbayInventory'
 
 export default {
   name: 'ViewAdmin',
@@ -75,6 +83,7 @@ export default {
     EditDamageReasons,
     EditEbayAccounts,
     UploadCsv,
+    UploadEbayInventory,
     Loading
   },
   data() {
@@ -84,6 +93,7 @@ export default {
       editCosts: false,
       editAccounts: false,
       uploadCsv: false,
+      uploadEbayInventory: false,
       loading: true,
       accountsLoaded: false,
 

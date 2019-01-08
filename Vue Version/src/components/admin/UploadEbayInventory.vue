@@ -1,22 +1,17 @@
 <template>
   <v-card>
     <v-card-text>
-      <h2>Upload CSV File</h2>
+      <h2>Uploading Ebay CSV File</h2>
     </v-card-text>
     <v-card-actions>
       <v-layout row wrap justify-center>
-        <v-flex xs12 sm2>
-          <v-select
-            :items="damageReasons.departments"
-            v-model="department"
-            label="Choose Department"
-            single-line
-            required
-          ></v-select>
+        <v-flex xs12 sm4>
+          <v-card-text class="green--text headline">End of year ebay inventory</v-card-text>
+          <input type="file" accept=".csv" @change="uploadEndOfYear">
         </v-flex>
-        <v-flex xs12 sm4 v-if="department">
-          <input type="file" accept=".csv" @change="uploadCsvFile">
-          <upload-btn color="success" accept=".csv" @change="onFileChange" title="Upload CSV File"></upload-btn>
+        <v-flex xs12 sm4>
+          <v-card-text class="green--text headline">Add previous category costs</v-card-text>
+          <input type="file" accept=".csv" @change="uploadPreviousCosts">
         </v-flex>
       </v-layout>
     </v-card-actions>
@@ -29,19 +24,14 @@
 <script>
 import db from '@/firebase/init'
 import papaparse from 'papaparse'
-import UploadButton from 'vuetify-upload-button'
 import moment from 'moment'
 
 export default {
-  name: 'UploadCsv',
-  components: {
-    'upload-btn': UploadButton
-  },
-  props: ['damageReasons'],
+  name: 'UploadEbayInventory',
+
   data() {
     return {
       csvFile: null,
-      department: '',
       feedback: '',
 
       // Table headers
@@ -139,6 +129,12 @@ export default {
 
       this.csvFile = newFile
       this.logDamages()
+    },
+    uploadEndOfYear(e) {
+      this.uploadCsvFile(e)
+    },
+    uploadPreviousCosts(e) {
+      this.uploadCsvFile(e)
     },
     uploadCsvFile(e) {
       // Allows user to upload CSV file to process
