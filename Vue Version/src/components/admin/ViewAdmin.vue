@@ -108,9 +108,9 @@ export default {
   },
   methods: {
     downloadDamages() {
-      this.tallyNewWarehouseTotals()
+
       // this.downloadPDF()
-      // this.downloadCSV()
+      this.downloadCSV()
     },
     downloadPDF() {
       // Create pdf file for damage report
