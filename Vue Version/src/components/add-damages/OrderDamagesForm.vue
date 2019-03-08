@@ -1,5 +1,5 @@
 <template>
-  <v-layout row wrap justify-center  class="order-damages-form">
+  <v-layout row wrap justify-center class="order-damages-form">
     <v-flex xs8 sm4 mx-4>
       <v-select
         :items="ebayAccounts"
@@ -78,10 +78,7 @@
       ></v-text-field>
     </v-flex>
     <v-flex xs6 sm3 mx-4>
-      <v-checkbox
-          label="Return Label"
-          v-model="damageReport.returnLabel"
-        ></v-checkbox>
+      <v-checkbox label="Return Label" v-model="damageReport.returnLabel"></v-checkbox>
     </v-flex>
     <v-flex xs6 sm3 mx-4 v-if="damageReport.returnLabel">
       <v-text-field

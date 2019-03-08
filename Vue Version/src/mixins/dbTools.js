@@ -16,12 +16,43 @@ export default {
       damageReasons: null,
       damageYears: [],
       warehouseDamages: [],
-      ebayAccounts: []
+      ebayAccounts: [],
+      years: []
     }
   },
   methods: {
-    hello () {
-      console.log('hello from mixin!')
+    fetchYears () {
+      db.collection('totalLosses').doc('years').get().then(doc => {
+        this.years = doc.data().years
+      }).catch(err => console.log(err))
+    },
+    updateYears () {
+      // Add damage years to database
+      let newYears = []
+
+      db.collection('totalLosses').doc('years').get().then(doc => {
+        this.years = doc.data().years
+        let currentYear = moment().format('YYYY')
+        this.years.push(currentYear)
+        newYears = this.years.filter(function (elem, index, self) {
+          return index === self.indexOf(elem)
+        })
+        this.years = newYears
+        // console.log(this.years)
+        this.uploadYears()
+      }).catch(err => console.log(err))
+
+    },
+    uploadYears () {
+      db.collection('totalLosses').doc("years").set({
+          years: this.years
+        }, {
+          merge: true
+        })
+        .then(console.log('Updated'))
+        .catch(err => {
+          console.log(err)
+        })
     },
     tallyNewOrderTotals () {
       // Tallies total damages for orders
@@ -91,13 +122,12 @@ export default {
       // Update warehouse tally in firestore
       db.collection('totalLosses')
         .doc('warehouse')
-        .set(
-          {
-            total: tally
-          },
-          { merge: true }
-        )
-        .then(console.log('Updated'))
+        .set({
+          total: tally
+        }, {
+          merge: true
+        })
+        .then(this.updateYears())
         .catch(err => {
           console.log(err)
         })
@@ -108,15 +138,14 @@ export default {
       // Update tally in firestore
       db.collection('totalLosses')
         .doc('order')
-        .set(
-          {
-            total: parseFloat((orderTally + shippingTally).toFixed(2)),
-            itemTotal: orderTally,
-            shipTotal: shippingTally
-          },
-          { merge: true }
-        )
-        .then(console.log('Updated'))
+        .set({
+          total: parseFloat((orderTally + shippingTally).toFixed(2)),
+          itemTotal: orderTally,
+          shipTotal: shippingTally
+        }, {
+          merge: true
+        })
+        .then(this.updateYears())
         .catch(err => {
           console.log(err)
         })

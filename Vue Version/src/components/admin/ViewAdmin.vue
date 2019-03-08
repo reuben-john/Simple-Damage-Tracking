@@ -32,7 +32,7 @@
               <v-flex xs2>
                 <v-btn
                   color="purple darken-1 white--text"
-                  @click="downloadDamages()"
+                  @click="downloadDamages = !downloadDamages"
                 >Download Damage Report</v-btn>
               </v-flex>
               <v-flex xs2>
@@ -55,6 +55,7 @@
             <edit-ebay-accounts v-if="editAccounts" :ebayAccounts="ebayAccounts"></edit-ebay-accounts>
             <upload-csv v-if="uploadCsv" :damageReasons="damageReasons"></upload-csv>
             <upload-ebay-inventory v-if="uploadEbayInventory"></upload-ebay-inventory>
+            <download-damages-form v-if="downloadDamages" :years="years"></download-damages-form>
           </v-card-text>
         </v-card>
       </v-flex>
@@ -66,11 +67,10 @@
 import EditDamageReasons from '@/components/admin/EditDamageReasons'
 import EditProductCosts from '@/components/admin/EditProductCosts'
 import EditEbayAccounts from '@/components/admin/EditEbayAccounts'
+import DownloadDamagesForm from '@/components/admin/DownloadDamagesForm'
 import Loading from '@/components/layout/Loading'
 import UploadCsv from '@/components/admin/UploadCsv'
 import db from '@/firebase/init'
-import papaparse from 'papaparse'
-import moment from 'moment'
 import jsPDF from 'jspdf'
 import dbTools from '@/mixins/dbTools.js'
 import UploadEbayInventory from '@/components/admin/UploadEbayInventory'
@@ -84,7 +84,8 @@ export default {
     EditEbayAccounts,
     UploadCsv,
     UploadEbayInventory,
-    Loading
+    Loading,
+    DownloadDamagesForm
   },
   data() {
     return {
@@ -96,57 +97,21 @@ export default {
       uploadEbayInventory: false,
       loading: true,
       accountsLoaded: false,
+      downloadDamages: false,
 
       // Data holders
       ebayAccounts: {
         accounts: null
       },
       damageReasons: {},
-      productCosts: [],
-      CSVReport: null
+      productCosts: []
     }
   },
-  methods: {
-    downloadDamages() {
 
-      // this.downloadPDF()
-      this.downloadCSV()
-    },
-    downloadPDF() {
-      // Create pdf file for damage report
-      let doc = new jsPDF()
-      doc.text(['Kendy Corporation', 'Damage Report'], 110, 10, {
-        align: 'center'
-      })
-      doc.text([])
-      doc.save('damages.pdf')
-    },
-    downloadCSV() {
-      // Creates CSV file of all damage reports
-
-      // Clears CSVreport
-      this.CSVReport = []
-      // fetch damages data from firestore
-      db.collection('damages')
-        .get()
-        .then(snapshot => {
-          snapshot.forEach(doc => {
-            let report = doc.data()
-            report.date = moment(report.timestamp).format('LL')
-            this.CSVReport.push(report)
-          })
-          // saves firestore data as csv - Must be inside [] for file-saver to work
-          let csv = [papaparse.unparse(this.CSVReport, { download: true })]
-          var FileSaver = require('file-saver')
-          var blob = new Blob(csv, { type: 'text/plain;charset=utf-8' })
-          FileSaver.saveAs(blob, 'damages.csv')
-        })
-        .catch(err => console.log(err))
-    }
-  },
   created() {
     // Display loading graphic during page load, closes it after last database call
     this.loading = true
+    this.fetchYears()
     // fetch product costs from firestore
     db.collection('productCosts')
       .get()
