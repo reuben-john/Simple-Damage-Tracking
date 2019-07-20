@@ -1,6 +1,6 @@
 # Simple Damage Tracker
 
-This is a very basic damage tracking system put together to track losses related to my ebay business.
+This is a damage tracking system put together to track losses related to my ebay business.
 It allows for entry of return/damaged product losses as well as general warehouse losses.
 
 ## Vue Version
