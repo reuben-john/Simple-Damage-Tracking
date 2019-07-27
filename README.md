@@ -1,4 +1,4 @@
-# Simple Damage Tracker
+# eBay Order & Warehouse Damage Tracker
 
 This is a damage tracking system put together to track losses related to my ebay business.
 It allows for entry of return/damaged product losses as well as general warehouse losses.
