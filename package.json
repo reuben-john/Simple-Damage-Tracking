@@ -4,7 +4,7 @@
   "description": "Simple damage tracking app",
   "main": "",
   "dependencies": {
-    "buefy": "^0.6.7",
+    "buefy": "^0.7.2",
     "jspdf": "^1.5.3",
     "lodash": "^4.17.13",
     "npm": "^6.13.4",
