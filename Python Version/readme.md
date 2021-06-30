@@ -6,5 +6,5 @@ This is the original version of my damage tracker. It is now a legacy project an
 
 ```bash
 # install dependencies
-pip install terminaltables colorama
+pip install texttable colorama
 ```
