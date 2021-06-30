@@ -8,7 +8,7 @@ import csv
 from os import path
 from time import strftime
 
-from terminaltables import AsciiTable
+from texttable import Texttable
 from colorama import init, Fore
 
 
@@ -458,8 +458,10 @@ while True:
     elif menu == '3':
         with open(order_csv, 'r') as order_obj:
             csv_data = damages_reader(order_obj)
-        damages_table = AsciiTable(csv_data)
-        print(damages_table.table)
+        damages_table = Texttable()
+        damages_table.set_deco(Texttable.HEADER)
+        damages_table.add_rows(csv_data)
+        print(damages_table.draw())
     # Menu 4 generates loss tallies for order and warehouse losses and prints them out
     elif menu == '4':
         with open(order_csv) as order_obj:
