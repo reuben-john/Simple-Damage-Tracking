@@ -1,6 +1,6 @@
 # Python based Damage Tracker
 
-This is the original version of my damage tracker. It is now a legacy project and will likely not be updated.
+This is the original version of my simple damage tracker. It is now a legacy project and will likely not be updated.
 
 ## Build Setup
 
