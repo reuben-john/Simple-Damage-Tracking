@@ -26,7 +26,7 @@ All other access is restricted to admin users.
 - Download all logged damages as csv file
 - Able to upload csv file from Python Version
 
-[![Image of demo page](/images/damages.jpg)](https://fir-damage-tracker.firebaseapp.com/)https://github.com/reuben-john/Simple-Damage-Tracking/tree/master/Python%20Version
+[![Image of demo page](/images/damages.jpg)](https://fir-damage-tracker.firebaseapp.com/)
 
 [A live demo can be viewed here! ](https://fir-damage-tracker.firebaseapp.com/)
 
